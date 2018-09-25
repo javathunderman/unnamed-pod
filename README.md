@@ -1,2 +1,2 @@
 # UMDLoop
-The Loop de doop
+Repository for control algorithm and everything code related.
