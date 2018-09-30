@@ -5,8 +5,7 @@ This is where our tech demo will go for testing the design processing of develop
 
 ## Eclipse Setup:
 
-Follow the steps here up to the point before you add the ...\c++\4.9.2\... path:
-> http://www.ni.com/tutorial/14625/en/
+Follow the [steps here](http://www.ni.com/tutorial/14625/en/) up to the point before you add the ...\c++\4.9.2\... path.
 
 Add the path to Project > Properties > C/C++ Build > Settings > Cross GCC Compiler > Includes 
 > C:\build\17.0\x64\sysroots\core2-64-nilrt-linux\usr\include
