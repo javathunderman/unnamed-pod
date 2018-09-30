@@ -5,7 +5,7 @@ This is where our tech demo will go for testing the design processing of develop
 
 ## Eclipse Setup:
 
-Follow the steps here:
+Follow the steps here up to the point before you add the ...\c++\4.9.2\... path:
 > http://www.ni.com/tutorial/14625/en/
 
 Add the path to Project > Properties > C/C++ Build > Settings > Cross GCC Compiler > Includes 
