@@ -3,7 +3,7 @@ This is where our tech demo will go for testing the design processing of develop
 # Setup Documentation:
 
 Everything stems from this [white paper](http://www.ni.com/white-paper/14623/en/).
-[Fancy C/C++ Eclipse Download](http://www.ni.com/download/labview-real-time-module-2017/6731/en/)
+- [Fancy C/C++ Eclipse Download](http://www.ni.com/download/labview-real-time-module-2017/6731/en/)
 
 ## Eclipse Setup:
 
