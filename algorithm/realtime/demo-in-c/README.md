@@ -23,6 +23,18 @@ Then search "Remote" and download the stuff...
 Start Eclipse Workbench, and choose Window > Open Perspective > Other > Remote System Explorer
 
 ## cRIO Connection
-for Mark to fill out
-
+First, ensure that NI MAX is downloaded. It should come with the cRIO driver found here:
+> http://www.ni.com/download/compactrio-device-drivers-may-2018/7321/en/
+# Inital Setup for cRIO
+Connect to the cRIO via ethernet or USB and then a popup should open notifying that the cRIO has been connected.
+Choose the first option to open NI MAX. Now, expand remot systems and select the cRIO. 
+Check startup settings and ensure that SSHD is enabled. If it is not enable, the admin login will be needed to enable it. Contact a team member for the password.
+# Initial Setup for Eclipse
+Open eclipse then navigate to the remote system explorer:
+> Window > Open Perspective > Other > Remote System Explorer
+Now, select create new connection and choose SSH only.
+Enter the IP for the host name and give a brief description if you feel included. The IP should be:
 > 172.22.11.2
+If this does not work. The IP can be found in NI MAX
+Now, create a folder on the cRIO (preferably under main) to SFTP the files into.
+TODO: Finish description
