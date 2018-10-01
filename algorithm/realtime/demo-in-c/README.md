@@ -38,3 +38,14 @@ Enter the IP for the host name and give a brief description if you feel included
 If this does not work. The IP can be found in NI MAX
 Now, create a folder on the cRIO (preferably under main) to SFTP the files into.
 TODO: Finish description
+
+## FPGA API
+# Note:
+> Remember to include libdl (add "dl" to libraries)
+API Download
+> http://www.ni.com/download/fpga-interface-c-api-17.0/6801/en/
+API Documentation 
+> http://zone.ni.com/reference/en-XX/help/372928G-01/capi/functions_write/
+Run the NI FPGA C API Generator on the labview bitfile. 
+Add the folder that the generated API was saved in to the includes and symbols in Ecliplse.
+Use the NiFpga.h funcions to interface with the FPGA.
