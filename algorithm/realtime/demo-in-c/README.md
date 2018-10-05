@@ -27,7 +27,7 @@ First, ensure that NI MAX is downloaded. It should come with the cRIO driver fou
 > http://www.ni.com/download/compactrio-device-drivers-may-2018/7321/en/
 # Inital Setup for cRIO
 Connect to the cRIO via ethernet or USB and then a popup should open notifying that the cRIO has been connected.
-Choose the first option to open NI MAX. Now, expand remot systems and select the cRIO. 
+Choose the first option to open NI MAX. Now, expand remote systems and select the cRIO. 
 Check startup settings and ensure that SSHD is enabled. If it is not enable, the admin login will be needed to enable it. Contact a team member for the password.
 # Initial Setup for Eclipse
 Open eclipse then navigate to the remote system explorer:
