@@ -77,11 +77,11 @@ screens_path = target_folder_path + "/screens"
 os.mkdir(screens_path)
 
 # Create screen definition file for each group
-for [name, group] in tlm.get_all_groups().items():
-    with open(f'{screens_path}/{name}.txt', "w") as file:
-        file.write(f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n')
-        file.write("VERTICAL\n")
-        for item in group:
-            file.write(item.get_screen_definition())
-        file.write("END\n")
-        
+if config["group_screens"]:
+    for [name, group] in tlm.get_all_groups().items():
+        with open(f'{screens_path}/{name}.txt', "w") as file:
+            file.write(f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n')
+            file.write("VERTICAL\n")
+            for item in group:
+                file.write(item.get_screen_definition())
+                file.write("END\n")
