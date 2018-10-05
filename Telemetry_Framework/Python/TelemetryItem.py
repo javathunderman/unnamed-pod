@@ -43,6 +43,20 @@ class TelemetryItem:
         
         return definition
     
+    def get_screen_definition(self):
+        screen_def = "  HORIZONTAL\n"
+        spacer = "    SPACER 10 0 EXPANDING PREFERRED\n"
+        
+        if self.limits_definition() == "":
+            screen_def += f'    LABELVALUE {self.config["target_name"]} '
+            screen_def += f'{self.config["packet_name"]} {self.mnemonic} '
+            screen_def += f' CONVERTED {self.config["screen_value_width"]}\n'
+        else:
+            screen_def += f'    LABELVALUELIMITSBAR {self.config["target_name"]} '
+            screen_def += f'{self.config["packet_name"]} {self.mnemonic} '
+            screen_def += f' CONVERTED {self.config["screen_value_width"]}\n'
+        return screen_def + spacer + "  END\n"
+    
     def conversion_definition(self):
         # TODO implement conversion table parsing
         
