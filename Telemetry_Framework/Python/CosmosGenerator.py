@@ -52,7 +52,7 @@ os.mkdir(f'{target_folder_path}/cmd_tlm')
 # Create tlm definition file
 tlm_path = target_folder_path + '/cmd_tlm/' + config["target_name"].lower() + '_tlm.txt'
 with open(tlm_path, "w") as file:
-    file.write(f'TELEMETRY {config["target_name"].upper()} PACKET BIG_ENDIAN\n')
+    file.write(f'TELEMETRY {config["target_name"].upper()} {config["packet_name"]} BIG_ENDIAN\n')
     for item in tlm.get_all():
         file.write(item.get_definition())
         
@@ -67,3 +67,21 @@ with open(server_path, "w") as file:
     file.write(f'INTERFACE {config["target_name"].upper()}_INT udp_interface.rb ')
     file.write(f'{config["target_ip"]} {config["udp_write_port"]} {config["udp_read_port"]}\n')
     file.write(f'  TARGET {config["target_name"]}\n')
+    
+###############################################################################
+# COSMOS Group Screen Definition
+###############################################################################
+    
+# Create screens folder
+screens_path = target_folder_path + "/screens"
+os.mkdir(screens_path)
+
+# Create screen definition file for each group
+for [name, group] in tlm.get_all_groups().items():
+    with open(f'{screens_path}/{name}.txt', "w") as file:
+        file.write(f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n')
+        file.write("VERTICAL\n")
+        for item in group:
+            file.write(item.get_screen_definition())
+        file.write("END\n")
+        
