@@ -37,9 +37,9 @@ class Telemetry:
         return group
     
     def get_all_groups(self):
-        groups = []
+        groups = {}
         for name in self.groups:
-            groups.append(self.get_group(name))
+            groups[name] = self.get_group(name)
         return groups
     
     def read_database(self):
