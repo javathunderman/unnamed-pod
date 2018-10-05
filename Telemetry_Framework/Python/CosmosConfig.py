@@ -22,3 +22,11 @@ def generate_config():
     with open("../cosmos_config.yaml") as f:
         config = yaml.safe_load(f)
     return config
+
+def define_server_file(config):
+    contents = f'INTERFACE {config["target_name"].upper()}_INT udp_interface.rb '
+    contents += f'{config["target_ip"]} {config["udp_write_port"]} {config["udp_read_port"]}\n'
+    return contents + f'  TARGET {config["target_name"]}\n'
+
+def generate_telemetry_header(config):
+    return f'TELEMETRY {config["target_name"].upper()} {config["packet_name"]} BIG_ENDIAN\n'
