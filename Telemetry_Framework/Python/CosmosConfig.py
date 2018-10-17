@@ -29,4 +29,4 @@ def define_server_file(config):
     return contents + f'  TARGET {config["target_name"]}\n'
 
 def generate_telemetry_header(config):
-    return f'TELEMETRY {config["target_name"].upper()} {config["packet_name"]} BIG_ENDIAN\n'
+    return f'TELEMETRY {config["target_name"].upper()} {config["packet_name"].upper()} BIG_ENDIAN\n'
