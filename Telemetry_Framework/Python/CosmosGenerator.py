@@ -19,7 +19,7 @@
 import os
 import shutil
 from pathlib import Path
-from CosmosConfig import generate_config
+import CosmosConfig as cc
 from Telemetry import Telemetry
 
 ###############################################################################
@@ -31,7 +31,7 @@ assert Path("../cosmos_config.yaml").exists(), "Couldn't locate cosmos_config.ya
 assert Path("../tlm_parms.csv").exists(), "Couldn't locate tlm_parms.csv"
 
 # Load values from cosmos_config.yaml into config dict
-config = generate_config()
+config = cc.generate_config()
 
 # Load values from tlm_parms.csv into tlm object
 tlm = Telemetry(config)
@@ -52,7 +52,7 @@ os.mkdir(f'{target_folder_path}/cmd_tlm')
 # Create tlm definition file
 tlm_path = target_folder_path + '/cmd_tlm/' + config["target_name"].lower() + '_tlm.txt'
 with open(tlm_path, "w") as file:
-    file.write(f'TELEMETRY {config["target_name"].upper()} {config["packet_name"]} BIG_ENDIAN\n')
+    file.write(cc.generate_telemetry_header(config))
     for item in tlm.get_all():
         file.write(item.get_definition())
         
@@ -64,9 +64,7 @@ with open(cmd_path, "w") as file:
 # Create cmd_tlm_server.txt file
 server_path = target_folder_path + '/cmd_tlm_server.txt'
 with open(server_path, "w") as file:
-    file.write(f'INTERFACE {config["target_name"].upper()}_INT udp_interface.rb ')
-    file.write(f'{config["target_ip"]} {config["udp_write_port"]} {config["udp_read_port"]}\n')
-    file.write(f'  TARGET {config["target_name"]}\n')
+    file.write(cc.define_server_file(config))
     
 ###############################################################################
 # COSMOS Group Screen Definition
@@ -81,7 +79,28 @@ if config["group_screens"]:
     for [name, group] in tlm.get_all_groups().items():
         with open(f'{screens_path}/{name}.txt', "w") as file:
             file.write(f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n')
-            file.write("VERTICAL\n")
+            file.write("VERTICAL\n\n")
             for item in group:
-                file.write(item.get_screen_definition())
-                file.write("END\n")
+                file.write(item.get_screen_definition() + '\n')
+            file.write("END\n")
+
+###############################################################################
+# COSMOS Group Post-Processing Definition
+###############################################################################
+
+# Create tools folder
+tools_path = target_folder_path + "/tools"
+os.mkdir(tools_path)
+
+# Create tlm_extractor folder
+extractor_path = target_folder_path + "/tools/tlm_extractor"
+os.mkdir(extractor_path)
+
+# Create extractor config file for each group
+for [name, group] in tlm.get_all_groups().items():
+    with open(f'{extractor_path}/{name}.txt', "w") as file:
+        if config["dense_logs"]:
+            file.write("FILL_DOWN\n\n")
+            
+        for item in group:
+            file.write(item.get_extractor_definition() + '\n')
