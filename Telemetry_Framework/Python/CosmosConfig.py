@@ -30,3 +30,20 @@ def define_server_file(config):
 
 def generate_telemetry_header(config):
     return f'TELEMETRY {config["target_name"].upper()} {config["packet_name"].upper()} BIG_ENDIAN\n'
+
+def get_screen_header(config, name):
+    header = f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n\n'
+    header += f'TITLE "{name}"\n\n'
+    header += "MATRIXBYCOLUMNS 7 15\n\n"
+    header += get_section_headers()
+    return header
+
+def get_section_headers():
+    header = '  SECTIONHEADER "STATUS"\n'
+    header += '  SECTIONHEADER "VALUE"\n'
+    header += '  SECTIONHEADER "UNITS"\n'
+    header += '  SPACER 50 0 FIXED FIXED\n'
+    header += '  SECTIONHEADER "MIN"\n'
+    header += '  SECTIONHEADER "LIMITS RANGE"\n'
+    header += '  SECTIONHEADER "MAX"\n\n'
+    return header

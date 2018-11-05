@@ -27,35 +27,61 @@ class TelemetryItem:
         self.mnemonic      = values[1]
         self.bit_length    = values[2]
         self.datatype      = values[3]
-        self.high_rate     = values[4]
-        self.conversion_id = values[5]
-        self.red_low       = values[6]
-        self.yellow_low    = values[7]
-        self.yellow_high   = values[8]
-        self.red_high      = values[9]
-        self.groups        = values[10:]
+        self.units         = values[4]
+        self.high_rate     = values[5]
+        self.conversion_id = values[6]
+        self.red_low       = values[7]
+        self.yellow_low    = values[8]
+        self.yellow_high   = values[9]
+        self.red_high      = values[10]
+        self.groups        = values[11:]
         while "" in self.groups: self.groups.remove("")
         
     def get_definition(self):
         definition = f'  APPEND_ITEM {self.mnemonic} {self.bit_length} {self.datatype}\n'
         definition += self.conversion_definition();
         definition += self.limits_definition();
+        definition += self.units_definition();
         
         return definition
     
     def get_screen_definition(self):
-        screen_def = "  HORIZONTAL\n"
-        spacer = "    SPACER 10 0 EXPANDING PREFERRED\n"
+        screen_def = ""
+        tgt = self.config["target_name"].upper()
+        pkt = self.config["packet_name"].upper()
+        width = self.config["screen_value_width"]
+        decimals = self.config["screen_decimals"]
+        name = self.mnemonic
         
+        # If limits are defined, add limits color bubble else add mnemonic label
         if self.limits_definition() == "":
-            screen_def += f'    LABELVALUE {self.config["target_name"].upper()} '
-            screen_def += f'{self.config["packet_name"].upper()} {self.mnemonic} '
-            screen_def += f' CONVERTED {self.config["screen_value_width"]}\n'
+            screen_def += f'  LABEL "      {name}"\n'
         else:
-            screen_def += f'    LABELVALUELIMITSBAR {self.config["target_name"].upper()} '
-            screen_def += f'{self.config["packet_name"].upper()} {self.mnemonic} '
-            screen_def += f' CONVERTED {self.config["screen_value_width"]}\n'
-        return screen_def + spacer + "  END\n"
+            screen_def += f'  LIMITSCOLOR {tgt} {pkt} {name}\n'
+        
+        # Add value, only list specified number of decimal points
+        if self.datatype == 'FLOAT':
+            screen_def += f'  FORMATVALUE {tgt} {pkt} {name} "%.{decimals}f" CONVERTED {width}\n'
+        else:
+            screen_def += f'  VALUE {tgt} {pkt} {name} CONVERTED {width}\n'
+        
+        # Add units
+        screen_def += f'  LABEL "{self.units}"\n'
+        
+        # Add spacer before limitsbars
+        screen_def += f'  SPACER 50 0 FIXED FIXED\n'
+        
+        # Add limits, if defined
+        if self.limits_definition() == "":
+            screen_def += "  SPACER 0 0 FIXED FIXED\n"
+            screen_def += "  SPACER 0 0 FIXED FIXED\n"
+            screen_def += "  SPACER 0 0 FIXED FIXED\n"
+        else:
+            screen_def += f'  LABEL "{self.red_low}"\n'
+            screen_def += f'  LIMITSBAR {tgt} {pkt} {name}\n'
+            screen_def += f'  LABEL "{self.red_high}"\n'
+            
+        return screen_def
 
     def get_extractor_definition(self):
         definition = ""
@@ -85,3 +111,6 @@ class TelemetryItem:
         except:
             # At least one limit is invalid
             return ""
+    
+    def units_definition(self):
+        return f'    UNITS "{self.units}" "{self.units}"\n'

@@ -78,8 +78,7 @@ os.mkdir(screens_path)
 if config["group_screens"]:
     for [name, group] in tlm.get_all_groups().items():
         with open(f'{screens_path}/{name}.txt', "w") as file:
-            file.write(f'SCREEN AUTO AUTO {config["screen_update_rate"]}\n')
-            file.write("VERTICAL\n\n")
+            file.write(cc.get_screen_header(config, name))
             for item in group:
                 file.write(item.get_screen_definition() + '\n')
             file.write("END\n")
