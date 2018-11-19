@@ -23,6 +23,7 @@ class Telemetry:
     def __init__(self, config):
         self.tlm = []
         self.groups = set()
+        self.rates = set()
         self.config = config
         self.read_database()
         
@@ -42,6 +43,19 @@ class Telemetry:
             groups[name] = self.get_group(name)
         return groups
     
+    def get_rate(self, rate):
+        items = []
+        for item in self.tlm:
+            if item.high_rate == rate:
+                items.append(item)
+        return items
+    
+    def get_all_rates(self):
+        rates = {}
+        for rate in self.rates:
+            rates[rate] = self.get_rate(rate)
+        return rates
+    
     def read_database(self):
         with open("../tlm_parms.csv") as f:
             next(f)
@@ -49,3 +63,4 @@ class Telemetry:
                 item = Item(line, self.config)
                 self.tlm.append(item)
                 self.groups.update(item.groups)
+                self.rates.add(item.high_rate)
