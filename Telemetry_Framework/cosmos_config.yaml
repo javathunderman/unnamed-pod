@@ -1,8 +1,10 @@
 target_name: UMDLOOP
-target_ip: 192.168.1.152
+target_ip: 172.22.11.2
 udp_read_port: 8888
 udp_write_port: 19112
+host_ip: 192.168.1.243
 packet_name: PACKET
+packet_frequency: 1
 group_screens: true
 supercommutation_rate: 10
 limits_persistence: 3
