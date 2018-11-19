@@ -16,6 +16,8 @@
 #  Ryan W.     10-03-18  Initial version.
 ###############################################################################
 
+from fractions import Fraction
+
 
 class TelemetryItem:
     
@@ -36,12 +38,24 @@ class TelemetryItem:
         self.red_high      = values[10]
         self.groups        = values[11:]
         while "" in self.groups: self.groups.remove("")
-        
+    
     def get_definition(self):
+        # COSMOS telemetry parameter definition
         definition = f'  APPEND_ITEM {self.mnemonic} {self.bit_length} {self.datatype}\n'
         definition += self.conversion_definition();
         definition += self.limits_definition();
         definition += self.units_definition();
+        
+        # Add more instances if high_rate
+        try:
+            x = int(self.high_rate)
+            for i in range(1, x):
+                definition += f'  APPEND_ITEM {self.mnemonic}_{i} {self.bit_length} {self.datatype}\n'
+                definition += self.conversion_definition();
+                definition += self.limits_definition();
+                definition += self.units_definition();
+        except:
+            pass
         
         return definition
     
@@ -114,3 +128,30 @@ class TelemetryItem:
     
     def units_definition(self):
         return f'    UNITS "{self.units}" "{self.units}"\n'
+
+    def header_definition(self):
+        header = f'    unsigned int {self.mnemonic} : {self.bit_length};\n'
+        
+        try:
+            x = int(self.high_rate)
+            for i in range(1, x):
+                header += f'    unsigned int {self.mnemonic}_{i} : {self.bit_length};\n'
+        except:
+            pass
+                
+        return header
+    
+    def update_definition(self, fn_frac):
+        update = ''
+        
+        if fn_frac:
+            num = 1
+            while Fraction(num, int(self.high_rate)) != fn_frac: num += 1
+            update += f'    tlm->{self.mnemonic}_{num} = '
+        else:
+            update += f'    tlm->{self.mnemonic} = '
+            
+        # TODO figure out with Mark
+        update += '???;\n'
+        
+        return update
