@@ -7,14 +7,18 @@ s#include <stdio.h>
 
 #define NUM_THREADS 4
 
+pthread_mutex_t state_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 int testfun(int i) {
 	printf("Printing integer: %d\n", i);
 	return 0;
 }
 
 void *threadfun(void * i) {
+	pthread_mutex_lock(&state_mutex);
 	int *ii = (int *)i;
 	printf("Printing integer from thread: %d\n", *ii);
+	pthread_mutex_unlock(&state_mutex);
 	return NULL;
 }
 
@@ -30,6 +34,7 @@ int main() {
 	 */
 	pthread_t thread_id;
 	pthread_t thread_ids[NUM_THREADS];
+	
 	//int *param = (int *)malloc(2*sizeof(int));
 	int *params[NUM_THREADS];
 
