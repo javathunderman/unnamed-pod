@@ -9,3 +9,6 @@
 
 #define __STATES__
 #endif
+
+#define NUM_STATES 6
+enum State_Status {SUCCESS = 0, SOMETHING = 1, ESTOP = 5}; 
