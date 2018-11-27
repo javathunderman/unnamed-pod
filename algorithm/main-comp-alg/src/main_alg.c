@@ -4,9 +4,17 @@
 #include "./sensors/sensors.h"
 #include "./states/states.h"
 
+
 #define MAX_SOMETHING_GOES_HERE 10
 //typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
 int active = 1;
+
+int standby_state();
+int initialize_state();
+int service_state();
+int accelerate_state();
+int normbrake_state();
+int estop_state();
 
 int main() {
 	int sid_arr[NUM_STATES][NUM_CODES];

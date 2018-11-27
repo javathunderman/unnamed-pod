@@ -7,7 +7,7 @@
 #define __SERVICE__
 #endif
 
-int normbrake_state() {
+int service_state() {
 	printf("SERVICE MODE BEEP BOOP!\n");
 
 	return SUCCESS;

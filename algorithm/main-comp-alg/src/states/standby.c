@@ -7,7 +7,7 @@
 #define __STANDBY__
 #endif
 
-int normbrake_state() {
+int standby_state() {
 	printf("STANDBY!\n");
 
 	return REPEAT;
