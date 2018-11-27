@@ -10,5 +10,5 @@
 int estop_state() {
 	printf("EMERGENCY STOP!\n");
 
-	return SUCCESS;
+	return ERROR;
 }

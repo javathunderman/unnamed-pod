@@ -22,8 +22,9 @@ int main() {
 
 	//2D Logic state array settings
 	sid_arr[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
-	sid_arr[ACCELERATE_SID][CONTINUE] = ACCELERATE_SID;
-	sid_arr[ACCELERATE_SID][SUCCESS] = ESTOP_SID;
+	sid_arr[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
+	sid_arr[ACCELERATE_SID][SUCCESS] = NORMALBRAKE_SID;
+	sid_arr[ACCELERATE_SID][ERROR] = ESTOP_SID;
 	
 	//Initial values for state flow
 	int last_state = STANDBY_SID;
@@ -31,7 +32,7 @@ int main() {
 
 	//main state loop
 	while (active) {
-		int last_state = (*sid_arr[last_state][return_code])();
+		int last_state = sid_arr[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
 	}
 
