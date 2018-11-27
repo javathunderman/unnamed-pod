@@ -31,7 +31,7 @@ int main() {
 	//2D Logic state array settings
 	sid_arr[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
 	sid_arr[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
-	sid_arr[ACCELERATE_SID][SUCCESS] = NORMALBRAKE_SID;
+	sid_arr[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
 	sid_arr[ACCELERATE_SID][ERROR] = ESTOP_SID;
 	
 	//Initial values for state flow
