@@ -14,7 +14,7 @@ int accelerate_state() {
 
 	while (testaccel_counter < 10) {
 		testaccel_counter += 1;
-		return CONTINUE;
+		return REPEAT;
 	}
 	return SUCCESS;
 }

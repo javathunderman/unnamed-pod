@@ -12,6 +12,7 @@ int main() {
 	int sid_arr[NUM_STATES][NUM_CODES];
 	int (*fp_arr[NUM_STATES]) (void);
 
+	//1D array of Function Pointers to state functions
 	fp_arr[STANDBY_SID] = &standby_state;
 	fp_arr[INITIALIZE_SID] = &initialize_state;
 	fp_arr[SERVICE_SID] = &service_state;
@@ -19,13 +20,16 @@ int main() {
 	fp_arr[NORMBRAKE_SID] = &normbrake_state;
 	fp_arr[ESTOP_SID] = &estop_state;
 
+	//2D Logic state array settings
 	sid_arr[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
 	sid_arr[ACCELERATE_SID][CONTINUE] = ACCELERATE_SID;
 	sid_arr[ACCELERATE_SID][SUCCESS] = ESTOP_SID;
 	
+	//Initial values for state flow
 	int last_state = STANDBY_SID;
 	int return_code = initialize_state();
 
+	//main state loop
 	while (active) {
 		int last_state = (*sid_arr[last_state][return_code])();
 		return_code = (*fp_arr[last_state])();
