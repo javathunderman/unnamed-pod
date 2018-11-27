@@ -8,8 +8,6 @@
 #endif
 
 int initialize_state() {
-	active = 1;
-	last_state = INITIALIZE_SID;
 	printf("INITIALIZING\n");
 
 	return SUCCESS;

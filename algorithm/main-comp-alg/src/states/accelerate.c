@@ -7,9 +7,9 @@
 #define __ACCELERATE__
 #endif
 
+int testaccel_counter = 0;
+
 int accelerate_state() {
-	active = 1;
-	last_state = ACCELERATE_SID;
 	printf("ACCELERATING: %d\n", testaccel_counter);
 
 	while (testaccel_counter < 10) {

@@ -4,23 +4,31 @@
 #include "./sensors/sensors.h"
 #include "./states/states.h"
 
-#define NUM_STATES 6
-
-int active = 0;
-int last_state = 0;
-
-int testaccel_counter = 0;
+#define MAX_SOMETHING_GOES_HERE 10
+//typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
+int active = 1;
 
 int main() {
-	int (*fp_arr[NUM_STATES][6]) (void);
-	fp_arr[INITIALIZE_SID][SUCCESS] = &accelerate_state;
-	fp_arr[ACCELERATE_SID][CONTINUE] = &accelerate_state;
-	fp_arr[ACCELERATE_SID][SUCCESS] = &estop_state;
+	int sid_arr[NUM_STATES][NUM_CODES];
+	int (*fp_arr[NUM_STATES]) (void);
+
+	fp_arr[STANDBY_SID] = &standby_state;
+	fp_arr[INITIALIZE_SID] = &initialize_state;
+	fp_arr[SERVICE_SID] = &service_state;
+	fp_arr[ACCELERATE_SID] = &accelerate_state;
+	fp_arr[NORMBRAKE_SID] = &normbrake_state;
+	fp_arr[ESTOP_SID] = &estop_state;
+
+	sid_arr[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
+	sid_arr[ACCELERATE_SID][CONTINUE] = ACCELERATE_SID;
+	sid_arr[ACCELERATE_SID][SUCCESS] = ESTOP_SID;
 	
-	int status = initialize_state();
+	int last_state = STANDBY_SID;
+	int return_code = initialize_state();
 
 	while (active) {
-		status = (*fp_arr[last_state][status])();
+		int last_state = (*sid_arr[last_state][return_code])();
+		return_code = (*fp_arr[last_state])();
 	}
 
 	return 0;
