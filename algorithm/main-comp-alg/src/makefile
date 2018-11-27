@@ -2,22 +2,22 @@ main: main_alg.c accelerate.o estop.o initialize.o normbrake.o service.o standby
 	gcc -o main main_alg.c
 	
 accelerate.o: ./states/accelerate.c ./states/states.h
-	gcc -c accelerate.c 
+	gcc -c ./states/accelerate.c 
 	
 estop.o: ./states/estop.c ./states/states.h
-	gcc -c estop.c 
+	gcc -c ./states/estop.c 
 	
 initialize.o: ./states/initialize.c ./states/states.h
-	gcc -c initialize.c 
+	gcc -c ./states/initialize.c 
 	
 normbrake.o: ./states/normbrake.c ./states/states.h
-	gcc -c normbrake.c 
+	gcc -c ./states/normbrake.c 
 	
 service.o: ./states/service.c ./states/states.h
-	gcc -c service.c 
+	gcc -c ./states/service.c 
 
 standby.o: ./states/standby.c ./states/states.h
-	gcc -c standby.c 
+	gcc -c ./states/standby.c 
 
 .PHONY: clean
 
