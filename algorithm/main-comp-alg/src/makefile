@@ -1,5 +1,5 @@
-main: main_alg.c accelerate.o estop.o initialize.o normbrake.o service.o standby.o
-	gcc -o main main_alg.c
+main: main_alg.c ./states/states.h ./sensors/sensors.h accelerate.o estop.o initialize.o normbrake.o service.o standby.o
+	gcc -o main main_alg.c accelerate.o estop.o initialize.o normbrake.o service.o standby.o
 	
 accelerate.o: ./states/accelerate.c ./states/states.h
 	gcc -c ./states/accelerate.c 
