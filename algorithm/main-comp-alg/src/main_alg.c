@@ -8,37 +8,8 @@
 
 int active = 0;
 int last_state = 0;
-enum State {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5}; 
-enum State_Status {SUCCESS = 0, CONTINUE = 1, ESTOP = 5}; 
+
 int testaccel_counter = 0;
-
-int initialize_state() {
-	active = 1;
-	last_state = INITIALIZE_SID;
-	printf("INITIALIZING\n");
-
-	return SUCCESS;
-}
-
-int accelerate_state() {
-	active = 1;
-	last_state = ACCELERATE_SID;
-	printf("ACCELERATING: %d\n", testaccel_counter);
-
-	while (testaccel_counter < 10) {
-		testaccel_counter += 1;
-		return CONTINUE;
-	}
-	return SUCCESS;
-}
-
-int estop_state() {
-	active = 0;
-	last_state = ESTOP_SID;
-	printf("EMERGENCY STOP!\n");
-
-	return SUCCESS;
-}
 
 int main() {
 	int (*fp_arr[NUM_STATES][6]) (void);

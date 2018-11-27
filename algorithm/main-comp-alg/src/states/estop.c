@@ -1,5 +1,9 @@
+#include "./states/states.h"
 
-int estoptestfun(int x) {
-	printf("Estop test function: %d\n", x);
-	return 1;
+int estop_state() {
+	active = 0;
+	last_state = ESTOP_SID;
+	printf("EMERGENCY STOP!\n");
+
+	return SUCCESS;
 }
