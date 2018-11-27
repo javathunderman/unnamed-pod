@@ -1,7 +1,11 @@
+#ifndef __ACCELERATE__
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
-#include "./states/states.h"
+#include "states.h"
+
+#define __ACCELERATE__
+#endif
 
 int accelerate_state() {
 	active = 1;
