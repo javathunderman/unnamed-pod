@@ -7,14 +7,17 @@
 #define __ACCELERATE__
 #endif
 
-int testaccel_counter = 0;
+
 
 int accelerate_state() {
+	static int testaccel_counter = 0;
+
 	printf("ACCELERATING: %d\n", testaccel_counter);
 
-	while (testaccel_counter < 10) {
+	if (testaccel_counter < 10) {
 		testaccel_counter += 1;
 		return REPEAT;
 	}
+
 	return SUCCESS;
 }
