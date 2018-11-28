@@ -35,9 +35,10 @@ int main() {
 	sid_arr[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
 	sid_arr[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
 	sid_arr[ACCELERATE_SID][ERROR] = ESTOP_SID;
+	sid_arr[ACCELERATE_SID][ERROR] = STANDBY_SID;
 	
 	//Initial values for state flow
-	int last_state = STANDBY_SID;
+	int last_state = INITIALIZE_SID;
 	int return_code = initialize_state();
 
 	//main state loop
