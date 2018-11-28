@@ -7,6 +7,8 @@
 
 #define MAX_SOMETHING_GOES_HERE 10
 //typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
+//typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 4, ESTOP = 5} State_Status; 
+
 int active = 1;
 
 int standby_state();
