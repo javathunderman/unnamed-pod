@@ -8,34 +8,40 @@ import re as R
 
 header = 'NiFpga_Indicators.h'
 
-class Nest:
+class Block:
     empty = ()
-    def __init__(self, s):
+    def __init__(self, s, f = ''):
         self.inner = []
         self.s = s
+        self.f = f
         
     def __str__(self):
         def str_h(arr):
             return '\t'.join(arr)
             
-        if self.inner:
-            return f'{self.s}\n\t{str_h([x.__str__() for x in self.inner])}'
+        return self.__str_h__(0)
+
+    def __str_h__(self, level):
+        assert isinstance(level, int) and level >= 0
+        out = ''
+        if level > 0 and not self.inner:
+            out =  '\t' * level + self.s
         else:
-            return self.s
-        
+            out = ('\t' * level) + self.s + '\n'
+            out += ('\n'.join([x.__str_h__(level + 1) for x in self.inner]).strip('\n'))
+
+        out += ('\n' + self.f if self.f != '' else '')
+        out += '\n' if level == 0 else ''
+
+        return out
     def add(self, elem):
-        assert elem is Nest.empty or isinstance(elem, Nest)
-        self.inner.append(elem)
+        if isinstance(elem, Block):
+            self.inner.append(elem)
+        else:
+            self.inner.append(Block(str(elem)))
         return self
+
     __repr__ = __str__
-        
-# This creates a symple c struct for cacheing values from the FPGA
-def gen_struct(decs):
-    struct_arr = ['typedef struct {']
-    for dec in decs:
-        struct_arr.append(f'\t{dec[0]} {dec[1]};')
-    struct_arr.append('} FPGA_CACHE;')
-    return struct_arr
 
 # This is the mapping for enum names to datatypes. It is generated with get_dict.py
 name_to_type = {
@@ -56,6 +62,7 @@ name_to_type = {
 includes = [f'"{header}"']
 
 name = ''
+session = 'the_session'
 decs = []
 p_bit = R.compile('^#define NiFpga_Indicators_Bitfile\s*"(.+).lvbitx"$')
 p_start = R.compile("^typedef\s*enum$")
@@ -65,6 +72,7 @@ p_end = ''
 path = '/home/admin/ProjectFolder/FPGA/NiFpga_ExampleCompactRIO_Bitfile'
 
 device = "RIO0";
+
 h = open(header, 'r')
 i = 0
 for line in h:
@@ -74,25 +82,72 @@ for line in h:
         i = 1
     elif(i == 1 and p_dec.match(line)):
         r = R.search(p_dec, line)
-        decs.append((name_to_type[r.group(1)],r.group(2),r.group(3)))
+        decs.append((name_to_type[r.group(1)],r.group(2),r.group(3), r.group(1)))
+        
 h.close()
 
+h_block = Block('typedef struct {', '} Cache;')
 
-f_out = open('generated.c', 'w')
+for dec in decs:
+    h_block.add(f'{dec[0]} {dec[1]};')
+
+fpga = Block('typedef struct {', '} Fpga;')
+
+# Metadata for the connection to the FPGA
+fpga.add('char *bit_path;')
+fpga.add('char *signature;')
+fpga.add('char *resource;')
+fpga.add('char *resource;')
+fpga.add('uint32_t attribute;')
+fpga.add('NiFpga_Session session;')
+fpga.add('NiFpga_Status status;')
+
+# Cache
+fpga.add('Cache cache;')
+
+
+# Generate header for FPGA cache
+header_out = open('fpga_cache.h', 'w')
+header_out.write('#ifndef __FPGA_CACHE__\n#define __FPGA_CACHE__\n')
 for line in includes:
-    f_out.write(f'#include {line}\n')
-f_out.write('\n')
+    header_out.write(f'#include {line}\n')
+header_out.write('\n')
 
-for line in gen_struct(decs):
-    f_out.write(line + '\n')
-f_out.write('\n')
+header_out.write(str(h_block))
+header_out.write('\n')
+
+header_out.write(str(fpga))
+header_out.write('\n')
 
 # Create update method
-f_out.write('Ni refresh_cache(){\n')
+header_out.write('NiFpga_Status init_cache(Fpga *fpga);\n')
+header_out.write('\n')
 
-f_out.write('\t return 0;\n')
-f_out.write('}')
-f_out.close()
+header_out.write('NiFpga_Status refresh_cache(Fpga *Fpga);\n')
+header_out.write('\n')
+
+header_out.write('#endif\n')
+header_out.close()
+
+src_out = open('fpga_cache.c', 'w')
+src_out.write('#include "fpga_cache.h"\n\n')
+init = Block('NiFpga_Cache init_fpga(Fpga *fpga){','}')
+
+src_out.write(str(init))
+src_out.write('\n')
+
+refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga){', '}')
+refresh.add('NiFpgaStatus = NiFpga_Status_Success;')
+
+
+for dec in decs:
+    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}({session}, {dec[2]}, &(fpga->cache->{dec[1]})));')
+
+refresh.add('return status;\n')
+
+src_out.write(str(refresh))
+
+src_out.close()
 
 
 
