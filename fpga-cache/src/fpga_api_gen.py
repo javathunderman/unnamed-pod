@@ -62,27 +62,32 @@ name_to_type = {
 includes = [f'"{header}"']
 
 name = ''
-session = 'the_session'
+
 decs = []
 p_bit = R.compile('^#define NiFpga_Indicators_Bitfile\s*"(.+).lvbitx"$')
 p_start = R.compile("^typedef\s*enum$")
 p_dec = ''
 p_end = ''
-
+p_sig = R.compile('^static\s+const\s+char\*\s+const\s+(.*_Signature).*')
+status = 'NiFpga_Status_Success'
 path = '/home/admin/ProjectFolder/FPGA/NiFpga_ExampleCompactRIO_Bitfile'
+signature = ''
+resource = "RIO0";
 
-device = "RIO0";
 
 h = open(header, 'r')
 i = 0
 for line in h:
-    if(i == 0 and p_bit.match(line)):
-        name = R.search(p_bit, line).group(1)
-        p_dec = R.compile(f'\s*{name}_Indicator(.+)_(\w+)\s*=\s*(.+),$')
-        i = 1
-    elif(i == 1 and p_dec.match(line)):
-        r = R.search(p_dec, line)
-        decs.append((name_to_type[r.group(1)],r.group(2),r.group(3), r.group(1)))
+    if(p_sig.match(line)):
+        signature = R.search(p_sig, line).group(1)
+    else:
+        if(i == 0 and p_bit.match(line)):
+            name = R.search(p_bit, line).group(1)
+            p_dec = R.compile(f'\s*{name}_Indicator(.+)_(\w+)\s*=\s*(.+),$')
+            i = 1
+        elif(i == 1 and p_dec.match(line)):
+            r = R.search(p_dec, line)
+            decs.append((name_to_type[r.group(1)],r.group(2),r.group(3), r.group(1)))
         
 h.close()
 
@@ -92,15 +97,20 @@ for dec in decs:
     h_block.add(f'{dec[0]} {dec[1]};')
 
 fpga = Block('typedef struct {', '} Fpga;')
+new_fpga = f'''const Fpga new_fpga = {{{status}, 
+                        "{path}", 
+                        {signature}, 
+                        {resource}}};\n'''
+
 
 # Metadata for the connection to the FPGA
+fpga.add('NiFpga_Status status;')
 fpga.add('char *bit_path;')
 fpga.add('char *signature;')
 fpga.add('char *resource;')
-fpga.add('char *resource;')
 fpga.add('uint32_t attribute;')
 fpga.add('NiFpga_Session session;')
-fpga.add('NiFpga_Status status;')
+
 
 # Cache
 fpga.add('Cache cache;')
@@ -119,8 +129,14 @@ header_out.write('\n')
 header_out.write(str(fpga))
 header_out.write('\n')
 
+header_out.write(new_fpga)
+header_out.write('\n')
+
 # Create update method
 header_out.write('NiFpga_Status init_cache(Fpga *fpga);\n')
+header_out.write('\n')
+
+header_out.write('Nifpga_Status run_fpga(Fpga *fpga);\n')
 header_out.write('\n')
 
 header_out.write('NiFpga_Status refresh_cache(Fpga *Fpga);\n')
@@ -131,17 +147,32 @@ header_out.close()
 
 src_out = open('fpga_cache.c', 'w')
 src_out.write('#include "fpga_cache.h"\n\n')
+
 init = Block('NiFpga_Cache init_fpga(Fpga *fpga){','}')
+
+init.add('NiFpga_IfIsNotError(status, NiFpga_Initalize());')
+open_fpga = f'''NiFpga_IfIsNotError(status, NiFpga_Open(fpga->bit_path, fpga->signature, 
+                        fpga->resource, 
+                        fpga->attribute, 
+                        &(fpga->session)));'''
+init.add(open_fpga)
+init.add('')
+init.add('return fpga->status;')
 
 src_out.write(str(init))
 src_out.write('\n')
 
-refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga){', '}')
-refresh.add('NiFpgaStatus = NiFpga_Status_Success;')
 
+run = Block('Nifpga_Status run_fpga(Fpga *fpga){', '}')
+
+src_out.write(str(run))
+src_out.write('\n')
+
+
+refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga){', '}')
 
 for dec in decs:
-    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}({session}, {dec[2]}, &(fpga->cache->{dec[1]})));')
+    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache->{dec[1]})));')
 
 refresh.add('return status;\n')
 
