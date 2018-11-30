@@ -46,11 +46,11 @@ int main() {
 			case YAML_BLOCK_MAPPING_START_TOKEN:  puts("[Block mapping]");            break;
 			case YAML_SCALAR_TOKEN:  printf("scalar %s \n", token.data.scalar.value); 
 				switch(token_id) {
-					case 1: thresholds.stopping_distance = token.data.scalar.value; break;
-					case 2: thresholds.threshold1_low = token.data.scalar.value; break;
-					case 3: thresholds.threshold1_high = token.data.scalar.value; break;
-					case 4: thresholds.threshold2_low = token.data.scalar.value; break;
-					case 5: thresholds.threshold2_high = token.data.scalar.value; break;
+					case 1: thresholds.stopping_distance = atoi(token.data.scalar.value); break;
+					case 2: thresholds.threshold1_low = atoi(token.data.scalar.value); break;
+					case 3: thresholds.threshold1_high = atoi(token.data.scalar.value); break;
+					case 4: thresholds.threshold2_low = atoi(token.data.scalar.value); break;
+					case 5: thresholds.threshold2_high = atoi(token.data.scalar.value); break;
 				}
 			
 			break;
@@ -101,7 +101,7 @@ int main() {
 	int return_code = initialize_state();
 
 	//main state loop
-	while (active) {
+	while (1) {
 		int last_state = sid_arr[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
 	}
