@@ -5,21 +5,15 @@
 #include "./sensors/sensors.h"
 #include "./states/states.h"
 
-
-#define MAX_SOMETHING_GOES_HERE 10
 //typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
 //typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 4, ESTOP = 5} State_Status; 
 
-int active = 1;
-
-int standby_state();
-int initialize_state();
-int service_state();
-int accelerate_state();
-int normbrake_state();
-int estop_state();
-//TO DO: Thresholds from config file. 
 int main() {
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// CONFIG LOADING CODE                                                                          //
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	Thresholds thresholds;
+
 	FILE *fh = fopen("config.yaml", "r");
 	yaml_parser_t parser;
 	yaml_token_t  token;
@@ -33,23 +27,33 @@ int main() {
 	/* Set input file */
 	yaml_parser_set_input_file(&parser, fh);
 
+	int token_id = 1;
 	/* CODE HERE */
 	do {
 		yaml_parser_scan(&parser, &token);
 		switch(token.type) {
 			/* Stream start/end */
-			case YAML_STREAM_START_TOKEN: puts("STREAM START"); break;
+			case YAML_STREAM_START_TOKEN: puts("STREAM START: LOADING FROM CONFIG..."); break;
 			case YAML_STREAM_END_TOKEN:   puts("STREAM END");   break;
 			/* Token types (read before actual token) */
 			case YAML_KEY_TOKEN:   printf("(Key token)   "); break;
-			case YAML_VALUE_TOKEN: printf("(Value token) "); break;
+			case YAML_VALUE_TOKEN: printf("(Value token) "); token_id += 1; break;
 			/* Block delimeters */
 			case YAML_BLOCK_SEQUENCE_START_TOKEN: puts("<b>Start Block (Sequence)</b>"); break;
 			case YAML_BLOCK_ENTRY_TOKEN:          puts("<b>Start Block (Entry)</b>");    break;
 			case YAML_BLOCK_END_TOKEN:            puts("<b>End block</b>");              break;
 			/* Data */
 			case YAML_BLOCK_MAPPING_START_TOKEN:  puts("[Block mapping]");            break;
-			case YAML_SCALAR_TOKEN:  printf("scalar %s \n", token.data.scalar.value); break;
+			case YAML_SCALAR_TOKEN:  printf("scalar %s \n", token.data.scalar.value); 
+				switch(token_id) {
+					case 1: thresholds.stopping_distance = token.data.scalar.value; break;
+					case 2: thresholds.threshold1_low = token.data.scalar.value; break;
+					case 3: thresholds.threshold1_high = token.data.scalar.value; break;
+					case 4: thresholds.threshold2_low = token.data.scalar.value; break;
+					case 5: thresholds.threshold2_high = token.data.scalar.value; break;
+				}
+			
+			break;
 			/* Others */
 			default:
 				printf("Got token of type %d\n", token.type);
@@ -64,8 +68,10 @@ int main() {
 	yaml_parser_delete(&parser);
 	fclose(fh);
 
+	printf("threshold stuct values: %d %d %d %d %d", thresholds.stopping_distance, thresholds.threshold1_low, thresholds.threshold1_high, thresholds.threshold2_low, thresholds.threshold2_high);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	/* REST OF CODE STARTS HERE */
+	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	int sid_arr[NUM_STATES][NUM_CODES];
 	int (*fp_arr[NUM_STATES]) (void);
