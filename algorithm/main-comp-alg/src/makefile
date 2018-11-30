@@ -2,7 +2,7 @@ main: main_alg.o accelerate.o estop.o initialize.o normbrake.o service.o standby
 	gcc -o main main_alg.o accelerate.o estop.o initialize.o normbrake.o service.o standby.o
 	
 main_alg.o: main_alg.c ./states/states.h ./sensors/sensors.h
-	gcc -c main_alg.c
+	gcc -c -lyaml main_alg.c
 
 accelerate.o: ./states/accelerate.c ./states/states.h
 	gcc -c ./states/accelerate.c 
