@@ -27,7 +27,7 @@ int main() {
 	/* Set input file */
 	yaml_parser_set_input_file(&parser, fh);
 
-	int token_id = 1;
+	int token_id = 0;
 	/* CODE HERE */
 	do {
 		yaml_parser_scan(&parser, &token);
@@ -36,8 +36,8 @@ int main() {
 			case YAML_STREAM_START_TOKEN: puts("STREAM START: LOADING FROM CONFIG..."); break;
 			case YAML_STREAM_END_TOKEN:   puts("STREAM END");   break;
 			/* Token types (read before actual token) */
-			case YAML_KEY_TOKEN:   printf("(Key token)   "); break;
-			case YAML_VALUE_TOKEN: printf("(Value token) "); token_id += 1; break;
+			case YAML_KEY_TOKEN:   printf("(Key token)   id:%d ", token_id); token_id += 1; break;
+			case YAML_VALUE_TOKEN: printf("(Value token) id:%d ", token_id); break;
 			/* Block delimeters */
 			case YAML_BLOCK_SEQUENCE_START_TOKEN: puts("<b>Start Block (Sequence)</b>"); break;
 			case YAML_BLOCK_ENTRY_TOKEN:          puts("<b>Start Block (Entry)</b>");    break;
@@ -51,6 +51,7 @@ int main() {
 					case 3: thresholds.threshold1_high = atoi(token.data.scalar.value); break;
 					case 4: thresholds.threshold2_low = atoi(token.data.scalar.value); break;
 					case 5: thresholds.threshold2_high = atoi(token.data.scalar.value); break;
+					default: printf("token_id error! or blockmapping! %d\n", token_id); break;
 				}
 			
 			break;
@@ -67,7 +68,8 @@ int main() {
 	/* Cleanup */
 	yaml_parser_delete(&parser);
 	fclose(fh);
-
+	
+	
 	printf("threshold stuct values: %d %d %d %d %d", thresholds.stopping_distance, thresholds.threshold1_low, thresholds.threshold1_high, thresholds.threshold2_low, thresholds.threshold2_high);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////

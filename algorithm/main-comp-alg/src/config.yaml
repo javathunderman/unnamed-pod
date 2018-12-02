@@ -1,13 +1,15 @@
 #begin braking distance
-threshold1:
-    distance: 200
+stopping_distance: 200
 
 #description
-threshold1:
-    low: 100
-    high: 500
+threshold1_low: 100
+threshold2_high: 500
     
 #description
-threshold2:
-    low: 1000
-    high: 2000
+threshold2_low: 1000
+threshold2_high: 2000
+
+test1: 10
+test2: 20
+test3: 30
+test4: 40
