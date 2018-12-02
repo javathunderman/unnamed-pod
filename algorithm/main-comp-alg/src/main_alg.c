@@ -104,10 +104,9 @@ int main() {
 	//Initial values for state flow
 	int last_state = INITIALIZE_SID;
 	int return_code = initialize_state();
-	printf("pre loop post init\n");
+	
 	//main state loop
 	while (1) {
-		printf("state loop\n");
 		int last_state = sid_arr[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
 	}
