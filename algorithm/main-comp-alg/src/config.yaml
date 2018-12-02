@@ -1,4 +1,4 @@
-#begin braking distance
+#test distance number
 stopping_distance: 200
 
 #description

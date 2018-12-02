@@ -9,6 +9,10 @@ typedef struct {
 	int threshold1_high;
 	int threshold2_low;
 	int threshold2_high;
+	int test1;
+	int test2;
+	int test3;
+	int test4;
 } Thresholds;
 
 int standby_state();

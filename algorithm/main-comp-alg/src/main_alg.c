@@ -7,6 +7,7 @@
 
 //typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
 //typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 4, ESTOP = 5} State_Status; 
+typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +28,7 @@ int main() {
 	/* Set input file */
 	yaml_parser_set_input_file(&parser, fh);
 
-	int token_id = 0;
+	int token_id = -1;
 	/* CODE HERE */
 	do {
 		yaml_parser_scan(&parser, &token);
@@ -36,7 +37,7 @@ int main() {
 			case YAML_STREAM_START_TOKEN: puts("STREAM START: LOADING FROM CONFIG..."); break;
 			case YAML_STREAM_END_TOKEN:   puts("STREAM END");   break;
 			/* Token types (read before actual token) */
-			case YAML_KEY_TOKEN:   printf("(Key token)   id:%d ", token_id); token_id += 1; break;
+			case YAML_KEY_TOKEN:   token_id += 1; printf("(Key token)   id:%d ", token_id); break;
 			case YAML_VALUE_TOKEN: printf("(Value token) id:%d ", token_id); break;
 			/* Block delimeters */
 			case YAML_BLOCK_SEQUENCE_START_TOKEN: puts("<b>Start Block (Sequence)</b>"); break;
@@ -46,14 +47,17 @@ int main() {
 			case YAML_BLOCK_MAPPING_START_TOKEN:  puts("[Block mapping]");            break;
 			case YAML_SCALAR_TOKEN:  printf("scalar %s \n", token.data.scalar.value); 
 				switch(token_id) {
-					case 1: thresholds.stopping_distance = atoi(token.data.scalar.value); break;
-					case 2: thresholds.threshold1_low = atoi(token.data.scalar.value); break;
-					case 3: thresholds.threshold1_high = atoi(token.data.scalar.value); break;
-					case 4: thresholds.threshold2_low = atoi(token.data.scalar.value); break;
-					case 5: thresholds.threshold2_high = atoi(token.data.scalar.value); break;
-					default: printf("token_id error! or blockmapping! %d\n", token_id); break;
+					case STOPPING_DISTANCE: thresholds.stopping_distance = atoi(token.data.scalar.value); break;
+					case THRESHOLD1_LOW: thresholds.threshold1_low = atoi(token.data.scalar.value); break;
+					case THRESHOLD1_HIGH: thresholds.threshold1_high = atoi(token.data.scalar.value); break;
+					case THRESHOLD2_LOW: thresholds.threshold2_low = atoi(token.data.scalar.value); break;
+					case THRESHOLD2_HIGH: thresholds.threshold2_high = atoi(token.data.scalar.value); break;
+					case TEST1: thresholds.test1 = atoi(token.data.scalar.value); break;
+					case TEST2: thresholds.test2 = atoi(token.data.scalar.value); break;
+					case TEST3: thresholds.test3 = atoi(token.data.scalar.value); break;
+					case TEST4: thresholds.test4 = atoi(token.data.scalar.value); break;
+					default: printf("token_id error! %d\n", token_id); break;
 				}
-			
 			break;
 			/* Others */
 			default:
@@ -68,9 +72,8 @@ int main() {
 	/* Cleanup */
 	yaml_parser_delete(&parser);
 	fclose(fh);
-	
-	
-	printf("threshold stuct values: %d %d %d %d %d", thresholds.stopping_distance, thresholds.threshold1_low, thresholds.threshold1_high, thresholds.threshold2_low, thresholds.threshold2_high);
+
+	printf("threshold stuct values: %d %d %d %d %d %d %d %d %d\n", thresholds.stopping_distance, thresholds.threshold1_low, thresholds.threshold1_high, thresholds.threshold2_low, thresholds.threshold2_high, thresholds.test1, thresholds.test2, thresholds.test3, thresholds.test4);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
@@ -101,9 +104,10 @@ int main() {
 	//Initial values for state flow
 	int last_state = INITIALIZE_SID;
 	int return_code = initialize_state();
-
+	printf("pre loop post init\n");
 	//main state loop
 	while (1) {
+		printf("state loop\n");
 		int last_state = sid_arr[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
 	}
