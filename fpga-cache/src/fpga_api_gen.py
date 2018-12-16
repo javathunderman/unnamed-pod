@@ -14,8 +14,11 @@ import ntpath as nt
 root = tk.Tk()
 root.withdraw()
 
-header = nt.basename(filedialog.askopenfilename())
+header = filedialog.askopenfilename()
 bit = nt.basename(filedialog.askopenfilename()).split('.')[0] + '_Bitfile'
+
+win_path = '/'.join(header.split('/')[0:-1])+'/'
+header = nt.basename(header)
 
 
 
@@ -70,7 +73,7 @@ name_to_type = {
 }
 
 # the list of includes for the files
-includes = [f'"{header}"']
+includes = [f'"{header}"', '"NiFpga.h"']
 
 name = ''
 
@@ -88,7 +91,7 @@ signature = ''
 resource = "RIO0";
 
 
-h = open(header, 'r')
+h = open(win_path + header, 'r')
 i = 0
 for line in h:
     if(p_sig.match(line)):
@@ -114,11 +117,6 @@ for dec in decs:
     h_block.add(f'{dec[0]} {dec[1]};')
 
 fpga = Block('typedef struct {', '} Fpga;')
-new_fpga = f'''const Fpga new_fpga = {{{status}, 
-                        "{path}", 
-                        {signature}, 
-                        {resource}}};\n'''
-
 
 # Metadata for the connection to the FPGA
 fpga.add('NiFpga_Status status;')
@@ -133,7 +131,7 @@ fpga.add('Cache cache;')
 
 
 # Generate header for FPGA cache
-header_out = open('fpga_cache.h', 'w')
+header_out = open(win_path + 'fpga_cache.h', 'w')
 header_out.write('#ifndef __FPGA_CACHE__\n#define __FPGA_CACHE__\n')
 for line in includes:
     header_out.write(f'#include {line}\n')
@@ -145,19 +143,16 @@ header_out.write('\n')
 header_out.write(str(fpga))
 header_out.write('\n')
 
-header_out.write(new_fpga)
-header_out.write('\n')
-
 # Create update method
 base_methods ='''NiFpga_Status init_cache(Fpga *fpga, uint32_t attr);
 
-Nifpga_Status run_fpga(Fpga *fpga, uint32_t attr);
+NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 
 NiFpga_Status refresh_cache(Fpga *Fpga);
 
-NiFpga_Status close(Fpga *fpga, uint32_t attr);
+NiFpga_Status fpclose(Fpga *fpga, uint32_t attr);
 
-NiFpga_Status finalize(Fpga *fpga);
+NiFpga_Status fpfinalize(Fpga *fpga);
 
 '''
 header_out.write(base_methods)
@@ -169,13 +164,16 @@ for cont in conts:
 header_out.write('#endif\n')
 header_out.close()
 
-src_out = open('fpga_cache.c', 'w')
+src_out = open(win_path + 'fpga_cache.c', 'w')
 src_out.write('#include "fpga_cache.h"\n\n')
 
-init = Block('NiFpga_Cache init_fpga(Fpga *fpga, uint32_t attr){','}')
+for line in includes:
+    src_out.write(f'#include {line}\n')
+src_out.write('\n')
+init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr){','}')
 
-init.add('NiFpga_IfIsNotError(fpga->status, NiFpga_Initalize());')
-open_fpga = f'''NiFpga_IfIsNotError(status, NiFpga_Open(fpga->bit_path, fpga->signature, 
+init.add('NiFpga_IfIsNotError(fpga->status, NiFpga_Initialize());')
+open_fpga = f'''NiFpga_IfIsNotError(fpga->status, NiFpga_Open(fpga->bit_path, fpga->signature, 
                         fpga->resource, 
                         NiFpga_OpenAttribute_NoRun | attr, 
                         &(fpga->session)));'''
@@ -187,10 +185,10 @@ src_out.write(str(init))
 src_out.write('\n')
 
 
-run = Block('Nifpga_Status run_fpga(Fpga *fpga, uint32_t attr){', '}')
+run = Block('NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr){', '}')
 run.add('NiFpga_IfIsNotError(fpga->status, NiFpga_Run(fpga->session, attr));')
 run.add('')
-run.add('return fpga->status')
+run.add('return fpga->status;')
 
 
 src_out.write(str(run))
@@ -200,19 +198,19 @@ src_out.write('\n')
 refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga){', '}')
 
 for dec in decs:
-    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache->{dec[1]})));')
-refresh.add('return status;\n')
+    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache.{dec[1]})));')
+refresh.add('return fpga->status;\n')
 
 src_out.write(str(refresh))
 src_out.write('\n')
 
 
-close = Block('NiFpga_Status close(Fpga *fpga, uint32_t attr){', '}')
+close = Block('NiFpga_Status fpclose(Fpga *fpga, uint32_t attr){', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Close(fpga->session, attr));')
 close.add('')
 close.add('return fpga->status')
 
-finalize = Block('NiFpga_Status finalize(Fpga *fpga){', '}')
+finalize = Block('NiFpga_Status fpfinalize(Fpga *fpga){', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
 finalize.add('')
 finalize.add('return fpga->status')
