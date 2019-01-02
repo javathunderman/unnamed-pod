@@ -16,7 +16,7 @@
 
 #define TEST "Template" //Name of the test, must be under 50 characters
 #define DT 100			//Timing interval for logging in millis
-#define LEN 10			//Length of time to log in seconds.
+#define LEN 5			//Length of time to log in seconds.
 
 
 /*
@@ -31,8 +31,10 @@ int test_num(const char* test_name){
 		exit(EXIT_FAILURE);
 	}
 
-	sprintf(fname, "test_%s_%d", test_name, ++num);
-	while(access(fname, F_OK) != -1);
+	sprintf(fname, "test_%s_%d.csv", test_name, ++num);
+	while(access(fname, F_OK) != -1){
+		sprintf(fname, "test_%s_%d.csv", test_name, ++num);
+	}
 
 	return num;
 }
@@ -50,17 +52,19 @@ void test(FILE * const file){
 	while(time < LEN){
 		//Measure values and log
 		gettimeofday(&cur, NULL);
-		time = (cur.tv_usec - start.tv_usec)/1000000.0f;
+		time = cur.tv_sec - start.tv_sec;
+		time += (0.000001f * (cur.tv_usec - start.tv_usec));
 		fprintf(file, "%f, %f\n", time, 0.0);
 		usleep(1000*DT);
-
+		printf("Time: %f\n", time);
 	}
 
 }
 int main(void) {
-	char fname[80];
+	char fname[128];
 	puts("Test Initialization..."); /* prints !!!Hello World!!! */
 	sprintf(fname, "test_%s_%d.csv", TEST, test_num(TEST));
+	printf("Output File: %s\n", fname);
 	FILE *file = fopen(fname, "w");
 
 	if(!file){
@@ -70,7 +74,7 @@ int main(void) {
 
 	test(file);
 	fclose(file);
-
+	puts("Test Complete!");
 	return EXIT_SUCCESS;
 }
 
