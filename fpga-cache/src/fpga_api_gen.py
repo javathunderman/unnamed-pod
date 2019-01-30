@@ -86,7 +86,7 @@ p_cont = ''
 p_end = ''
 p_sig = R.compile('^static\s+const\s+char\*\s+const\s+(.*_Signature).*')
 status = 'NiFpga_Status_Success'
-path = '/home/admin/ProjectFolder/FPGA/NiFpga_ExampleCompactRIO_Bitfile'
+path = '/home/admin/ProjectFolder/FPGA/'
 signature = ''
 resource = "RIO0";
 
@@ -144,7 +144,10 @@ header_out.write(str(fpga))
 header_out.write('\n')
 
 # Create update method
-base_methods ='''NiFpga_Status init_cache(Fpga *fpga, uint32_t attr);
+base_methods ='''
+void default_fpga(Fpga *fpga);
+
+NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);
 
 NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 
@@ -170,7 +173,13 @@ src_out.write('#include "fpga_cache.h"\n\n')
 for line in includes:
     src_out.write(f'#include {line}\n')
 src_out.write('\n')
-init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr){','}')
+
+# Create the method for populating the default values into an FPGA struct
+default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga.add('fpga->status = NiFpga_Status_Success;')
+default_fpga.add('fpga->bit_path')
+
+init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {','}')
 
 init.add('NiFpga_IfIsNotError(fpga->status, NiFpga_Initialize());')
 open_fpga = f'''NiFpga_IfIsNotError(fpga->status, NiFpga_Open(fpga->bit_path, fpga->signature, 
@@ -185,7 +194,7 @@ src_out.write(str(init))
 src_out.write('\n')
 
 
-run = Block('NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr){', '}')
+run = Block('NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr) {', '}')
 run.add('NiFpga_IfIsNotError(fpga->status, NiFpga_Run(fpga->session, attr));')
 run.add('')
 run.add('return fpga->status;')
@@ -195,7 +204,7 @@ src_out.write(str(run))
 src_out.write('\n')
 
 
-refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga){', '}')
+refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga) {', '}')
 
 for dec in decs:
     refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache.{dec[1]})));')
@@ -205,12 +214,12 @@ src_out.write(str(refresh))
 src_out.write('\n')
 
 
-close = Block('NiFpga_Status fpclose(Fpga *fpga, uint32_t attr){', '}')
+close = Block('NiFpga_Status fpclose(Fpga *fpga, uint32_t attr) {', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Close(fpga->session, attr));')
 close.add('')
 close.add('return fpga->status')
 
-finalize = Block('NiFpga_Status fpfinalize(Fpga *fpga){', '}')
+finalize = Block('NiFpga_Status fpfinalize(Fpga *fpga) {', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
 finalize.add('')
 finalize.add('return fpga->status')
