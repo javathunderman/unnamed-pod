@@ -11,7 +11,14 @@ int initialize_state() {
 	printf("INITIALIZING...\n");
 	//Do Initialization stuff here
 
-	//Maybe a loop to wait for launch command
+	if (launch_command) {
+		printf("LAUNCH COMMAND RECEIVED!\n");
+		return SUCCESS;
+	}
+	else if (abort_launch_command) {
+		printf("LAUNCH COMMAND RECEIVED!\n");
+		return SUCCESS;
+	}
 
 	return SUCCESS;
 }

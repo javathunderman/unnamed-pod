@@ -10,8 +10,16 @@
 int standby_state() {
 	printf("STANDBY!\n");
 
-	if (launch_command) {
-		printf("LAUNCH COMMAND RECEIVED!\n");
+	//Emergency brake
+	if (estop_command || motor_temp > max_motor_temp) {
+		return FAILURE;
+	}
+	else if (prelaunch_command) {
+		printf("PRELAUNCH COMMAND RECEIVED!\n");
+		return SUCCESS;
+	}
+	else if (enter_service_command) {
+		printf("ENTER SERVICE COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}
 
