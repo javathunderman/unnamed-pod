@@ -23,24 +23,24 @@ int normbrake_state();
 int estop_state();
 
 //temporary thresholds, commands, and other values for transition logic
-#define estop_command false
-#define acknowledge_command true //braking acknowledgement
+#define estop_command 0
+#define acknowledge_command 1 //braking acknowledgement
 //available in standby state:
-#define prelaunch_command true
-#define enter_service_command false
+#define prelaunch_command 1
+#define enter_service_command 0
 //available in initialize state:
-#define launch_command true
-#define abort_launch_command false
+#define launch_command 1
+#define abort_launch_command 0
 //available in service state:
-#define enter_standby_command false
-#define start_service_propulsion_command false
-#define stop_service_propulsion_command false
-#define depressurize_command false
-#define slow_service_propulsion_command false
-#define medium_service_propulsion_command false
-#define fast_service_propulsion_command false
-#define forward_service_propulsion_command false
-#define backward_service_propulsion_command false
+#define enter_standby_command 0
+#define start_service_propulsion_command 0
+#define stop_service_propulsion_command 0
+#define depressurize_command 0
+#define slow_service_propulsion_command 0
+#define medium_service_propulsion_command 0
+#define fast_service_propulsion_command 0
+#define forward_service_propulsion_command 0
+#define backward_service_propulsion_command 0
 
 #define min_distance_from_end 305 //meters
 #define track_length 1000 

@@ -12,7 +12,7 @@ int standby_state() {
 
 	//Emergency brake
 	if (estop_command || motor_temp > max_motor_temp) {
-		return FAILURE;
+		return ESTOP;
 	}
 	else if (prelaunch_command) {
 		printf("PRELAUNCH COMMAND RECEIVED!\n");

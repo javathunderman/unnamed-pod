@@ -15,7 +15,7 @@ int accelerate_state() {
 
 	//Emergency brake
 	if (estop_command || motor_temp > max_motor_temp) {
-		return FAILURE;
+		return ESTOP;
 	}
 	//End of tube regular brake
 	else if (track_length - pod_position <= min_distance_from_end) {
