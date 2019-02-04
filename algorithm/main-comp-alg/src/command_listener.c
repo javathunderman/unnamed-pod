@@ -12,7 +12,7 @@ int listen() {
 	// COMMAND LISTENING LOOP                                                                       //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	while (true) {
+	/*while (true) {
 		printf("Listening for command...\n");
 
 		int     result;
@@ -31,7 +31,7 @@ int listen() {
 
 			ch++;
 		}
-	}
+	}*/
 
 
 	return 0;
