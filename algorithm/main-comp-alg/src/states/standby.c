@@ -10,6 +10,11 @@
 int standby_state() {
 	printf("STANDBY!\n");
 
+	if (launch_command) {
+		printf("LAUNCH COMMAND RECEIVED!\n");
+		return SUCCESS;
+	}
+
 	return REPEAT;
 }
 

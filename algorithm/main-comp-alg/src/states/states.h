@@ -22,6 +22,16 @@ int accelerate_state();
 int normbrake_state();
 int estop_state();
 
+//temporary threshold and other values for transition logic
+#define launch_command true
+#define acknowledge_command true
+#define estop_command false
+
+#define min_distance_from_end 100
+#define track_length 1000
+#define max_motor_temp 300
+
+
 #define __STATES__
 #endif
 

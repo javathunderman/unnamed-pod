@@ -10,5 +10,9 @@
 int estop_state() {
 	printf("EMERGENCY STOP!\n");
 
-	return ERROR;
+	if (acknowledge_command) {
+		return SUCCESS;
+	}
+
+	return REPEAT;
 }

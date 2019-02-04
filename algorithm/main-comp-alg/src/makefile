@@ -1,8 +1,11 @@
-main: main_alg.o accelerate.o estop.o initialize.o normbrake.o service.o standby.o
-	gcc -o main main_alg.o accelerate.o estop.o initialize.o normbrake.o service.o standby.o -lyaml
+main: main_alg.o command_listener.o accelerate.o estop.o initialize.o normbrake.o service.o standby.o
+	gcc -o main main_alg.o command_listener.o accelerate.o estop.o initialize.o normbrake.o service.o standby.o -lyaml
 	
 main_alg.o: main_alg.c ./states/states.h ./sensors/sensors.h
 	gcc -c -lyaml main_alg.c
+
+command_listener.o: command_listener.c
+	gcc -c command_listener.c 
 
 accelerate.o: ./states/accelerate.c ./states/states.h
 	gcc -c ./states/accelerate.c 

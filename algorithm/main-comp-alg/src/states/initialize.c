@@ -8,7 +8,10 @@
 #endif
 
 int initialize_state() {
-	printf("INITIALIZING\n");
+	printf("INITIALIZING...\n");
+	//Do Initialization stuff here
+
+	//Maybe a loop to wait for launch command
 
 	return SUCCESS;
 }

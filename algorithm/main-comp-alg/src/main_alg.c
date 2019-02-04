@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
+#include <pthread.h>
 #include <yaml.h>
 #include "./sensors/sensors.h"
 #include "./states/states.h"
@@ -10,6 +11,7 @@
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int main() {
+	//Do it in python, pyyaml
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,8 +80,8 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	int sid_arr[NUM_STATES][NUM_CODES];
-	int (*fp_arr[NUM_STATES]) (void);
+	int sid_arr[NUM_STATES][NUM_CODES]; //transitions
+	int (*fp_arr[NUM_STATES]) (void);   //state function calls
 
 	//1D array of Function Pointers to state functions
 	fp_arr[STANDBY_SID] = &standby_state;
@@ -109,6 +111,7 @@ int main() {
 	while (1) {
 		int last_state = sid_arr[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
+		//state = transitions[state][(*functions[state])()]
 	}
 
 	return 0;

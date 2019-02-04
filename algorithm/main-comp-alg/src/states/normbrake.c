@@ -12,5 +12,9 @@ int normbrake_state() {
 
 	//check speed, repeat until zero?
 
-	return SUCCESS;
+	if (acknowledge_command) {
+		return SUCCESS;
+	}
+
+	return REPEAT;
 }
