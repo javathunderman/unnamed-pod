@@ -16,7 +16,7 @@ int initialize_state() {
 		return SUCCESS;
 	}
 	else if (abort_launch_command) {
-		printf("LAUNCH COMMAND RECEIVED!\n");
+		printf("ABORT LAUNCH COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}
 

@@ -23,9 +23,9 @@ int main() {
 
 	/* Initialize parser */
 	if(!yaml_parser_initialize(&parser))
-	fputs("Failed to initialize parser!\n", stderr);
+		fputs("Failed to initialize parser!\n", stderr);
 	if(fh == NULL)
-	fputs("Failed to open file!\n", stderr);
+		fputs("Failed to open file!\n", stderr);
 
 	/* Set input file */
 	yaml_parser_set_input_file(&parser, fh);
@@ -80,7 +80,7 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	int sid_arr[NUM_STATES][NUM_CODES]; //transitions
+	int transitions[NUM_STATES][NUM_CODES]; //transitions
 	int (*fp_arr[NUM_STATES]) (void);   //state function calls
 
 	//1D array of Function Pointers to state functions
@@ -92,24 +92,24 @@ int main() {
 	fp_arr[ESTOP_SID] = &estop_state;
 
 	//2D Logic state array settings
-	sid_arr[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
-	sid_arr[INITIALIZE_SID][ERROR] = STANDBY_SID;
-	sid_arr[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
-	sid_arr[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
-	sid_arr[ACCELERATE_SID][ERROR] = ESTOP_SID;
-	sid_arr[NORMBRAKE_SID][SUCCESS] = STANDBY_SID;
-	sid_arr[NORMBRAKE_SID][ERROR] = ESTOP_SID;
-	sid_arr[ESTOP_SID][SUCCESS] = STANDBY_SID;
-	sid_arr[STANDBY_SID][REPEAT] = STANDBY_SID;
-	sid_arr[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
+	transitions[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
+	transitions[INITIALIZE_SID][ERROR] = STANDBY_SID;
+	transitions[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
+	transitions[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
+	transitions[ACCELERATE_SID][ERROR] = ESTOP_SID;
+	transitions[NORMBRAKE_SID][SUCCESS] = STANDBY_SID;
+	transitions[NORMBRAKE_SID][ERROR] = ESTOP_SID;
+	transitions[ESTOP_SID][SUCCESS] = STANDBY_SID;
+	transitions[STANDBY_SID][REPEAT] = STANDBY_SID;
+	transitions[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
 	
 	//Initial values for state flow
-	int last_state = INITIALIZE_SID;
-	int return_code = initialize_state();
+	int last_state = STANDBY_SID;
+	int return_code = standby_state();
 	
 	//main state loop
 	while (1) {
-		int last_state = sid_arr[last_state][return_code];
+		last_state = transitions[last_state][return_code];
 		return_code = (*fp_arr[last_state])();
 		//state = transitions[state][(*functions[state])()]
 	}
