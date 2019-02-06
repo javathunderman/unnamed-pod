@@ -65,7 +65,10 @@ typedef struct {
 	Cache cache;
 } Fpga;
 
-NiFpga_Status init_cache(Fpga *fpga, uint32_t attr);
+
+void default_fpga(Fpga *fpga);
+
+NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);
 
 NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 

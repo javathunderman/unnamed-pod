@@ -3,7 +3,7 @@
 #include "NiFpga_FPGA_Main.h"
 #include "NiFpga.h"
 
-NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr){
+NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_Initialize());
 	NiFpga_IfIsNotError(fpga->status, NiFpga_Open(fpga->bit_path, fpga->signature, 
                         fpga->resource, 
@@ -13,13 +13,13 @@ NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr){
 	return fpga->status;
 }
 
-NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr){
+NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_Run(fpga->session, attr));
 	
 	return fpga->status;
 }
 
-NiFpga_Status refresh_cache(Fpga *fpga){
+NiFpga_Status refresh_cache(Fpga *fpga) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180BE, &(fpga->cache.BLRaw)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180B2, &(fpga->cache.BLTape)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180DA, &(fpga->cache.BRRaw)));

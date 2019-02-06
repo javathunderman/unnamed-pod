@@ -167,7 +167,10 @@ for cont in conts:
 header_out.write('#endif\n')
 header_out.close()
 
+#Write FPGA Implementation
 src_out = open(win_path + 'fpga_cache.c', 'w')
+
+#Write includes
 src_out.write('#include "fpga_cache.h"\n\n')
 
 for line in includes:
@@ -178,6 +181,8 @@ src_out.write('\n')
 default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
 default_fpga.add('fpga->bit_path')
+src_out.write(default_fpga)
+src_out.write('\n')
 
 init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {','}')
 
@@ -233,5 +238,20 @@ for cont in conts:
     src_out.write('\n')
 src_out.close()
 
+#Create Mock Cache .c
+src_test = open(win_path + 'fpga_cache.c', 'w')
+
+#Includes
+src_test.write('#include "fpga_cache.h"\n\n')
+for line in includes:
+    src_test.write(f'#include {line}\n')
+src_test.write('\n')
+
+default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga.add('fpga->status = NiFpga_Status_Success;')
+default_fpga.add('fpga->bit_path')
+
+
+src_test.close()
 
 
