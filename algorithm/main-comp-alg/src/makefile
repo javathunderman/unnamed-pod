@@ -28,4 +28,4 @@ standby.o: ./states/standby.c ./states/states.h
 .PHONY: clean
 
 clean:
-	rm -f *.o
+	rm *.o

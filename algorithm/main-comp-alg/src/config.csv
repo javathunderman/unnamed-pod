@@ -1,3 +1,4 @@
-brake_distance,255.3,
-acceleration_distance,937.5,
-battery_temperature,-20,75
+<threshold name>,<low/limit>,<high>,<persistance>
+brake_distance,255.3,,
+acceleration_distance,937.5,,
+battery_temperature,-20,75,2000
