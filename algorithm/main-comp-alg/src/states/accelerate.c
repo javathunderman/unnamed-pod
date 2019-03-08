@@ -15,14 +15,17 @@ int accelerate_state() {
 
 	//Emergency brake
 	if (estop_command || motor_temp > max_motor_temp) {
+		printf("ESTOP: fake position: %d\n", pod_position);
 		return ESTOP;
 	}
 	//End of tube regular brake
 	else if (track_length - pod_position <= min_distance_from_end) {
+		printf("NORMAL BRAKE: fake position: %d\n", pod_position);
 		return SUCCESS;
 	}
 	//Continue to accelerate
 	else {
+		printf("CONTINUING: fake position: %d\n", pod_position);
 		//FULL THROTTLE!
 		pod_position += 10;
 		return REPEAT;

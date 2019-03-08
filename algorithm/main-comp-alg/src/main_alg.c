@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
-#include <pthread.h>
-#include <yaml.h>
+//#include <yaml.h>
 #include "./sensors/sensors.h"
 #include "./states/states.h"
 
@@ -15,38 +14,38 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	Thresholds thresholds;
+	/*Thresholds thresholds;
 
 	FILE *fh = fopen("config.yaml", "r");
 	yaml_parser_t parser;
 	yaml_token_t  token;
 
 	/* Initialize parser */
-	if(!yaml_parser_initialize(&parser))
+	/*if(!yaml_parser_initialize(&parser))
 		fputs("Failed to initialize parser!\n", stderr);
 	if(fh == NULL)
 		fputs("Failed to open file!\n", stderr);
 
 	/* Set input file */
-	yaml_parser_set_input_file(&parser, fh);
+	/*yaml_parser_set_input_file(&parser, fh);
 
 	int token_id = -1;
 	/* CODE HERE */
-	do {
+	/*do {
 		yaml_parser_scan(&parser, &token);
 		switch(token.type) {
 			/* Stream start/end */
-			case YAML_STREAM_START_TOKEN: puts("STREAM START: LOADING FROM CONFIG..."); break;
+			/*case YAML_STREAM_START_TOKEN: puts("STREAM START: LOADING FROM CONFIG..."); break;
 			case YAML_STREAM_END_TOKEN:   puts("STREAM END");   break;
 			/* Token types (read before actual token) */
-			case YAML_KEY_TOKEN:   token_id += 1; printf("(Key token)   id:%d ", token_id); break;
+			/*case YAML_KEY_TOKEN:   token_id += 1; printf("(Key token)   id:%d ", token_id); break;
 			case YAML_VALUE_TOKEN: printf("(Value token) id:%d ", token_id); break;
 			/* Block delimeters */
-			case YAML_BLOCK_SEQUENCE_START_TOKEN: puts("<b>Start Block (Sequence)</b>"); break;
+			/*case YAML_BLOCK_SEQUENCE_START_TOKEN: puts("<b>Start Block (Sequence)</b>"); break;
 			case YAML_BLOCK_ENTRY_TOKEN:          puts("<b>Start Block (Entry)</b>");    break;
 			case YAML_BLOCK_END_TOKEN:            puts("<b>End block</b>");              break;
 			/* Data */
-			case YAML_BLOCK_MAPPING_START_TOKEN:  puts("[Block mapping]");            break;
+			/*case YAML_BLOCK_MAPPING_START_TOKEN:  puts("[Block mapping]");            break;
 			case YAML_SCALAR_TOKEN:  printf("scalar %s \n", token.data.scalar.value); 
 				switch(token_id) {
 					case STOPPING_DISTANCE: thresholds.stopping_distance = atoi(token.data.scalar.value); break;
@@ -62,7 +61,7 @@ int main() {
 				}
 			break;
 			/* Others */
-			default:
+			/*default:
 				printf("Got token of type %d\n", token.type);
 		}
 		if(token.type != YAML_STREAM_END_TOKEN)
@@ -72,10 +71,69 @@ int main() {
 	/* END new code */
 
 	/* Cleanup */
-	yaml_parser_delete(&parser);
-	fclose(fh);
+	/*yaml_parser_delete(&parser);
+	/*fclose(fh);
 
 	printf("threshold stuct values: %d %d %d %d %d %d %d %d %d\n", thresholds.stopping_distance, thresholds.threshold1_low, thresholds.threshold1_high, thresholds.threshold2_low, thresholds.threshold2_high, thresholds.test1, thresholds.test2, thresholds.test3, thresholds.test4);
+	*/
+
+	Thresholds thresholds;
+	char filename[] = "config.csv";
+	FILE *config_file = fopen(filename, "r");
+
+	if ( config_file == NULL ) { /* error opening file */
+		printf("Cannot open file: %s\n", filename);
+		return 0;
+	}
+	else {
+		char line [128]; /* or other suitable maximum line size */
+		while (fgets ( line, sizeof line, config_file ) != NULL) { /* read a line */
+			fputs (line, stdout); /* write the line */
+
+			char *token = strtok(line, ",");
+			
+			char *type = token;
+			int i = 1;
+
+			printf("Type: %s \n", type);
+			token = strtok(NULL, ",");
+			
+			while( token != NULL ) {
+				char *curr_tok = token;
+				printf("> %s \n", curr_tok);
+				printf("STRING %s %f\n", curr_tok, atof(curr_tok));
+				if (strcmp("brake_distance", type) == 0) {
+					if (i == 1) thresholds.brake_distance = atof(curr_tok);
+					else {
+					}
+				}
+				else if (strcmp("acceleration_distance", type) == 0) {
+					if (i == 1) thresholds.acceleration_distance = atof(curr_tok);
+					else {
+					}
+				}
+				else if (strcmp("battery_temperature", type) == 0) {
+					if (i == 1) thresholds.battery_temperature_low = atof(curr_tok);
+					else if (i == 2) thresholds.battery_temperature_high = atof(curr_tok);
+					else if (i == 3) thresholds.battery_temperature_pers = atof(curr_tok);
+					else {
+					}
+				}
+
+				i++;
+				token = strtok(NULL, ",");
+			}
+			
+		}
+		fclose ( config_file );
+	}
+
+	printf("threshold stuct values: %d %d %d %d %d\n", 
+		thresholds.brake_distance, 
+		thresholds.acceleration_distance, 
+		thresholds.battery_temperature_low, 
+		thresholds.battery_temperature_high, 
+		thresholds.battery_temperature_pers);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
@@ -103,6 +161,10 @@ int main() {
 	transitions[STANDBY_SID][REPEAT] = STANDBY_SID;
 	transitions[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
 	
+	printf("################################################################\n");
+	printf("#                     beginning of run                         #\n");
+	printf("################################################################\n");
+
 	//Initial values for state flow
 	int last_state = STANDBY_SID;
 	int return_code = standby_state();

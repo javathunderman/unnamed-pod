@@ -4,15 +4,12 @@ typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_S
 typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 2, ESTOP = 3, NUM_CODES} State_Status; 
 
 typedef struct {
-	int stopping_distance;
-	int threshold1_low;
-	int threshold1_high;
-	int threshold2_low;
-	int threshold2_high;
-	int test1;
-	int test2;
-	int test3;
-	int test4;
+	float brake_distance;
+	float acceleration_distance;
+	float battery_temperature_low;
+	float battery_temperature_high;
+	float battery_temperature_pers;
+	float i_should_be_unassigned;
 } Thresholds;
 
 int standby_state();

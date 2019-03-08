@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
-#include <pthread.h>
 
 //typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
 //typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 4, ESTOP = 5} State_Status; 
