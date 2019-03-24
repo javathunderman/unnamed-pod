@@ -7,7 +7,7 @@
 #define __INITIALIZE__
 #endif
 
-int initialize_state() {
+int initialize_state(Thresholds thresholds) {
 	printf("INITIALIZING...\n");
 	//Do Initialization stuff here
 

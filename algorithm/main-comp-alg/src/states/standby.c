@@ -7,8 +7,14 @@
 #define __STANDBY__
 #endif
 
-int standby_state() {
+int standby_state(Thresholds thresholds) {
 	printf("STANDBY!\n");
+	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
+		thresholds.brake_distance, 
+		thresholds.acceleration_distance, 
+		thresholds.battery_temperature_low, 
+		thresholds.battery_temperature_high, 
+		thresholds.battery_temperature_pers);
 
 	//Emergency brake
 	if (estop_command) {

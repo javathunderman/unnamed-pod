@@ -7,7 +7,7 @@
 #define __NORMBRAKE__
 #endif
 
-int normbrake_state() {
+int normbrake_state(Thresholds thresholds) {
 	printf("NORMAL BRAKING!\n");
 
 	//check speed, repeat until zero?

@@ -39,7 +39,12 @@ int main() {
 			while( token != NULL ) {
 				char *curr_tok = token;
 				
-				if (strcmp("brake_distance", type) == 0) {
+				if (strcmp("track_length", type) == 0) {
+					if (i == 1) thresholds.track_length = atof(curr_tok);
+					else {
+					}
+				}
+				else if (strcmp("brake_distance", type) == 0) {
 					if (i == 1) thresholds.brake_distance = atof(curr_tok);
 					else {
 					}
@@ -56,11 +61,17 @@ int main() {
 					else {
 					}
 				}
+				else if (strcmp("motor_temperature", type) == 0) {
+					if (i == 1) thresholds.motor_temperature_low = atof(curr_tok);
+					else if (i == 2) thresholds.motor_temperature_high = atof(curr_tok);
+					else if (i == 3) thresholds.motor_temperature_pers = atof(curr_tok);
+					else {
+					}
+				}
 
 				i++;
 				token = strtok(NULL, ",");
-			}
-			
+			}	
 		}
 		fclose ( config_file );
 	}
@@ -76,7 +87,7 @@ int main() {
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	int transitions[NUM_STATES][NUM_CODES]; //transitions
-	int (*fp_arr[NUM_STATES]) (void);   //state function calls
+	int (*fp_arr[NUM_STATES]) (Thresholds);   //state function calls
 
 	//1D array of Function Pointers to state functions
 	fp_arr[STANDBY_SID] = &standby_state;
@@ -104,12 +115,12 @@ int main() {
 
 	//Initial values for state flow
 	int last_state = STANDBY_SID;
-	int return_code = standby_state();
+	int return_code = standby_state(thresholds);
 	
 	//main state loop
 	while (1) {
 		last_state = transitions[last_state][return_code];
-		return_code = (*fp_arr[last_state])();
+		return_code = (*fp_arr[last_state])(thresholds);
 		//state = transitions[state][(*functions[state])()]
 	}
 
