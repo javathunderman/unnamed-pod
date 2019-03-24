@@ -1,10 +1,8 @@
-target_name: UMDLOOP
+target_name: TCP
 target_ip: 172.22.11.2
-udp_read_port: 8888
-udp_write_port: 19112
-host_ip: 172.22.11.1
+target_port: 8187
 packet_name: PACKET
-packet_frequency: 1
+packet_frequency: 10
 group_screens: true
 limits_persistence: 3
 screen_update_rate: 1.0

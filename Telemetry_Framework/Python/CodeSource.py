@@ -29,10 +29,11 @@ def source_definition(tlm):
 
 def imports():
     imports = '#include <sys/socket.h>\n'
-    imports += '#include <arpa/inet.h>\n'
     imports += '#include <string.h>\n'
     imports += '#include <stdlib.h>\n'
     imports += '#include <time.h>\n'
+    imports += '#include <errno.h>\n'
+    imports += '#include <stdio.h>\n'
     imports += '#include "telemetry.h"\n\n\n'
     
     return imports
@@ -49,15 +50,11 @@ def main_thread(tlm):
     # Convert bits to bytes, round up
     pkt_length = math.ceil(pkt_length / 8)
     
-    
-    main = f'#define PORT {tlm.config["udp_read_port"]}\n'
-    main += f'#define HOST "{tlm.config["host_ip"]}"\n'
-    main += f'#define PKT_LENGTH {pkt_length}\n'
+    # Begin writing send_tlm function
+    main = f'#define PKT_LENGTH {pkt_length}\n'
     main += '\n'
-    main += 'void main_thread(void) {\n'
-    main += '    Telemetry tlm;\n'
-    main += '    int s;\n'
-    main += '    struct sockaddr_in sa;\n\n'
+    main += 'void send_tlm(int socket) {\n'
+    main += '    Telemetry tlm;\n\n'
     
     # Create time structs for delays between tlm udpates
     time = 0
@@ -74,14 +71,7 @@ def main_thread(tlm):
         main += f'    struct timespec delay_{i+1} = {{{sec}, {ns}L}};\n'
     main += '\n'
         
-    
-    main += '    memset((char *) &sa, 0, sizeof(sa));\n'
-    main += '    sa.sin_family = AF_INET;\n'
-    main += '    sa.sin_port = htons(PORT);\n\n'
-    main += '    if(inet_aton(HOST, &(sa.sin_addr)) == 0)\n'
-    main += '        exit(1);\n\n'
-    main += '    if((s = socket(AF_INET, SOCK_DGRAM, 0)) == -1)\n'
-    main += '        exit(2);\n\n'
+    # Open infinite loop to send telemetry
     main += '    while(1) {\n'
     
     # Call update functions and send telemetry
@@ -92,8 +82,10 @@ def main_thread(tlm):
         main += f'        clock_nanosleep({clk}, 0, &delay_{i+1}, NULL);\n'
         main += f'        {call}\n\n'
     
-    main += '        if(sendto(s, &tlm, PKT_LENGTH, 0, (struct sockaddr *)&sa, sizeof(sa)) == -1)\n'
-    main += '            exit(3);\n'
+    main += '        if(send(socket, &tlm, PKT_LENGTH, MSG_NOSIGNAL) == -1) {\n'
+    main += '            printf("%s\\n", strerror(errno));\n'
+    main += '            break;\n'
+    main += '        }\n'
     main += '    }\n}\n\n'
     
     return main
