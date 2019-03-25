@@ -1,6 +1,7 @@
-target_name: TCP
+target_name: UDP
 target_ip: 172.22.11.2
 target_port: 8187
+comm_timeout_us: 250000
 packet_name: PACKET
 packet_frequency: 10
 group_screens: true

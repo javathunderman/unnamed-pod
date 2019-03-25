@@ -53,7 +53,7 @@ def main_thread(tlm):
     # Begin writing send_tlm function
     main = f'#define PKT_LENGTH {pkt_length}\n'
     main += '\n'
-    main += 'void send_tlm(int socket) {\n'
+    main += 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len) {\n'
     main += '    Telemetry tlm;\n\n'
     
     # Create time structs for delays between tlm udpates
@@ -82,7 +82,7 @@ def main_thread(tlm):
         main += f'        clock_nanosleep({clk}, 0, &delay_{i+1}, NULL);\n'
         main += f'        {call}\n\n'
     
-    main += '        if(send(socket, &tlm, PKT_LENGTH, MSG_NOSIGNAL) == -1) {\n'
+    main += '        if(sendto(socket, &tlm, PKT_LENGTH, MSG_NOSIGNAL, dest_addr, dest_len) == -1) {\n'
     main += '            printf("%s\\n", strerror(errno));\n'
     main += '            break;\n'
     main += '        }\n'

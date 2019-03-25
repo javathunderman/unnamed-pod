@@ -21,7 +21,7 @@ from fractions import Fraction
 def header_definition(tlm):
     header = '#ifndef TELEMETRY_H\n'
     header += '#define TELEMETRY_H\n\n\n'
-    header += port_definition(tlm)
+    header += defines(tlm)
     header += struct_definition(tlm)
     header += '\n\n'
     header += main_thread_header()
@@ -30,8 +30,11 @@ def header_definition(tlm):
     
     return header
 
-def port_definition(tlm):
-    return f'#define PORT {tlm.config["target_port"]}\n\n'
+def defines(tlm):
+    defines = '#define SA struct sockaddr\n'
+    defines += f'#define TO_USEC {tlm.config["comm_timeout_us"]}\n'
+    defines += f'#define PORT {tlm.config["target_port"]}\n\n'
+    return defines
 
 def struct_definition(tlm):
     struct = "typedef struct {\n"
@@ -43,7 +46,7 @@ def struct_definition(tlm):
     return struct
 
 def main_thread_header():
-    return 'void send_tlm(int socket);\n\n'
+    return 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len);\n\n'
 
 def function_headers(tlm):
     fractions = set()
