@@ -3,7 +3,7 @@ target_ip: 172.22.11.2
 target_port: 8187
 comm_timeout_us: 250000
 packet_name: PACKET
-packet_frequency: 10
+packet_frequency: 1
 group_screens: true
 limits_persistence: 3
 screen_update_rate: 1.0

@@ -22,6 +22,7 @@ import CodeHeader
 
 def source_definition(tlm):
     source = imports()
+    source += defines(tlm)
     source += main_thread(tlm)
     source += build_tlm(tlm)
     
@@ -38,7 +39,7 @@ def imports():
     
     return imports
 
-def main_thread(tlm):
+def defines(tlm):
     # Determine packet length
     pkt_length = 0
     for item in tlm.get_all():
@@ -50,11 +51,24 @@ def main_thread(tlm):
     # Convert bits to bytes, round up
     pkt_length = math.ceil(pkt_length / 8)
     
+    # Calculate packet period in nanoseconds
+    total_ns = int(1000000000 / tlm.config["packet_frequency"])
+    
+    defines = f'#define PKT_LENGTH {pkt_length}\n'
+    defines += f'#define TLM_FREQ {total_ns}L\n'
+    defines += '#define NS_IN_SEC 1000000000L\n'
+    defines += '#define UPDATE_DELAY(name) name.tv_sec = name.tv_sec + ((name.tv_nsec + TLM_FREQ) / NS_IN_SEC);\\\n'
+    defines += '                           name.tv_nsec = (name.tv_nsec + TLM_FREQ) % NS_IN_SEC;\n'
+    defines += '#define INIT_TIMES(name, time) sec = name.tv_sec + ((name.tv_nsec + time) / NS_IN_SEC);\\\n'
+    defines += '                               nsec = (name.tv_nsec + time) % NS_IN_SEC;\n\n'
+    return defines
+
+def main_thread(tlm):
     # Begin writing send_tlm function
-    main = f'#define PKT_LENGTH {pkt_length}\n'
-    main += '\n'
-    main += 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len) {\n'
+    main = 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len) {\n'
     main += '    Telemetry tlm;\n\n'
+    
+    main += current_time()
     
     # Create time structs for delays between tlm udpates
     time = 0
@@ -67,8 +81,11 @@ def main_thread(tlm):
         delay = int((total_ns * numerator / denominator) - time);
         time = total_ns * numerator / denominator
         
-        (sec, ns) = divmod(delay, 1000000000)
-        main += f'    struct timespec delay_{i+1} = {{{sec}, {ns}L}};\n'
+        if i == 0:
+            main += f'    INIT_TIMES(now, {delay}L)\n'
+        else:
+            main += f'    INIT_TIMES(delay_{i}, {delay}L)\n'
+        main += f'    struct timespec delay_{i+1} = {{sec, nsec}};\n\n'
     main += '\n'
         
     # Open infinite loop to send telemetry
@@ -85,10 +102,23 @@ def main_thread(tlm):
     main += '        if(sendto(socket, &tlm, PKT_LENGTH, MSG_NOSIGNAL, dest_addr, dest_len) == -1) {\n'
     main += '            printf("%s\\n", strerror(errno));\n'
     main += '            break;\n'
-    main += '        }\n'
+    main += '        }\n\n'
+    
+    for i in range(0, len(fns)):
+        main += f'        UPDATE_DELAY(delay_{i+1})\n'
+    
     main += '    }\n}\n\n'
     
     return main
+
+def current_time():
+    return """    struct timespec now;
+    if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
+        printf("clock_gettime() error: %s\\n", strerror(errno));
+        exit(-3);
+    }
+    __time_t sec = now.tv_sec;
+    __syscall_slong_t nsec = now.tv_nsec;\n\n"""
 
 def build_tlm(tlm):
     fns = CodeHeader.function_headers(tlm).splitlines()
