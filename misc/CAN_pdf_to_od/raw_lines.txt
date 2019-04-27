@@ -202,7 +202,7 @@
 0xc9 (RW): 0x0000 0 xKp2 (I_KP2 ) proportional amplification position controller P-I
 0xca (RW): 0x0000 0 Ti (POSI_KI ) integral action time (Integral part) position controller P-I
 0xcb (RW): 0x0000 0 Kf (I_KF ) ...
-0xcc (RO): 0xc953 -13997 0xcc (POSI_ERR ) 0xcc
+0xcc (RO): 0xc953 -13997 BADCC (POSI_ERR ) 0xcc
 0xcd (RW): 0x0000 0 TiM (POSI_ERRSUMMA) Limit integral storeroom peak value P-I
 0xce (RO): 0x0e10 3600 Label 0xce (SPEED_RPMMAX_) Description of 0xce
 0xcf (RW): 0x0000 0 Label 0xcf (POSI_KY ) Description of 0xcf

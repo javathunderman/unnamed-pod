@@ -1,0 +1,61 @@
+[1000]
+ParameterName=Device Type
+ObjectType=0x7
+DataType=0x7
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
+
+[1001]
+ParameterName=Error Register
+ObjectType=0x7
+DataType=0x5
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
+
+[1018]
+SubNumber=5
+ParameterName=Identity Object
+ObjectType=0x9
+
+[1018sub0]
+ParameterName=Internal Number of Entries
+ObjectType=0x7
+DataType=0x5
+AccessType=ro
+DefaultValue=4
+PDOMapping=0
+ObjFlags=3
+
+[1018sub1]
+ParameterName=Vendor ID
+ObjectType=0x7
+DataType=0x7
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
+
+[1018sub2]
+ParameterName=Product Code
+ObjectType=0x7
+DataType=0x7
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
+
+[1018sub3]
+ParameterName=Revision Number
+ObjectType=0x7
+DataType=0x7
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
+
+[1018sub4]
+ParameterName=Serial Number
+ObjectType=0x7
+DataType=0x7
+AccessType=ro
+PDOMapping=0
+ObjFlags=1
