@@ -26,7 +26,8 @@ int accelerate_state(Thresholds thresholds) {
 	}
 	//Continue to accelerate
 	else {
-		pod_position += 10; //get pod position from IMU and light sensors, logic goes here
+		pod_position += 50; //get pod position from IMU and light sensors, logic goes here
+
 		printf("CONTINUING: fake position: %d\n", pod_position);
 		//FULL THROTTLE!
 		return REPEAT;

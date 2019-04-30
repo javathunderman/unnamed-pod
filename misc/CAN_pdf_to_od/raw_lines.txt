@@ -1,0 +1,256 @@
+0x00 (UK): 0x0000 0 (rsv) (rsv ) (reserved)
+0x01 (UK): 0x0000 0 Usr-Opt (USER_SPEC_OPT) (Deif) Options
+0x02 (RO): 0x0000 0 SC-info (USER_SPEC_STA) (Deif) Safety-State
+0x03 (SP): 0x0000 0 Cmd-Spec (USER_SPEC_DEM) (Deif) Cmd-Specials
+0x04 (SP): 0x0000 0 (Key) (USER_KEY ) ?? (User Key)
+0x05 (RW): 0x05dc 1500 F nom (MOTOR_NOM_F ) Nominal motor frequency (FU)
+0x06 (RW): 0x0000 0 V nom (MOTOR_NOM_V ) Motor nominal voltage (FU)
+0x07 (RW): 0x00000000 0 T dc (UF_TDC ) Time DC-pre-mag. (FU)
+0x08 (RW): 0x00000000 0 V dc (UF_UDC ) DC voltages (FU)
+0x09 (RW): 0x00000064 100 F dc (UF_SPEZIAL ) ??
+0x0a (RW): 0x00000000 0 U min (UF_UMIN ) Minimum voltage (FU)
+0x0b (RW): 0x00000000 0 F min (UF_FMIN ) Minimum frequency (FU)
+0x0c (RW): 0x00000000 0 V corner (UF_UECK ) Voltage für max. frequency (FU)
+0x0d (RW): 0x00000000 0 F corner (UF_FECK ) Frequency for max. voltage (FU)
+0x0e (RW): 0x0000 0 Cos Phi (UF_POWF ) Power factor (FU)
+0x0f (RW): 0x0064 100 (...) (UF_EXTRA ) (...)
+0x10 (SP): 0x0000 0 Chan (CAPTURE_CHAN ) Oscilloscope trigger channel
+0x11 (RO): 0xcb5e37b4 3411949492 Ctrl (CONTROL_STATU) Control-Status
+0x12 (SP): 0x7ae8 31464 Trig. Level (CAPTURE_TRIGL) Oscilloscope trigger level
+0x13 (SP): 0x0001 1 Trig. Edge (CAPTURE_TRIGE) Oscilloscope trigger function
+0x14 (SP): 0x9134 37172 Trig. Sce (CAPTURE_TRIGS) Oscilloscope trigger source
+0x15 (SP): 0x0001 1 Source (CAPTURE_SOURC) Oscilloscope source
+0x16 (SP): 0x0001 1 Skip (CAPTURE_SKIP ) Oscilloscope skip
+0x17 (FN): 0x0000 0 Read Cmd (CAPTURE_READ ) Oscilloscope read
+0x18 (FN): 0xface 64206 Run Cmd (CAPTURE_RUN ) Oscilloscope Run
+0x19 (RW): 0x0000 0 PWM freq. (PWM-FREQ ) Frequency PWM-stage
+0x1a (SP): 0x0000 0 Look-up (LOOKUP_TEMP ) lookup field (temperary)
+0x1b (RO): 0x01d8 472 FW (FW-VERSION ) Firmware
+0x1c (RW): 0x000a 10 Kp (I_KP ) Proportional amplification current controller
+0x1d (RW): 0x03e8 1000 Ti (I_KI ) Integral action time current controller
+0x1e (RW): 0x0000 0 Cutoff (dig.) (DIG_CUTOFF ) Cutoff-digital-cmd
+0x1f (RO): 0x07f0 2032 ?? (I3_ISTOFFSET ) Offset actual current 3
+0x20 (RO): 0x0002 2 I actual (I_IST ) current actual value
+0x21 (SP): 0x0000 0 Id set (dig.) (I_SOLLOFFSET ) D-current setpoint
+0x22 (RO): 0x0000 0 I cmd (ramp) (I_REF ) current set point numeric
+0x23 (RO): 0x0000 0 Id ref (ID_REF ) D-Current reference
+0x24 (RO): 0x013f 319 I max inuse (I_MAXPLUS ) I max inuse
+0x25 (RW): 0x03e9 1001 Ramp (I_DELTAMAXPLU) Icmd ramp
+0x26 (RO): 0x0000 0 I cmd (I_SOLL ) command current
+0x27 (RO): 0xffff -1 Iq actual (IQ_ACTUAL ) Q-current actual
+0x28 (RO): 0xfffd -3 Id actual (ID_ACTUAL ) D-current actual
+0x29 (RO): 0x0000 0 Vq (VQ ) Q-Outputvoltage
+0x2a (RO): 0x0000 0 Vd (VD ) D-Outputvoltage
+0x2b (RW): 0x0050 80 TiM (I_ERRSUMMAX ) Max. integration sample count
+0x2c (RW): 0x000a 10 Kp (SPEED_KP ) Proportional gain speed
+0x2d (RW): 0x0064 100 Ti (SPEED_KI ) Integration time speed
+0x2e (RW): 0x0000 0 Td (SPEED_KD ) D_ speed
+0x2f (RW): 0x10000000 268435456 Ain1 offset/scale (ANALOG_OFFSET) Offset/scale Ain1
+0x30 (RO): 0x0000 0 N actual (SPEED_ACTUAL ) Speed actual value
+0x31 (RW): 0x0000 0 N set (dig.) (SPEED_CMD ) Digital Speed Set Point
+0x32 (RO): 0x0000 0 N cmd (ramp) (SPEED_REF ) Command speed after ramp
+0x33 (RW): 0x0000 0 N error (SPEED_ERR ) Speed error
+0x34 (RW): 0x7fff 32767 N-Lim (SPEED_LIMIT ) Speed limit
+0x35 (RW): 0x00010064 65636 Accel. (SPEED_DELTAMA) Speed/torque acceleration ramp times
+0x36 (RW): 0x0000 0 Command (COMMAND_SOURC) Selection command speed
+0x37 (RO): 0x0002 2 Loop (SPEED_COUNTMA) current to speed loop factor
+0x38 (RO): 0x0000 0 Iq error (IQ_ERR ) Current Iq error
+0x39 (RO): 0x0000 0 Id error (ID_ERR ) Current Id error
+0x3a (RW): 0xface 64206 ?? (...) (0x3a (...) ) ?? (...)
+0x3b (RW): 0x0050 80 TiM (SPEED_ERRSUMM) Max. integration sample count
+0x3c (RW): 0x7fff 32767 I-red-N (I_RD_N ) Current derating speed
+0x3d (FN): 0x0618 1560 Read (READ ) Function
+0x3e (RW): 0x8000 -32768 N-Lim- (SPEED_CLIP_NE) Speed limit negative
+0x3f (RW): 0x7fff 32767 N-Lim+ (SPEED_CLIP_PO) Speed limit positive
+0x40 (RO): 0x00000380 896 Status map (STATUS ) Status
+0x41 (RO): 0x0000 0 incr_delta (INCR_DELTA ) ??
+0x42 (RO): 0x86b9 -31047 MotorPos mech (MPOS_ACTUAL_M) Motor actual angular position mechanical
+0x43 (RO): 0x6a13 27155 MotorPos elec (MPOS_ACTUAL_E) Motor actual angular position electrical
+0x44 (RW): 0xfdb0 -592 FB-Offset (MPOS_ISTOFFSE) phase angle offset Feedback
+0x45 (RO): 0x00000000 0 I2t & Regen. Energy (IT_RG_MONITOR) monitor i2t & regen circuit
+0x46 (RW): 0x7fff 32767 I lim dig (I_LIMIT ) Current limit with a digital switch
+0x47 (RW): 0xface 64206 ... (... ) ...
+0x48 (RO): 0x013f 319 I lim inuse (I_LIM_INUSE ) actual current limit
+0x49 (RO): 0x0000 0 T-motor (T_MOTOR ) motor temperature
+0x4a (RO): 0x0000 0 T-igbt (T_IGBT ) power stage temperature
+0x4b (RO): 0x0000 0 T-air (T_AIR ) air temperature
+0x4c (RW): 0x0000 0 I-red-TE (I_RD_TE ) Current derate Temp.
+0x4d (RW): 0x0035 53 I max (MOTOR_I_MAX ) max. motor current
+0x4e (RW): 0x0035 53 I nom (MOTOR_I_DAUER) Motor continuous current
+0x4f (RW): 0x0006 6 M-Pole (MOTOR_POLE ) Motor pole count
+0x50 (RW): 0x0000 0 Cutoff (AIN1_CUTOFF ) cutoff window Ain1
+0x51 (SP): 0x0000 0 Mode (MODE ) Mode State
+0x52 (SP): 0x0000f811 63505 Status mask (STATUS_MASK ) Status mask
+0x53 (RW): 0x0000 0 Cutoff (AIN2_CUTOFF ) cutoff window Ain2
+0x54 (RO): 0xffff -1 I1 actual (I1_IST ) Current actual value I1
+0x55 (RO): 0x0004 4 I2 actual (I2_IST ) Current actual value I2
+0x56 (RO): 0x0002 2 I3 actual (I3_IST ) Current actual value I3
+0x57 (RO): 0x0000 0 I lim inuse rmp (I_LIM_INUSE_R) ??
+0x58 (RW): 0x0000 0 I-red-TD (I_RD-TD ) ??
+0x59 (RW): 0x0bb8 3000 N nom (MOTOR_RPMMAX ) Rated motor speed
+0x5a (RW): 0x00000808 2056 Device Options (KERN_OPTIONS ) Device settings (options)
+0x5b (RW): 0x0000 0 Kacc (SPEED_KS ) Acceleration amplification
+0x5c (RO): 0x86b9 34489 Rotor (ROTOR ) Rotor signals
+0x5d (RO): 0x0000 0 N cmd (int) (SPEED_CMD_INT) Command speed internal
+0x5e (RW): 0x0002 2 Filter (SPEED_FILTER_) Filter speed actual value
+0x5f (RO): 0x0000 0 I act (filt) (I_IST_FILT ) Filtered actual current
+0x60 (RW): 0x0000 0 Filter (AINx_FILT ) NONE
+0x61 (RO): 0x0000 0 I t (IT_MONITOR ) I t monitor
+0x62 (RW): 0x075bcd15 123456789 S-Nr. (DEVICE_SERIAL) Device Serial number Servo
+0x63 (RO): 0x0000 0 fpga Status (POWER_BOARD_S) FPGA Status
+0x64 (RW): 0x00e6 230 Mains (DEVICE_MAINS ) Mains supply voltage
+0x65 (RW): 0x00500019 5242905 Regen-P, Regen-R (DEVICE_EXT_RE) Regenerative Resistor power rating
+0x66 (RO): 0xface 64206 Vdc-Bat (DC_BUS ) Battery voltage
+0x67 (RW): 0x00011313 70419 Type (DEVICE_AUTO_I) Device type
+0x68 (RW): 0x0201 513 Rx ID (CAN_ID_RX ) CAN-Bus drive rx address
+0x69 (RW): 0x0181 385 Tx ID (CAN_ID_TX ) CAN-Bus drive tx address
+0x6a (RW): 0x000f 15 Kp (POS_KP ) position controller proportional amplification P-N
+0x6b (RW): 0x01f5 501 Ti (POS_KI ) integral action time (Integral part) position controller P-N
+0x6c (RW): 0x0000 0 Td (POS_KD ) advancing-time (Differezial-part) position controller P-N
+0x6d (RO): 0x000086b9 34489 Pos actual (POS_ACTUAL ) actuael position numeric
+0x6e (SP): 0x00000000 0 Pos dest (POS_DEST ) position-destination
+0x6f (RO): 0x00000000 0 Pos actual 2 (RegName_0x6f ) Pos actual 2
+0x70 (RO): 0x00000000 0 Pos error (POS_ERR ) position error
+0x71 (RW): 0x0033 51 TiM (POS_ERRSUMMAX) Max.integration sample count, position
+0x72 (RW): 0x00000000 0 Off. Ref. (POS_REF_OFFSE) reference zero offset
+0x73 (RW): 0x4025 16421 NBT (CAN_BTR ) CAN-BUS transmission rate
+0x74 (RO): 0x91be -28226 Zero-Capture (POS_ZEROCAPTU) Pos Zero Capture
+0x75 (RW): 0x0000 0 Reso edge (POS_REFRESOED) Reso pos. at Rsw
+0x76 (RW): 0x0078 120 Speed 1 (SPEED_CALIB_F) Reference speed (fast)
+0x77 (RW): 0x0078 120 Speed 2 (SPEED_CALIB_S) Reference speed (slow)
+0x78 (FN): 0x444d 17485 Start park cycle (FUN_REF_START) Start park cycle
+0x79 (RW): 0x0064 100 Tol-wind (POS_WINDOW ) Tolerance window for position
+0x7a (SP): 0xfd944f98 4254355352 Preset (POS_PRESET ) Preset value
+0x7b (RO): 0x00000000 0 Off. Var (POS_VAR_OFFSE) user zero offset
+0x7c (RW): 0x00000000 0 ND-Scale (NDRIVE_SCALE ) Display-conversion factor-position
+0x7d (RW): 0x00000000 0 ND-Offset (NDRIVE_OFFSET) Verschiebefaktor Pos-Anzeige
+0x7e (RW): 0x00000000 0 Factor-ext (ENCODER_2_SCA) Scale 2nd encoder
+0x7f (RW): 0x00000000 0 ?? (OFFSET_SLACK ) ??
+0x80 (RW): 0x86b9 34489 ?? (POS_DIFF_SLAC) ??
+0x81 (UK): 0xface 64206 ... (... ) ...
+0x82 (RO): 0xface 64206 NONE (DEVICE_SERIAL) Device serial number ext.
+0x83 (FN): 0x444d 17485 ?? (FUN_PARAREAD ) ??
+0x84 (FN): 0x444d 17485 ?? (FUN_PARAWRITE) ??
+0x85 (FN): 0x0000 0 Auto-Fn (FUN_SPEZIAL ) Auto-Functions
+0x86 (UK): 0xface -1330 ?? (READ_INFO ) ??
+0x87 (RW): 0xface 64206 ... (... ) ...
+0x88 (RW): 0x00000000 0 Rx ID 2 (CAN_ID_RX_2 ) CAN-Bus drive rx 2 address
+0x89 (RW): 0x00000000 0 Tx ID 2 (CAN_ID_TX_2 ) CAN-Bus drive tx 2 address
+0x8a (RO): 0x0000 0 V out (VOUT ) Output-voltage usage
+0x8b (RW): 0x0000 0 V red (VRED ) Start point field reduction
+0x8c (RW): 0x0000 0 V kp (VKP ) Proportional amplification field reduction
+0x8d (RW): 0x0000 0 V-Ti (VTI ) Time constant integral part field reduction
+0x8e (FN): 0x444d 17485 ?? (FUN_ERRCANCEL) Clear error list
+0x8f (RO): 0x00000020 32 Warning-Error map (ERR_BITMAP1 ) Description of 0x8f
+0x90 (SP): 0x0000 0 M set (dig.) (TORQUE_SETPOI) Digital Torque Set Point
+0x91 (RO): 0x000086b9 34489 Pos cmd (POS_COMMAND ) Command position
+0x92 (RO): 0x0000 0 ?? (CAN_ERROR_BUS) CAN-BUS Bus-Off count
+0x93 (RO): 0x0000 0 ?? (CAN_ERRWRITET) CAN-BUS ??
+0x94 (RO): 0x0000 0 fpga 1st error (POWER_BOARD_E) FPGA 1st Error
+0x95 (RO): 0x0000 0 ?? (CAN_COUNTREAD) CAN-BUS ??
+0x96 (RO): 0x0000 0 ?? (CAN_COUNTWRIT) CAN-BUS ??
+0x97 (RO): 0x0000 0 ?? (CAN_COUNTREJ ) CAN-BUS
+0x98 (RO): 0xface -1330 O-Block (LOG_O_BLOCK ) O-Block
+0x99 (RO): 0x02b5 693 Info Intr (INFO_INTERRUP) Info - Interrupt time
+0x9a (RO): 0x0000 0 (dbg) temp (TEMP ) (dbg) Temp
+0x9b (RO): 0xface 64206 in Block (LOG_I_BLOCK ) I-Block
+0x9c (UK): 0xface -1330 Pt100-1 (T-PT-1 ) Temp. Sensor Pt100-1
+0x9d (UK): 0xface -1330 Pt100-2 (T-PT-2 ) Temp. Sensor Pt100-2
+0x9e (UK): 0xface -1330 Pt100-3 (T-PT-3 ) Temp. Sensor Pt100-3
+0x9f (UK): 0xface -1330 Pt100-4 (T-PT-4 ) Temp. Sensor Pt100-4
+0xa0 (RO): 0x0000 0 M out (TORQUE_OUT ) Digital Torque Intern
+0xa1 (RO): 0x0000 0 Ballast counter (BALLAST_COUNT) Ballast counter
+0xa2 (RW): 0x15e0 5600 I-red-TM (I_RD_TM ) ??
+0xa3 (RW): 0x1b58 7000 M-Temp (MOTOR_TEMP_ER) Motor-Temperatur Abschaltpunkt
+0xa4 (RW): 0x3001 12289 Label 0xa4 (MOTOR_OPTION ) Description of 0xa4
+0xa5 (RW): 0x00000064 100 DC-Bus min, DC-Bus max (DEVICE_DCBUS_) Description of 0xa5
+0xa6 (RW): 0x0400 1024 FB-Incr (Mot) (MOTOR_GEBER_I) Increments per Rpm
+0xa7 (RW): 0x0002 2 FB-Pole (MOTOR_GEBER_P) Resolver pole
+0xa8 (RO): 0x0000 0 N act (filt) (SPEED_ACTUAL_) Actual speed value (filtered)
+0xa9 (RO): 0x07ef 2031 I3 adc (I1_ADC ) Current sensor M1
+0xaa (RO): 0x07ee 2030 I2 adc (I2_ADC ) Current sensor M3
+0xab (RO): 0xfde8 65000 Logic freq. (LOGIC_HZ ) Forerground frequency
+0xac (RO): 0x0618 1560 pwm1 (5/6) (PWM1 ) pulse widths modulation Ph1
+0xad (RO): 0x0618 1560 pwm2 (3/4) (PWM2 ) pulse widths modulation Ph2
+0xae (RO): 0x0618 1560 pwm3 (1/2) (PWM3 ) pulse widths modulation Ph3
+0xaf (RO): 0x007d 125 T-intr (TIMER_DELTA ) Intr. time
+0xb0 (RW): 0x444d 17485 ?? (FUN_SERIALBOO) ??
+0xb1 (RW): 0x0000 0 L sigma-q (MOTOR_INDUCTA) Stator Leakage inductance
+0xb2 (RW): 0x0000 0 Id nom (ID_NOM ) nominal magnetising current
+0xb3 (RW): 0x007b 123 L magnet. (MOTOR_MAGN_L ) Motor magnetising inductance
+0xb4 (RW): 0x0000 0 R rotor (MOTOR_ROTOR_R) rotor resistance
+0xb5 (RW): 0x0000 0 Id min (ID_MIN ) minimum magnetising current
+0xb6 (RW): 0x07d0 2000 TC rotor (MOTOR_TR ) time constant rotor
+0xb7 (SP): 0x9133 37171 (dbg) ptr1 (TEMP1_PTR ) (dbg) ptr1
+0xb8 (UK): 0x0000 0 (dbg) *ptr1 (TEMP1_PTR_IND) (dbg) *ptr1
+0xb9 (SP): 0x902b 36907 (dbg) ptr2 (TEMP2_PTR ) (dbg) ptr2
+0xba (UK): 0x0002 2 (dbg) *ptr2 (TEMP2_PTR_IND) (dbg) *ptr2
+0xbb (RW): 0x0000 0 L sigma-d (MOTOR_INDUCTA) leakage inductance ph-ph
+0xbc (RW): 0x007b 123 R stator (MOTOR_STATOR_) stator resistance ph-ph
+0xbd (RW): 0x0000 0 TC stator (MOTOR_SPECS_I) time constant stator
+0xbe (RW): 0x8005 32773 Label 0xbe (LOGIC_DEFINE_) Description of 0xbe
+0xbf (RW): 0x8004 32772 Label 0xbf (LOGIC_DEFINE_) Description of 0xbf
+0xc0 (RW): 0x800c 32780 Label 0xc0 (LOGIC_DEFINE_) Description of 0xc0
+0xc1 (RW): 0x800c 32780 Label 0xc1 (LOGIC_DEFINE_) Description of 0xc1
+0xc2 (RW): 0x0000 0 Label 0xc2 (LOGIC_DEFINE_) Description of 0xc2
+0xc3 (RW): 0x0000 0 Label 0xc3 (LOGIC_DEFINE_) Description of 0xc3
+0xc4 (RW): 0x20a3 8355 I max pk (DEVICE_I_MAX_) Limit for peak current (Servo)
+0xc5 (RW): 0x3a3d 14909 I con eff (DEVICE_I_CNT_) Limit for continius current (Servo)
+0xc6 (RW): 0x0032 50 I device (DEVICE_I ) Type current, protected
+0xc7 (RW): 0x000a 10 R-Lim (SPEED_DELTAMA) Emergency stops time ramp, limit switch for 100 % speed command
+0xc8 (RW): 0x0e10 3600 Nmax-100% (SPEED_RPMMAX ) Maximum rotation speed in turns per minute (Servo)
+0xc9 (RW): 0x0000 0 xKp2 (I_KP2 ) proportional amplification position controller P-I
+0xca (RW): 0x0000 0 Ti (POSI_KI ) integral action time (Integral part) position controller P-I
+0xcb (RW): 0x0000 0 Kf (I_KF ) ...
+0xcc (RO): 0xc953 -13997 BADCC (POSI_ERR ) 0xcc
+0xcd (RW): 0x0000 0 TiM (POSI_ERRSUMMA) Limit integral storeroom peak value P-I
+0xce (RO): 0x0e10 3600 Label 0xce (SPEED_RPMMAX_) Description of 0xce
+0xcf (RW): 0x0000 0 Label 0xcf (POSI_KY ) Description of 0xcf
+0xd0 (SP): 0x0000 0 T-Out (CAN_TIMEOUT ) CAN timeout
+0xd1 (RW): 0x0000003e 62 Var1 (VAR1 ) Comparison variable-1
+0xd2 (RW): 0x00002710 10000 Var2 (VAR2 ) Comparison variable-2
+0xd3 (RW): 0x00000000 0 Var3 (VAR3 ) Comparison variable-3
+0xd4 (RW): 0x00000000 0 Var4 (VAR4 ) Comparison variable-4
+0xd5 (RO): 0xffe0ffe0 -2031648 Ain1 (AIN1 ) Analog Ain1 in/scaled
+0xd6 (RO): 0x00580058 5767256 Ain2 (AIN_2 ) Analog Ain2 in/scaled
+0xd7 (RW): 0x10000000 268435456 Offset 2 (AIN2_OFFSET ) analog input 2 offset compensation
+0xd8 (RO): 0x0020 32 Label 0xd8 (LOGIC_READ_BI) Description of 0xd8
+0xd9 (RO): 0x0349 841 Label 0xd9 (KERN_I_200PC ) Description of 0xd9
+0xda (RW): 0x0000 0 NONE (LOGIC_DEFINE_) NONE
+0xdb (RW): 0x0000 0 NONE (LOGIC_DEFINE_) NONE
+0xdc (RW): 0x0030 48 ?? (DEFINE_DAC ) ??
+0xdd (UK): 0xface 64206 ... (... ) ...
+0xde (RO): 0x0000 0 out Dout3 (O_DOUT3 ) Digital output 3
+0xdf (RO): 0x0000 0 out Dout4 (O_DOUT4 ) Digital output 4
+0xe0 (RO): 0x0000 0 out Dout1 (O_DOU1 ) Digital output 1
+0xe1 (RO): 0x0000 0 out Dout2 (O_DOU2 ) Digital output 2
+0xe2 (RO): 0x0000 0 out Rdy (BTB) (O_BTB ) Device ready
+0xe3 (RO): 0x0000 0 O Go (O_GO ) Internal run
+0xe4 (RO): 0x0000 0 (in) Limit1 (I_END1 ) Digital input END1
+0xe5 (RO): 0x0000 0 (in) Limit2 (I_END2 ) Digital input END2
+0xe6 (RO): 0x0000 0 (in) Din1 (I_DIN1 ) Digital input DIN1
+0xe7 (RO): 0x0000 0 (in) Din2 (I_DIN2 ) Digital input DIN2
+0xe8 (RO): 0x0000 0 (in) Run (Frg) (I_FRG ) Digital input RUN
+0xe9 (RO): 0x0000 0 I Fault (I_FAULT ) internal error message of the power part
+0xea (RO): 0x0000 0 I Regen (I_BALLAST ) message regen circuit
+0xeb (RO): 0x0001 1 Vdc-Bus (DC_BUS ) DC-Bus voltage
+0xec (RO): 0x0000 0 I LossOfSignal (I_LOS ) Resolver fault. Incorrect or missing cable
+0xed (RW): 0x00010064 65636 Decel. (SPEED_DELTAMA) Speed/torque deceleration ramp times
+0xee (RW): 0x0226 550 I 100% (Stromsensor) (IIST_100PC ) Current sensor justage (protected)
+0xef (RO): 0x0001 1 Label 0xef (O_NOFAULT ) Description of 0xef
+0xf0 (RW): 0x0005 5 T-peak (TIME_IPEAK ) Timing for peak current
+0xf1 (RW): 0x00fa 250 Brake delay (USER_T_BRAKE ) Brake delay time
+0xf2 (RO): 0x0001 1 O Brake (VO_BRAKE ) Brake on
+0xf3 (RO): 0x0000 0 O Icns (VO_ICNS ) message continuous current
+0xf4 (RO): 0x0000 0 O Toler (VO_TOLER ) message position in tolerance
+0xf5 (RO): 0x0001 1 O Less N0 (VO_Less_ N0 ) message speed <1%
+0xf6 (RO): 0x0000 0 Power (POWER ) Power
+0xf7 (RO): 0x0000 0 Work (WORK ) Work
+0xf8 (RW): 0x0000444d 17485 Axis (ASCII_USER ) Axis label
+0xf9 (FN): 0x444d 17485 ?? (ASCII_WR_EEP ) ??
+0xfa (FN): 0x444d 17485 ?? (ASCII_RD_EEP ) ??
+0xfb (RO): 0xffd4 -44 Ain1 calc (AIN1_CALC ) Ain1 calc
+0xfc (RO): 0x0054 84 Ain2 calc (AIN2_CALC ) Ain2 calc
+0xfd (UK): 0xface 64206 ... (... ) ...
+0xfe (UK): 0xface 64206 ... (... ) ...
+0xff (UK): 0xface -1330 rsv (rsv ) reserved

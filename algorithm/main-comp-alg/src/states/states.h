@@ -1,6 +1,6 @@
 #ifndef __STATES__
 /* This is where our state includes will live */
-typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5, NUM_STATES} State; 
+typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5, IDLE_SID = 6, NUM_STATES} State; 
 typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 2, ESTOP = 3, NUM_CODES} State_Status; 
 
 typedef struct {
@@ -22,6 +22,7 @@ int service_state(Thresholds);
 int accelerate_state(Thresholds);
 int normbrake_state(Thresholds);
 int estop_state(Thresholds);
+int idle_state(Thresholds);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0
@@ -47,3 +48,4 @@ int estop_state(Thresholds);
 #define __STATES__
 #endif
 
+	

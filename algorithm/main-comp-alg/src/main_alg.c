@@ -96,6 +96,7 @@ int main() {
 	fp_arr[ACCELERATE_SID] = &accelerate_state;
 	fp_arr[NORMBRAKE_SID] = &normbrake_state;
 	fp_arr[ESTOP_SID] = &estop_state;
+	fp_arr[IDLE_SID] = &idle_state;
 
 	//2D Logic state array settings
 	transitions[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
@@ -103,11 +104,13 @@ int main() {
 	transitions[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
 	transitions[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
 	transitions[ACCELERATE_SID][ERROR] = ESTOP_SID;
-	transitions[NORMBRAKE_SID][SUCCESS] = STANDBY_SID;
+	transitions[NORMBRAKE_SID][SUCCESS] = IDLE_SID;
 	transitions[NORMBRAKE_SID][ERROR] = ESTOP_SID;
-	transitions[ESTOP_SID][SUCCESS] = STANDBY_SID;
+	transitions[ESTOP_SID][SUCCESS] = IDLE_SID;
 	transitions[STANDBY_SID][REPEAT] = STANDBY_SID;
 	transitions[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
+	transitions[IDLE_SID][REPEAT] = IDLE_SID;
+	transitions[IDLE_SID][SUCCESS] = STANDBY_SID;
 	
 	printf("################################################################\n");
 	printf("#                     beginning of run                         #\n");
@@ -126,51 +129,3 @@ int main() {
 
 	return 0;
 }
-
-
-
-//REST OF COMMENTED CODE IS FOR FUTURE REFERENCE - Jerry
-
-/*int testfun(int i) {
-	printf("Printing integer: %d\n", i);
-	return 0;
-}
-
-void *threadfun(void * i) {
-	//pthread_mutex_lock(&state_mutex);
-	int *ii = (int *)i;
-	printf("Printing integer from thread: %d\n", *ii);
-	//pthread_mutex_unlock(&state_mutex);
-	return NULL;
-}
-
- thread_ids[0] = State
-	 * thread_ids[1] = FPGA read
-	 * thread_ids[2] = Telem send
-	 * thread_ids[3] = Read commands
-	 */
-	/*pthread_t thread_ids[NUM_THREADS];
-	void (*testfun_ptr)(int) = &testfun;
-	void * (*threadfun_ptr)(void *) = &threadfun;
-	int *param = (int *)malloc(2*sizeof(int));
-	int *params[NUM_THREADS];
-
-	int i;
-	for (i = 0; i < NUM_THREADS; i++) {
-		params[i] = (int *)malloc(2*sizeof(int));
-	}
-	
-	fp_arr[1][1] = &threadfun;
-
-	param[0] = 100;
-	param[1] = 200;
-
-	for (i = 0; i < NUM_THREADS; i++) {
-		pthread_create(&thread_ids[i], NULL, fp_arr[1][1], params[i]); 
-	}
-
-	for (i = 0; i < NUM_THREADS; i++) {
-		pthread_join(thread_ids[i], NULL); 
-	}
-	pthread_join(thread_id, NULL); 
-	free(param);*/
