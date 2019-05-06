@@ -7,11 +7,14 @@
 #define __ESTOP__
 #endif
 
-int estop_state(Thresholds thresholds, CommandBuffer *cb) {
+int estop_state(Thresholds thresholds, int command) {
 	printf("EMERGENCY STOP!\n");
 	int pod_velocity = 0;
 
-	if (pod_velocity < 2 && acknowledge_command) {
+	if (command == EMERGENCY_BRAKE) {
+		return ESTOP;
+	}
+	else if (pod_velocity < 1) {
 		printf("Entering Idle state!");
 		return SUCCESS;
 	}

@@ -7,11 +7,15 @@
 #define __STANDBY__
 #endif
 
-int idle_state(Thresholds thresholds, CommandBuffer *cb) { //keeps high power on, but forbids movement
-	//printf("Idle state!");
+int idle_state(Thresholds thresholds, int command) { //keeps high power on, but forbids movement
+	printf(">> IDLE STATE\n");
 
+	if (command == EMERGENCY_BRAKE) {
+		return ESTOP;
+	}
 	//Move to standby
-	if (!acknowledge_command) {
+	else if (command == ENTER_STANDBY) {
+		printf("Command received - Entering standby\n");
 		return SUCCESS;
 	}
 

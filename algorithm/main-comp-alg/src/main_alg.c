@@ -13,15 +13,21 @@ int main() {
 	// COMMAND BUFFER                                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	CommandBuffer cb;
-	volatile int buffer[3];
+	volatile int buffer[50];
 
-	if (init_cmd_buffer(&cb, buffer, 3) != 0) {
+	if (init_cmd_buffer(&cb, buffer, 50) != 0) {
 		perror("ERROR: Failed to initialize command buffer!");
 		return 1;
 	}
 
 	write_cmd(&cb, PRELAUNCH);
 	write_cmd(&cb, LAUNCH_INITIALIZE);
+	write_cmd(&cb, ENTER_STANDBY);
+	write_cmd(&cb, ENTER_STANDBY);
+	write_cmd(&cb, ENTER_STANDBY);
+	write_cmd(&cb, ENTER_STANDBY);
+	write_cmd(&cb, ENTER_STANDBY);
+	write_cmd(&cb, ENTER_SERVICE);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
@@ -99,7 +105,7 @@ int main() {
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	int transitions[NUM_STATES][NUM_CODES]; //transitions
-	int (*fp_arr[NUM_STATES]) (Thresholds, CommandBuffer*);   //state function calls
+	int (*fp_arr[NUM_STATES]) (Thresholds, int);   //state function calls
 
 	//1D array of Function Pointers to state functions
 	fp_arr[STARTUP_SID] = &startup_state;
@@ -121,9 +127,11 @@ int main() {
 	transitions[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
 	transitions[ACCELERATE_SID][ERROR] = ESTOP_SID;
 	transitions[NORMBRAKE_SID][SUCCESS] = IDLE_SID;
-	transitions[NORMBRAKE_SID][ERROR] = ESTOP_SID;
+	transitions[NORMBRAKE_SID][REPEAT] = IDLE_SID;
+	transitions[NORMBRAKE_SID][ERROR] = NORMBRAKE_SID;
 	transitions[ESTOP_SID][SUCCESS] = IDLE_SID;
 	transitions[STANDBY_SID][REPEAT] = STANDBY_SID;
+	transitions[STANDBY_SID][SERVICE] = SERVICE_SID;
 	transitions[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
 	transitions[IDLE_SID][REPEAT] = IDLE_SID;
 	transitions[IDLE_SID][SUCCESS] = STANDBY_SID;
@@ -133,13 +141,16 @@ int main() {
 	printf("################################################################\n");
 
 	//Initial values for state flow
+	int command = 0;
 	int last_state = STARTUP_SID;
-	int return_code = startup_state(thresholds, &cb);
+	int return_code = startup_state(thresholds, command);
 	
 	//main state loop
 	while (1) {
+		read_cmd(&cb, &command);
+
 		last_state = transitions[last_state][return_code];
-		return_code = (*fp_arr[last_state])(thresholds, &cb);
+		return_code = (*fp_arr[last_state])(thresholds, command);
 		//state = transitions[state][(*functions[state])()]
 	}
 

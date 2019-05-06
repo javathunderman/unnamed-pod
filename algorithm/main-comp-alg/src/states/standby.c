@@ -7,11 +7,9 @@
 #define __STANDBY__
 #endif
 
-int standby_state(Thresholds thresholds, CommandBuffer *cb) {
-	int command;
-	read_cmd(cb, &command);
+int standby_state(Thresholds thresholds, int command) {
 
-	printf("STANDBY! Command: %d\n", command);
+	printf(">> STANDBY STATE - Command: %d\n", command);
 	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
 		thresholds.brake_distance, 
 		thresholds.acceleration_distance, 
@@ -29,7 +27,7 @@ int standby_state(Thresholds thresholds, CommandBuffer *cb) {
 	}
 	else if (command == ENTER_SERVICE) {
 		printf("ENTER SERVICE COMMAND RECEIVED!\n");
-		return SUCCESS;
+		return SERVICE;
 	}
 
 	return REPEAT;

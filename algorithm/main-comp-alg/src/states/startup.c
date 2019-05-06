@@ -7,8 +7,8 @@
 #define __INITIALIZE__
 #endif
 
-int startup_state(Thresholds thresholds, CommandBuffer *cb) {
-	printf("STARTUP...\n");
+int startup_state(Thresholds thresholds, int command) {
+	printf(">> STARTUP STATE\n");
 
 	//Do startup stuff here
 

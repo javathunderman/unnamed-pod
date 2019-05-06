@@ -2,7 +2,7 @@
 /* This is where our state includes will live */
 #include "../../../../Telemetry_Framework/Commanding/commands.h"
 typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, NUM_STATES} State; 
-typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 2, ESTOPP = 3, NUM_CODES} State_Status; 
+typedef enum {SUCCESS = 0, REPEAT = 1, SERVICE = 2, ERROR = 3, ESTOPP = 4, NUM_CODES} State_Status; 
 typedef enum {
 	NONE = 0x00, 
 	PRELAUNCH = 0x01, 
@@ -40,14 +40,14 @@ typedef struct {
 	//Mark struct
 } Data;
 
-int startup_state(Thresholds, CommandBuffer*);
-int standby_state(Thresholds, CommandBuffer*);
-int initialize_state(Thresholds, CommandBuffer*);
-int service_state(Thresholds, CommandBuffer*);
-int accelerate_state(Thresholds, CommandBuffer*);
-int normbrake_state(Thresholds, CommandBuffer*);
-int estop_state(Thresholds, CommandBuffer*);
-int idle_state(Thresholds, CommandBuffer*);
+int startup_state(Thresholds, int);
+int standby_state(Thresholds, int);
+int initialize_state(Thresholds, int);
+int service_state(Thresholds, int);
+int accelerate_state(Thresholds, int);
+int normbrake_state(Thresholds, int);
+int estop_state(Thresholds, int);
+int idle_state(Thresholds, int);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0
