@@ -20,14 +20,17 @@ int main() {
 		return 1;
 	}
 
+	//test commands
+	int i = 0;
 	write_cmd(&cb, PRELAUNCH);
 	write_cmd(&cb, LAUNCH_INITIALIZE);
-	write_cmd(&cb, ENTER_STANDBY);
-	write_cmd(&cb, ENTER_STANDBY);
-	write_cmd(&cb, ENTER_STANDBY);
-	write_cmd(&cb, ENTER_STANDBY);
-	write_cmd(&cb, ENTER_STANDBY);
+	for (i = 0; i < 20; i++)
+		write_cmd(&cb, ENTER_STANDBY);
 	write_cmd(&cb, ENTER_SERVICE);
+	write_cmd(&cb, FORWARD_SERVICE_PROPULSION);
+	write_cmd(&cb, SLOW_SERVICE_PROPULSION);
+	write_cmd(&cb, STOP_SERVICE_PROPULSION);
+	write_cmd(&cb, ENTER_STANDBY);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
@@ -94,6 +97,7 @@ int main() {
 		fclose ( config_file );
 	}
 
+	//Edit for manual testing
 	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
 		thresholds.brake_distance, 
 		thresholds.acceleration_distance, 
@@ -104,7 +108,6 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	int transitions[NUM_STATES][NUM_CODES]; //transitions
 	int (*fp_arr[NUM_STATES]) (Thresholds, int);   //state function calls
 
 	//1D array of Function Pointers to state functions
@@ -116,25 +119,6 @@ int main() {
 	fp_arr[NORMBRAKE_SID] = &normbrake_state;
 	fp_arr[ESTOP_SID] = &estop_state;
 	fp_arr[IDLE_SID] = &idle_state;
-
-	//2D Logic state array settings
-	transitions[STARTUP_SID][SUCCESS] = STANDBY_SID;
-	transitions[STARTUP_SID][ERROR] = ESTOP_SID;
-	transitions[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
-	transitions[INITIALIZE_SID][REPEAT] = INITIALIZE_SID;
-	transitions[INITIALIZE_SID][ERROR] = STANDBY_SID;
-	transitions[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
-	transitions[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
-	transitions[ACCELERATE_SID][ERROR] = ESTOP_SID;
-	transitions[NORMBRAKE_SID][SUCCESS] = IDLE_SID;
-	transitions[NORMBRAKE_SID][REPEAT] = IDLE_SID;
-	transitions[NORMBRAKE_SID][ERROR] = NORMBRAKE_SID;
-	transitions[ESTOP_SID][SUCCESS] = IDLE_SID;
-	transitions[STANDBY_SID][REPEAT] = STANDBY_SID;
-	transitions[STANDBY_SID][SERVICE] = SERVICE_SID;
-	transitions[STANDBY_SID][SUCCESS] = INITIALIZE_SID;
-	transitions[IDLE_SID][REPEAT] = IDLE_SID;
-	transitions[IDLE_SID][SUCCESS] = STANDBY_SID;
 	
 	printf("################################################################\n");
 	printf("#                     beginning of run                         #\n");
@@ -142,16 +126,12 @@ int main() {
 
 	//Initial values for state flow
 	int command = 0;
-	int last_state = STARTUP_SID;
-	int return_code = startup_state(thresholds, command);
+	int next_state = startup_state(thresholds, command);
 	
 	//main state loop
 	while (1) {
 		read_cmd(&cb, &command);
-
-		last_state = transitions[last_state][return_code];
-		return_code = (*fp_arr[last_state])(thresholds, command);
-		//state = transitions[state][(*functions[state])()]
+		next_state = (*fp_arr[next_state])(thresholds, command);
 	}
 
 	return 0;

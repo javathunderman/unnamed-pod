@@ -8,17 +8,17 @@
 #endif
 
 int idle_state(Thresholds thresholds, int command) { //keeps high power on, but forbids movement
-	printf(">> IDLE STATE\n");
+	printf(">> IDLE STATE - Command: %d\n", command);
 
 	if (command == EMERGENCY_BRAKE) {
-		return ESTOP;
+		return ESTOP_SID;
 	}
 	//Move to standby
 	else if (command == ENTER_STANDBY) {
 		printf("Command received - Entering standby\n");
-		return SUCCESS;
+		return STANDBY_SID;
 	}
 
-	return REPEAT;
+	return IDLE_SID;
 }
 

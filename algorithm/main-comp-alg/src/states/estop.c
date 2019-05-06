@@ -12,12 +12,12 @@ int estop_state(Thresholds thresholds, int command) {
 	int pod_velocity = 0;
 
 	if (command == EMERGENCY_BRAKE) {
-		return ESTOP;
+		return ESTOP_SID;
 	}
 	else if (pod_velocity < 1) {
 		printf("Entering Idle state!");
-		return SUCCESS;
+		return IDLE_SID;
 	}
 
-	return REPEAT;
+	return ESTOP_SID;
 }

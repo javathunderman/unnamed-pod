@@ -14,5 +14,5 @@ int startup_state(Thresholds thresholds, int command) {
 
 	
 
-	return SUCCESS;
+	return STANDBY_SID;
 }

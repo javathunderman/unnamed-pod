@@ -10,26 +10,26 @@
 int standby_state(Thresholds thresholds, int command) {
 
 	printf(">> STANDBY STATE - Command: %d\n", command);
-	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
+	/*printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
 		thresholds.brake_distance, 
 		thresholds.acceleration_distance, 
 		thresholds.battery_temperature_low, 
 		thresholds.battery_temperature_high, 
-		thresholds.battery_temperature_pers);
+		thresholds.battery_temperature_pers);*/
 
 	//Emergency brake
 	if (command == EMERGENCY_BRAKE) {
-		return ESTOP;
+		return ESTOP_SID;
 	}
 	else if (command == PRELAUNCH) {
 		printf("PRELAUNCH COMMAND RECEIVED!\n");
-		return SUCCESS;
+		return INITIALIZE_SID;
 	}
 	else if (command == ENTER_SERVICE) {
 		printf("ENTER SERVICE COMMAND RECEIVED!\n");
-		return SERVICE;
+		return SERVICE_SID;
 	}
 
-	return REPEAT;
+	return STANDBY_SID;
 }
 

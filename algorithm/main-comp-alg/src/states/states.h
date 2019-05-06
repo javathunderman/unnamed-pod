@@ -2,7 +2,7 @@
 /* This is where our state includes will live */
 #include "../../../../Telemetry_Framework/Commanding/commands.h"
 typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, NUM_STATES} State; 
-typedef enum {SUCCESS = 0, REPEAT = 1, SERVICE = 2, ERROR = 3, ESTOPP = 4, NUM_CODES} State_Status; 
+//typedef enum {SUCCESS = 0, REPEAT = 1, SERVICE = 2, ERROR = 3, ESTOPP = 4, NUM_CODES} State_Status; 
 typedef enum {
 	NONE = 0x00, 
 	PRELAUNCH = 0x01, 

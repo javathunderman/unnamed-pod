@@ -11,26 +11,26 @@ int accelerate_state(Thresholds thresholds, int command) {
 	static int pod_position = 0;
 	int motor_temp = 998; //<- fake temp for logic
 
-	printf(">> ACCELERATING - fake position: %d\n", pod_position);
+	printf(">> ACCELERATE STATE - fake position: %d\n", pod_position);
 
 	//Emergency brake
 	if (command == EMERGENCY_BRAKE || motor_temp > thresholds.motor_temperature_high) {
 		printf("ESTOP: fake position: %d\n", pod_position);
-		return ESTOP;
+		return ESTOP_SID;
 	}
 	//End of tube regular brake
 	else if (thresholds.track_length - pod_position <= thresholds.brake_distance) {
 		printf("NORMAL BRAKE: fake position: %d\n", pod_position);
 		pod_position = 0; //temporary
-		return SUCCESS;
+		return NORMBRAKE_SID;
 	}
 	//Continue to accelerate
 	else {
-		pod_position += 500; //get pod position from IMU and light sensors, logic goes here
+		pod_position += 100; //get pod position from IMU and light sensors, logic goes here
 
 		printf("CONTINUING: fake position: %d\n", pod_position);
 		//FULL THROTTLE!
-		return REPEAT;
+		return ACCELERATE_SID;
 	}
 
 	

@@ -13,16 +13,16 @@ int initialize_state(Thresholds thresholds, int command) {
 	//Do Initialization stuff here
 
 	if (command == EMERGENCY_BRAKE) {
-		return ESTOP;
+		return ESTOP_SID;
 	}
 	if (command == LAUNCH_INITIALIZE) {
 		printf("LAUNCH COMMAND RECEIVED!\n");
-		return SUCCESS;
+		return ACCELERATE_SID;
 	}
 	else if (command == ENTER_STANDBY) {
 		printf("ABORT LAUNCH COMMAND RECEIVED!\n");
-		return SUCCESS;
+		return STANDBY_SID;
 	}
 
-	return REPEAT;
+	return INITIALIZE_SID;
 }
