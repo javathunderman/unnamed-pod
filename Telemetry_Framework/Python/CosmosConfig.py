@@ -24,9 +24,8 @@ def generate_config():
     return config
 
 def define_server_file(config):
-    contents = f'INTERFACE {config["target_name"].upper()}_INT tcpip_client_interface.rb '
-    contents += f'{config["target_ip"]} {config["target_port"]} {config["target_port"]} '
-    contents += 'nil nil BURST\n'
+    contents = f'INTERFACE {config["target_name"].upper()}_INT udp_interface.rb '
+    contents += f'{config["target_ip"]} {config["target_port"]} {config["target_port"]}\n'
     return contents + f'  TARGET {config["target_name"]}\n'
 
 def generate_telemetry_header(config):

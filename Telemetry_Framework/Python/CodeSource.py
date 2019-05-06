@@ -96,10 +96,10 @@ def main_thread(tlm):
     clk = 'CLOCK_MONOTONIC'
     for i in range(0, len(fns)):
         call = fns[i][5:].replace("Telemetry *", "&")
-        main += f'        clock_nanosleep({clk}, 0, &delay_{i+1}, NULL);\n'
+        main += f'        clock_nanosleep({clk}, TIMER_ABSTIME, &delay_{i+1}, NULL);\n'
         main += f'        {call}\n\n'
     
-    main += '        if(sendto(socket, &tlm, PKT_LENGTH, MSG_NOSIGNAL, dest_addr, dest_len) == -1) {\n'
+    main += '        if(sendto(socket, &tlm, PKT_LENGTH, 0, dest_addr, dest_len) == -1) {\n'
     main += '            printf("%s\\n", strerror(errno));\n'
     main += '            break;\n'
     main += '        }\n\n'

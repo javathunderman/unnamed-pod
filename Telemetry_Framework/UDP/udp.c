@@ -49,10 +49,14 @@ void udp_init(void) {
 	}
 
 	/* Accept connection from COSMOS */
-	recvfrom(pod_socket, &buffer, BUFF_LEN, MSG_WAITALL, (SA *) &dest_addr, &dest_len);
+	dest_len = sizeof(dest_addr);
+	recvfrom(pod_socket, &buffer, BUFF_LEN, 0, (SA *) &dest_addr, &dest_len);
+	dest_addr.sin_port = htons(PORT);
+	printf("Received Command!!!\n");
 
 	/* Configure socket with comm loss timeout */
 	setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout));
+	printf("Set SockOpt...\n");
 
 	/* Begin receiving commands */
 
