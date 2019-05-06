@@ -2,6 +2,24 @@
 /* This is where our state includes will live */
 typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5, IDLE_SID = 6, NUM_STATES} State; 
 typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 2, ESTOP = 3, NUM_CODES} State_Status; 
+typedef enum {
+	NONE = 0x00, 
+	PRELAUNCH = 0x01, 
+	ENTER_SERVICE = 0x02, 
+	LAUNCH_INITIALIZE = 0x03, 
+	ABORT_LAUNCH = 0x04, 
+	ENTER_STANDBY = 0x05, 
+	START_SERVICE_PROPULSION = 0x06,
+	STOP_SERVICE_PROPULSION = 0x07,
+	DEPRESSURIZE = 0x08,
+	SLOW_SERVICE_PROPULSION = 0x09,
+	MEDIUM_SERVICE_PROPULSION = 0x0A,
+	FAST_SERVICE_PROPULSION = 0x0B,
+	FORWARD_SERVICE_PROPULSION = 0x0C,
+	BACKWARD_SERVICE_PROPULSION = 0x0D,
+	EMERGENCY_BRAKE = 0xFF
+	} Command; 
+
 
 typedef struct {
 	float track_length;
@@ -15,6 +33,11 @@ typedef struct {
 	float motor_temperature_pers;
 	float i_should_be_unassigned;
 } Thresholds;
+
+typedef struct {
+	Command command;
+	//Mark struct
+} Data;
 
 int standby_state(Thresholds);
 int initialize_state(Thresholds);
