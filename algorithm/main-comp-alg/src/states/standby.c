@@ -7,8 +7,11 @@
 #define __STANDBY__
 #endif
 
-int standby_state(Thresholds thresholds) {
-	printf("STANDBY!\n");
+int standby_state(Thresholds thresholds, CommandBuffer *cb) {
+	int command;
+	read_cmd(cb, &command);
+
+	printf("STANDBY! Command: %d\n", command);
 	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
 		thresholds.brake_distance, 
 		thresholds.acceleration_distance, 
@@ -17,14 +20,14 @@ int standby_state(Thresholds thresholds) {
 		thresholds.battery_temperature_pers);
 
 	//Emergency brake
-	if (estop_command) {
+	if (command == EMERGENCY_BRAKE) {
 		return ESTOP;
 	}
-	else if (prelaunch_command) {
+	else if (command == PRELAUNCH) {
 		printf("PRELAUNCH COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}
-	else if (enter_service_command) {
+	else if (command == ENTER_SERVICE) {
 		printf("ENTER SERVICE COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}

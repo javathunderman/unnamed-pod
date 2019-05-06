@@ -7,18 +7,21 @@
 #define __INITIALIZE__
 #endif
 
-int initialize_state(Thresholds thresholds) {
-	printf("INITIALIZING...\n");
+int initialize_state(Thresholds thresholds, CommandBuffer *cb) {
+	int command;
+	read_cmd(cb, &command);
+
+	printf("INITIALIZING... Command: %d\n", command);
 	//Do Initialization stuff here
 
-	if (launch_command) {
+	if (command == LAUNCH_INITIALIZE) {
 		printf("LAUNCH COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}
-	else if (abort_launch_command) {
+	else if (command == ENTER_STANDBY) {
 		printf("ABORT LAUNCH COMMAND RECEIVED!\n");
 		return SUCCESS;
 	}
 
-	return SUCCESS;
+	return REPEAT;
 }

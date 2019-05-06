@@ -7,7 +7,7 @@
 #define __ACCELERATE__
 #endif
 
-int accelerate_state(Thresholds thresholds) {
+int accelerate_state(Thresholds thresholds, CommandBuffer *cb) {
 	static int pod_position = 0;
 	int motor_temp = 998; //<- fake temp for logic
 

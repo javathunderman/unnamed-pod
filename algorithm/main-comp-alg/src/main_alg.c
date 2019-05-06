@@ -2,17 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-//#include <yaml.h>
 #include "./sensors/sensors.h"
 #include "./states/states.h"
+#include "../../../Telemetry_Framework/Commanding/commands.h"
 
-//typedef enum {STANDBY_SID = 0, INITIALIZE_SID = 1, SERVICE_SID = 2, ACCELERATE_SID = 3, NORMBRAKE_SID = 4, ESTOP_SID = 5} State; 
-//typedef enum {SUCCESS = 0, REPEAT = 1, ERROR = 4, ESTOP = 5} State_Status; 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int main() {
-	Data data;
-	data.command = Command.NONE;
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// COMMAND BUFFER                                                                               //
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	CommandBuffer cb;
+	volatile int buffer[3];
+
+	if (init_cmd_buffer(&cb, buffer, 3) != 0) {
+		perror("ERROR: Failed to initialize command buffer!");
+		return 1;
+	}
+
+	write_cmd(&cb, PRELAUNCH);
+	write_cmd(&cb, LAUNCH_INITIALIZE);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
@@ -90,9 +99,10 @@ int main() {
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	int transitions[NUM_STATES][NUM_CODES]; //transitions
-	int (*fp_arr[NUM_STATES]) (Thresholds);   //state function calls
+	int (*fp_arr[NUM_STATES]) (Thresholds, CommandBuffer*);   //state function calls
 
 	//1D array of Function Pointers to state functions
+	fp_arr[STARTUP_SID] = &startup_state;
 	fp_arr[STANDBY_SID] = &standby_state;
 	fp_arr[INITIALIZE_SID] = &initialize_state;
 	fp_arr[SERVICE_SID] = &service_state;
@@ -102,7 +112,10 @@ int main() {
 	fp_arr[IDLE_SID] = &idle_state;
 
 	//2D Logic state array settings
+	transitions[STARTUP_SID][SUCCESS] = STANDBY_SID;
+	transitions[STARTUP_SID][ERROR] = ESTOP_SID;
 	transitions[INITIALIZE_SID][SUCCESS] = ACCELERATE_SID;
+	transitions[INITIALIZE_SID][REPEAT] = INITIALIZE_SID;
 	transitions[INITIALIZE_SID][ERROR] = STANDBY_SID;
 	transitions[ACCELERATE_SID][REPEAT] = ACCELERATE_SID;
 	transitions[ACCELERATE_SID][SUCCESS] = NORMBRAKE_SID;
@@ -120,13 +133,13 @@ int main() {
 	printf("################################################################\n");
 
 	//Initial values for state flow
-	int last_state = STANDBY_SID;
-	int return_code = standby_state(thresholds);
+	int last_state = STARTUP_SID;
+	int return_code = startup_state(thresholds, &cb);
 	
 	//main state loop
 	while (1) {
 		last_state = transitions[last_state][return_code];
-		return_code = (*fp_arr[last_state])(thresholds);
+		return_code = (*fp_arr[last_state])(thresholds, &cb);
 		//state = transitions[state][(*functions[state])()]
 	}
 

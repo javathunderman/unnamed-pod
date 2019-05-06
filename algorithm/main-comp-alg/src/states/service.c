@@ -7,7 +7,7 @@
 #define __SERVICE__
 #endif
 
-int service_state(Thresholds thresholds) {
+int service_state(Thresholds thresholds, CommandBuffer *cb) {
 	printf("SERVICE MODE BEEP BOOP!\n");
 
 	return SUCCESS;
