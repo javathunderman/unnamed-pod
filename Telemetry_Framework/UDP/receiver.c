@@ -11,11 +11,12 @@ void *recv_cmds(void *args) {
     char buffer[RECV_LEN];
     int cmd, len;
 
+    printf("Entered receiver.c\n");
     while (1) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */
         len = recvfrom(sock, &buffer, RECV_LEN, 0, NULL, NULL);
         if (len == -1) {
-            printf("Receiver Error");
+            printf("Receiver Error\n");
             //TODO Comm Loss
         }
 
@@ -23,10 +24,10 @@ void *recv_cmds(void *args) {
         if (len == 8 && *((int *)&buffer) == 0xC0DE) {
             cmd = *(((int *)&buffer) + 1); 
             if (write_cmd(cb, cmd) == 0) {
-                printf("Received: %d", cmd);
+                printf("Received: %d\n", cmd);
                 //TODO Telemeter success
             } else {
-                printf("Invalid Command: %d", cmd);
+                printf("Invalid Command: %d\n", cmd);
                 //TODO Comm Loss
             }
         }

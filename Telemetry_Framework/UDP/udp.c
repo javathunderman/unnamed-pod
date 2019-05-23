@@ -15,7 +15,7 @@
 #define US_IN_SEC 1000000
 
 /* Global variables for thread arguments */
-ReceiverArgs *ra;
+ReceiverArgs ra;
 
 
 
@@ -65,11 +65,13 @@ int udp_init(CommandBuffer *cmd_buff) {
     printf("Set SockOpt...\n");
 
     /* Begin receiving commands */
-    ra->sock = pod_socket;
-    ra->cb = cmd_buff;
-    if (pthread_create(&recv_tid, NULL, recv_cmds, ra) != 0) {
+    ra.sock = pod_socket;
+    ra.cb = cmd_buff;
+    if (pthread_create(&recv_tid, NULL, recv_cmds, &ra) != 0) {
         printf("recv_cmds pthread create failed...\n");
         exit(-3);
+    } else {
+        printf("Created receiver thread...\n");
     }
 
     /* Begin sending telemetry */
