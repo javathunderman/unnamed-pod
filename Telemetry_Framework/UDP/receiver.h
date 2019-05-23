@@ -8,5 +8,6 @@ typedef struct {
 
 
 void *recv_cmds(void *args);
+int verify_cmd(int cmd);
 
 #endif

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sys/socket.h>
+#include <stdbool.h>
 #include "commands.h"
 #include "receiver.h"
 
@@ -23,15 +24,23 @@ void *recv_cmds(void *args) {
         /* Verify magic word, pass command to state machine */
         if (len == 8 && *((int *)&buffer) == 0xC0DE) {
             cmd = *(((int *)&buffer) + 1); 
-            if (write_cmd(cb, cmd) == 0) {
+            if (verify_cmd(cmd) && (write_cmd(cb, cmd) == 0)) {
                 printf("Received: %d\n", cmd);
                 //TODO Telemeter success
             } else {
-                printf("Invalid Command: %d\n", cmd);
-                //TODO Comm Loss
+                if (cmd != NONE) {
+                    printf("Invalid Command: %d\n", cmd);
+                    //TODO Comm Loss
+                }
             }
         }
     }
 }
 
-
+int verify_cmd(int cmd) {
+    if (cmd == EMERGENCY_BRAKE || (cmd > 0 && cmd < NUM_COMMANDS)) {
+        return true;
+    }
+    
+    return false;
+}
