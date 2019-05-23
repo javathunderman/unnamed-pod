@@ -107,3 +107,7 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+# LabView Ignore files
+*.aliases
+*.lvlps

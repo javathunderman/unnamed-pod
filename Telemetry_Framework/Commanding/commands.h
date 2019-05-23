@@ -3,9 +3,28 @@
 
 #include <pthread.h>
 
-#define NOOP  0x00
-#define ESTOP 0xFF
 #define ACK   0xF0
+
+
+typedef enum {
+    NONE = 0x00, 
+    PRELAUNCH = 0x01, 
+    ENTER_SERVICE = 0x02, 
+    LAUNCH_INITIALIZE = 0x03, 
+    ABORT_LAUNCH = 0x04, 
+    ENTER_STANDBY = 0x05, 
+    START_SERVICE_PROPULSION = 0x06,
+    STOP_SERVICE_PROPULSION = 0x07,
+    DEPRESSURIZE = 0x08,
+    SLOW_SERVICE_PROPULSION = 0x09,
+    MEDIUM_SERVICE_PROPULSION = 0x0A,
+    FAST_SERVICE_PROPULSION = 0x0B,
+    FORWARD_SERVICE_PROPULSION = 0x0C,
+    BACKWARD_SERVICE_PROPULSION = 0x0D,
+    
+    NUM_COMMANDS,
+    EMERGENCY_BRAKE = 0xFF
+} Command; 
 
 typedef struct {
     volatile int *buffer;

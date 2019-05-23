@@ -23,7 +23,7 @@
 int init_cmd_buffer(CommandBuffer *cb, volatile int *buff, int max_length) {
     cb->head = 0;
     cb->tail = 0;
-    cb->estop = NOOP;
+    cb->estop = NONE;
     cb->size = max_length;
     cb->buffer = buff;
     int retval = pthread_mutex_init(&(cb->mutex), NULL);
@@ -46,11 +46,11 @@ int write_cmd(CommandBuffer *cb, int cmd) {
     int error = pthread_mutex_lock(&(cb->mutex));
     
     if (!error) {
-        if (cmd == ESTOP) {
+        if (cmd == EMERGENCY_BRAKE) {
             if (cb->estop == ACK) {
-                cb->estop = NOOP;
+                cb->estop = NONE;
             } else {
-                cb->estop = ESTOP;
+                cb->estop = EMERGENCY_BRAKE;
             }
         } else if ((cb->tail + 1 == cb->head) || ((cb->tail + 1 == cb->size) && cb->head == 0)) {
             /* Buffer is full */
@@ -69,7 +69,7 @@ int write_cmd(CommandBuffer *cb, int cmd) {
 /* This function reads one command from the buffer.
  * Commands will be read from the buffer in FIFO fashion.
  * This function is non-blocking, see pthread_mutex_trylock().
- * If ESTOP is received, no other commands can be read until
+ * If EMERGENCY_BRAKE is received, no other commands can be read until
  * appropriate action is taken and ack_estop() is called.
  *
  * Params:
@@ -86,12 +86,12 @@ int read_cmd(CommandBuffer *cb, int *cmd) {
     int error = pthread_mutex_trylock(&(cb->mutex));
     
     if (!error) {
-        if (cb->estop == ESTOP) {
+        if (cb->estop == EMERGENCY_BRAKE) {
             /* Need to ack_estop() to clear */
-            *cmd = ESTOP;
+            *cmd = EMERGENCY_BRAKE;
         } else if (cb->head == cb->tail) {
             /* Buffer empty */
-            *cmd = NOOP;
+            *cmd = NONE;
         } else {
             /* Read command, increment head */
             *cmd = (cb->buffer)[(cb->head)];
@@ -103,9 +103,9 @@ int read_cmd(CommandBuffer *cb, int *cmd) {
     return error;
 }
 
-/* This function acknowledges ESTOP.
+/* This function acknowledges EMERGENCY_BRAKE.
  * This function is non-blocking, see pthread_mutex_trylock().
- * This should be called after reading ESTOP from the buffer and taking 
+ * This should be called after reading EMERGENCY_BRAKE from the buffer and taking 
  * appropriate action.
  *
  * Params:
@@ -117,7 +117,7 @@ int read_cmd(CommandBuffer *cb, int *cmd) {
  *     else  -> mutex failure
  */
 int ack_estop(CommandBuffer *cb) {
-    /* TODO: Figure out how to tell control to stop spamming ESTOP */
+    /* TODO: Figure out how to tell control to stop spamming EMERGENCY_BRAKE */
     
     int error = pthread_mutex_trylock(&(cb->mutex));
     
