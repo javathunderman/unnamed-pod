@@ -7,7 +7,7 @@
 #define __NORMBRAKE__
 #endif
 
-int normbrake_state(Thresholds thresholds, int command) {
+int normbrake_state(Thresholds *thresholds, int command) {
 	static int pod_vel = 250;
 	printf(">> NORMAL BRAKE STATE - %d %d\n", pod_vel, acknowledge_command);
 

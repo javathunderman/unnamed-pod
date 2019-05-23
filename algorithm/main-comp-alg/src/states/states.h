@@ -40,14 +40,14 @@ typedef struct {
 	//Mark struct
 } Data;
 
-int startup_state(Thresholds, int);
-int standby_state(Thresholds, int);
-int initialize_state(Thresholds, int);
-int service_state(Thresholds, int);
-int accelerate_state(Thresholds, int);
-int normbrake_state(Thresholds, int);
-int estop_state(Thresholds, int);
-int idle_state(Thresholds, int);
+int startup_state(Thresholds*, int);
+int standby_state(Thresholds*, int);
+int initialize_state(Thresholds*, int);
+int service_state(Thresholds*, int);
+int accelerate_state(Thresholds*, int);
+int normbrake_state(Thresholds*, int);
+int estop_state(Thresholds*, int);
+int idle_state(Thresholds*, int);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0

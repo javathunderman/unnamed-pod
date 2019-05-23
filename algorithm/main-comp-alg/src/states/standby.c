@@ -7,7 +7,7 @@
 #define __STANDBY__
 #endif
 
-int standby_state(Thresholds thresholds, int command) {
+int standby_state(Thresholds *thresholds, int command) {
 
 	printf(">> STANDBY STATE - Command: %d\n", command);
 	/*printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
