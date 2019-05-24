@@ -16,7 +16,7 @@
 
 /* Global variables for thread arguments */
 ReceiverArgs ra;
-
+TelemetryArgs ta;
 
 
 int udp_init(CommandBuffer *cmd_buff) {
@@ -31,7 +31,7 @@ int udp_init(CommandBuffer *cmd_buff) {
     pod_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (pod_socket == -1) {
         printf("Socket creation failed...\n");
-        exit(-1);
+        return -1;
     } else {
         printf("Created socket...\n");
     }
@@ -49,7 +49,7 @@ int udp_init(CommandBuffer *cmd_buff) {
     if ((bind(pod_socket, (SA *) &servaddr, sizeof(servaddr))) != 0) {
         printf("Socket bind failed...\n");
         printf("%s\n", strerror(errno));
-        exit(-2);
+        return -2;
     } else {
         printf("Bound socket...\n");
     }
@@ -69,14 +69,23 @@ int udp_init(CommandBuffer *cmd_buff) {
     ra.cb = cmd_buff;
     if (pthread_create(&recv_tid, NULL, recv_cmds, &ra) != 0) {
         printf("recv_cmds pthread create failed...\n");
-        exit(-3);
+        return -3;
     } else {
         printf("Created receiver thread...\n");
     }
 
     /* Begin sending telemetry */
-    send_tlm(pod_socket, (SA *) &dest_addr, dest_len);
+    ta.socket = pod_socket;
+    ta.dest_addr = (SA *) &dest_addr;
+    ta.dest_len = dest_len;
+    if (pthread_create(&send_tid, NULL, send_tlm, &ta) != 0) {
+        printf("send_tlm pthread create failed...\n");
+        return -4;
+    } else {
+        printf("Created telemetry thread...\n");
+    }
 
     /* Return success */
+    //TODO something with tids
     return 0;
 }
