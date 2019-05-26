@@ -7,7 +7,7 @@
 #define __SERVICE__
 #endif
 
-int service_state(Thresholds thresholds, int command) {
+int service_state(Thresholds *thresholds, int command) {
 	printf(">> SERVICE STATE\n");
 
 	if (command == EMERGENCY_BRAKE) {

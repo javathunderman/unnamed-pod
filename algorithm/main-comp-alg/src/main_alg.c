@@ -108,7 +108,7 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	int (*fp_arr[NUM_STATES]) (Thresholds, int);   //state function calls
+	int (*fp_arr[NUM_STATES]) (Thresholds *, int);   //state function calls
 
 	//1D array of Function Pointers to state functions
 	fp_arr[STARTUP_SID] = &startup_state;
@@ -126,12 +126,12 @@ int main() {
 
 	//Initial values for state flow
 	int command = 0;
-	int next_state = startup_state(thresholds, command);
+	int next_state = startup_state(&thresholds, command);
 	
 	//main state loop
 	while (1) {
 		read_cmd(&cb, &command);
-		next_state = (*fp_arr[next_state])(thresholds, command);
+		next_state = (*fp_arr[next_state])(&thresholds, command);
 	}
 
 	return 0;

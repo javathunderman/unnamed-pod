@@ -3,23 +3,6 @@
 #include "../../../../Telemetry_Framework/Commanding/commands.h"
 typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, NUM_STATES} State; 
 //typedef enum {SUCCESS = 0, REPEAT = 1, SERVICE = 2, ERROR = 3, ESTOPP = 4, NUM_CODES} State_Status; 
-typedef enum {
-	NONE = 0x00, 
-	PRELAUNCH = 0x01, 
-	ENTER_SERVICE = 0x02, 
-	LAUNCH_INITIALIZE = 0x03, 
-	ABORT_LAUNCH = 0x04, 
-	ENTER_STANDBY = 0x05, 
-	START_SERVICE_PROPULSION = 0x06,
-	STOP_SERVICE_PROPULSION = 0x07,
-	DEPRESSURIZE = 0x08,
-	SLOW_SERVICE_PROPULSION = 0x09,
-	MEDIUM_SERVICE_PROPULSION = 0x0A,
-	FAST_SERVICE_PROPULSION = 0x0B,
-	FORWARD_SERVICE_PROPULSION = 0x0C,
-	BACKWARD_SERVICE_PROPULSION = 0x0D,
-	EMERGENCY_BRAKE = 0xFF
-	} Command; 
 
 
 typedef struct {
@@ -40,14 +23,14 @@ typedef struct {
 	//Mark struct
 } Data;
 
-int startup_state(Thresholds, int);
-int standby_state(Thresholds, int);
-int initialize_state(Thresholds, int);
-int service_state(Thresholds, int);
-int accelerate_state(Thresholds, int);
-int normbrake_state(Thresholds, int);
-int estop_state(Thresholds, int);
-int idle_state(Thresholds, int);
+int startup_state(Thresholds*, int);
+int standby_state(Thresholds*, int);
+int initialize_state(Thresholds*, int);
+int service_state(Thresholds*, int);
+int accelerate_state(Thresholds*, int);
+int normbrake_state(Thresholds*, int);
+int estop_state(Thresholds*, int);
+int idle_state(Thresholds*, int);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0

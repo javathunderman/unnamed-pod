@@ -7,7 +7,7 @@
 #define __ESTOP__
 #endif
 
-int estop_state(Thresholds thresholds, int command) {
+int estop_state(Thresholds *thresholds, int command) {
 	printf("EMERGENCY STOP!\n");
 	int pod_velocity = 0;
 

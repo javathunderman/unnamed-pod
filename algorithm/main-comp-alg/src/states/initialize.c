@@ -7,7 +7,7 @@
 #define __INITIALIZE__
 #endif
 
-int initialize_state(Thresholds thresholds, int command) {
+int initialize_state(Thresholds *thresholds, int command) {
 
 	printf(">> INITIALIZE STATE - Command: %d\n", command);
 	//Do Initialization stuff here
