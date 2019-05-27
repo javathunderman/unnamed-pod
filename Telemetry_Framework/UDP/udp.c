@@ -18,8 +18,24 @@
 ReceiverArgs ra;
 TelemetryArgs ta;
 
-
-int udp_init(CommandBuffer *cmd_buff) {
+/* This function initializes external communication via UDP.
+ * This function will wait to receive one message from the host and then
+ * launch 3 communication threads.
+ *     1) Command Receiver Thread
+ *     2) Pod Telemetry Thread (to host)
+ *     3) Special Telemetry Thread (to SpaceX)
+ *
+ * Params:
+ *     CommandBuffer *cb -> pointer to initialized CommandBuffer
+ *
+ * Returns:
+ *      0 -> success
+ *     -1 -> socket creation failure
+ *     -2 -> socket bind failure
+ *     -3 -> cmd thread creation failure
+ *     -4 -> tlm thread creation failure
+ */
+int udp_init(CommandBuffer *cb) {
     int pod_socket;
     pthread_t recv_tid, send_tid;
     socklen_t dest_len;
@@ -66,7 +82,7 @@ int udp_init(CommandBuffer *cmd_buff) {
 
     /* Begin receiving commands */
     ra.sock = pod_socket;
-    ra.cb = cmd_buff;
+    ra.cb = cb;
     if (pthread_create(&recv_tid, NULL, recv_cmds, &ra) != 0) {
         printf("recv_cmds pthread create failed...\n");
         return -3;
