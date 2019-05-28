@@ -32,8 +32,10 @@ TelemetryArgs ta;
  *      0 -> success
  *     -1 -> socket creation failure
  *     -2 -> socket bind failure
- *     -3 -> cmd thread creation failure
- *     -4 -> tlm thread creation failure
+ *     -3 -> recvfrom failure
+ *     -4 -> setsockopt failure
+ *     -5 -> cmd thread creation failure
+ *     -6 -> tlm thread creation failure
  */
 int udp_init(CommandBuffer *cb) {
     int pod_socket;
@@ -46,10 +48,10 @@ int udp_init(CommandBuffer *cb) {
     /* Create pod socket */
     pod_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (pod_socket == -1) {
-        printf("Socket creation failed...\n");
+        printf("Pod socket creation failed...\n");
         return -1;
     } else {
-        printf("Created socket...\n");
+        printf("Created pod socket...\n");
     }
 
     /* Zero out servaddr and client */
@@ -72,20 +74,29 @@ int udp_init(CommandBuffer *cb) {
 
     /* Accept connection from COSMOS */
     dest_len = sizeof(dest_addr);
-    recvfrom(pod_socket, &buffer, BUFF_LEN, 0, (SA *) &dest_addr, &dest_len);
+    if (recvfrom(pod_socket, &buffer, BUFF_LEN, 0, (SA *) &dest_addr, &dest_len) == -1) {
+        printf("COSMOS connection failed at recvfrom()\n");
+        return -3;
+    } else {
+        printf("Received COSMOS connection!\n");
+    }
     dest_addr.sin_port = htons(PORT);
-    printf("Received Command!!!\n");
+
 
     /* Configure socket with comm loss timeout */
-    setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout));
-    printf("Set SockOpt...\n");
+    if (setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout)) == -1) {
+        printf("setsockopt failure...\n");
+        exit -4;
+    } else {
+        printf("Set timeout sockopt...\n");
+    }
 
     /* Begin receiving commands */
     ra.sock = pod_socket;
     ra.cb = cb;
     if (pthread_create(&recv_tid, NULL, recv_cmds, &ra) != 0) {
         printf("recv_cmds pthread create failed...\n");
-        return -3;
+        return -5;
     } else {
         printf("Created receiver thread...\n");
     }
@@ -96,7 +107,7 @@ int udp_init(CommandBuffer *cb) {
     ta.dest_len = dest_len;
     if (pthread_create(&send_tid, NULL, send_tlm, &ta) != 0) {
         printf("send_tlm pthread create failed...\n");
-        return -4;
+        return -6;
     } else {
         printf("Created telemetry thread...\n");
     }

@@ -31,7 +31,7 @@ typdef struct {
 
 int init_spacex(void);
 int send_spacex(Telemetry *tlm);
-SpaceXState convert_state(Telemetry *tlm);
+SpaceXState convert_state(int pod_state);
 
 
 #endif
