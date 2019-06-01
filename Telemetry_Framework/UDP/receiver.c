@@ -6,13 +6,24 @@
 
 #define RECV_LEN 100
 
+
+/* This function runs as a thread continuously to receive commands.
+ * Commands are written to a command buffer used by the state machine.
+ * Invalid commands and timeout trigger comm loss condition.
+ * 
+ * Params:
+ *     int sock -> socket (timeout already configured: see udp.c)
+ * 
+ * Returns:
+ *     Never
+ *     TODO Comm loss will trigger signal
+ */
 void *recv_cmds(void *args) {
     int sock = ((ReceiverArgs *)args)->sock;
     CommandBuffer *cb = ((ReceiverArgs *)args)->cb;
     char buffer[RECV_LEN];
     int cmd, len;
 
-    printf("Entered receiver.c\n");
     while (1) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */
         len = recvfrom(sock, &buffer, RECV_LEN, 0, NULL, NULL);
@@ -37,6 +48,15 @@ void *recv_cmds(void *args) {
     }
 }
 
+/* This function checks the validity of a received command.
+ * 
+ * Params:
+ *     int cmd -> received from host
+ * 
+ * Returns:
+ *     true  -> valid command
+ *     false -> invalid command
+ */
 int verify_cmd(int cmd) {
     if (cmd == EMERGENCY_BRAKE || (cmd > 0 && cmd < NUM_COMMANDS)) {
         return true;

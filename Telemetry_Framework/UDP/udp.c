@@ -18,8 +18,26 @@
 ReceiverArgs ra;
 TelemetryArgs ta;
 
-
-int udp_init(CommandBuffer *cmd_buff) {
+/* This function initializes external communication via UDP.
+ * This function will wait to receive one message from the host and then
+ * launch 3 communication threads.
+ *     1) Command Receiver Thread
+ *     2) Pod Telemetry Thread (to host)
+ *     3) Special Telemetry Thread (to SpaceX)
+ *
+ * Params:
+ *     CommandBuffer *cb -> pointer to initialized CommandBuffer
+ *
+ * Returns:
+ *      0 -> success
+ *     -1 -> socket creation failure
+ *     -2 -> socket bind failure
+ *     -3 -> recvfrom failure
+ *     -4 -> setsockopt failure
+ *     -5 -> cmd thread creation failure
+ *     -6 -> tlm thread creation failure
+ */
+int udp_init(CommandBuffer *cb) {
     int pod_socket;
     pthread_t recv_tid, send_tid;
     socklen_t dest_len;
@@ -30,10 +48,10 @@ int udp_init(CommandBuffer *cmd_buff) {
     /* Create pod socket */
     pod_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (pod_socket == -1) {
-        printf("Socket creation failed...\n");
+        printf("Pod socket creation failed...\n");
         return -1;
     } else {
-        printf("Created socket...\n");
+        printf("Created pod socket...\n");
     }
 
     /* Zero out servaddr and client */
@@ -56,20 +74,29 @@ int udp_init(CommandBuffer *cmd_buff) {
 
     /* Accept connection from COSMOS */
     dest_len = sizeof(dest_addr);
-    recvfrom(pod_socket, &buffer, BUFF_LEN, 0, (SA *) &dest_addr, &dest_len);
+    if (recvfrom(pod_socket, &buffer, BUFF_LEN, 0, (SA *) &dest_addr, &dest_len) == -1) {
+        printf("COSMOS connection failed at recvfrom()\n");
+        return -3;
+    } else {
+        printf("Received COSMOS connection!\n");
+    }
     dest_addr.sin_port = htons(PORT);
-    printf("Received Command!!!\n");
+
 
     /* Configure socket with comm loss timeout */
-    setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout));
-    printf("Set SockOpt...\n");
+    if (setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout)) == -1) {
+        printf("setsockopt failure...\n");
+        exit -4;
+    } else {
+        printf("Set timeout sockopt...\n");
+    }
 
     /* Begin receiving commands */
     ra.sock = pod_socket;
-    ra.cb = cmd_buff;
+    ra.cb = cb;
     if (pthread_create(&recv_tid, NULL, recv_cmds, &ra) != 0) {
         printf("recv_cmds pthread create failed...\n");
-        return -3;
+        return -5;
     } else {
         printf("Created receiver thread...\n");
     }
@@ -80,7 +107,7 @@ int udp_init(CommandBuffer *cmd_buff) {
     ta.dest_len = dest_len;
     if (pthread_create(&send_tid, NULL, send_tlm, &ta) != 0) {
         printf("send_tlm pthread create failed...\n");
-        return -4;
+        return -6;
     } else {
         printf("Created telemetry thread...\n");
     }
