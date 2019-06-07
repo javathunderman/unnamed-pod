@@ -86,7 +86,7 @@ int udp_init(CommandBuffer *cb) {
     /* Configure socket with comm loss timeout */
     if (setsockopt(pod_socket, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout)) == -1) {
         printf("setsockopt failure...\n");
-        exit -4;
+        return -4;
     } else {
         printf("Set timeout sockopt...\n");
     }
