@@ -4,13 +4,15 @@
 #include <unistd.h>
 #include "./sensors/sensors.h"
 #include "./states/states.h"
-#include "../../../Telemetry_Framework/Commanding/commands.h"
+#include "./comm/commands.h"
+#include "./comm/spacex.h"
+#include "./comm/udp.h"
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	// COMMAND BUFFER                                                                               //
+	// INIT COMMAND BUFFER                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	CommandBuffer cb;
 	volatile int buffer[50];
@@ -20,17 +22,12 @@ int main() {
 		return 1;
 	}
 
-	//test commands
-	int i = 0;
-	write_cmd(&cb, PRELAUNCH);
-	write_cmd(&cb, LAUNCH_INITIALIZE);
-	for (i = 0; i < 20; i++)
-		write_cmd(&cb, ENTER_STANDBY);
-	write_cmd(&cb, ENTER_SERVICE);
-	write_cmd(&cb, FORWARD_SERVICE_PROPULSION);
-	write_cmd(&cb, SLOW_SERVICE_PROPULSION);
-	write_cmd(&cb, STOP_SERVICE_PROPULSION);
-	write_cmd(&cb, ENTER_STANDBY);
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// INIT SPACEX TELEMETRY                                                                        //
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	if (init_spacex() != 0) {
+		return 2;
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
@@ -104,6 +101,13 @@ int main() {
 		thresholds.battery_temperature_low, 
 		thresholds.battery_temperature_high, 
 		thresholds.battery_temperature_pers);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// INIT UDP COMMUNICATION                                                                       //
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	if(udp_init(&cb) != 0) {
+		return 3;
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //

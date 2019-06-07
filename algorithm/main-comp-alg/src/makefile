@@ -1,35 +1,53 @@
-main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o
-	gcc -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o -lpthread 
-	
-main_alg.o: main_alg.c ./states/states.h ./sensors/sensors.h
-	gcc -c main_alg.c
+CC = gcc
+CFLAGS = -I${COMM} -I${STATES} -pthread
+COMM = ./comm
+STATES = ./states
+SENS = ./sensors
 
-commands.o: ../../../Telemetry_Framework/Commanding/commands.c ../../../Telemetry_Framework/Commanding/commands.h
-	gcc -c ../../../Telemetry_Framework/Commanding/commands.c -lpthread 
+main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o
+	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o
 
-accelerate.o: ./states/accelerate.c ./states/states.h
-	gcc -c ./states/accelerate.c 
-	
-estop.o: ./states/estop.c ./states/states.h
-	gcc -c ./states/estop.c 
-	
-initialize.o: ./states/initialize.c ./states/states.h
-	gcc -c ./states/initialize.c 
-	
-normbrake.o: ./states/normbrake.c ./states/states.h
-	gcc -c ./states/normbrake.c 
-	
-service.o: ./states/service.c ./states/states.h
-	gcc -c ./states/service.c 
+main_alg.o: main_alg.c ${STATES}/states.h ${SENS}/sensors.h ${COMM}/commands.h ${COMM}/udp.h
+	${CC} ${CFLAGS} -c main_alg.c
 
-startup.o: ./states/startup.c ./states/states.h
-	gcc -c ./states/startup.c 
+accelerate.o: ${STATES}/accelerate.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/accelerate.c 
 
-standby.o: ./states/standby.c ./states/states.h
-	gcc -c ./states/standby.c 
+estop.o: ${STATES}/estop.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/estop.c 
 
-idle.o: ./states/idle.c ./states/states.h
-	gcc -c ./states/idle.c 
+initialize.o: ${STATES}/initialize.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/initialize.c 
+
+normbrake.o: ${STATES}/normbrake.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/normbrake.c 
+
+service.o: ${STATES}/service.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/service.c 
+
+startup.o: ${STATES}/startup.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/startup.c 
+
+standby.o: ${STATES}/standby.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/standby.c 
+
+idle.o: ${STATES}/idle.c ${STATES}/states.h
+	${CC} ${CFLAGS} -c ${STATES}/idle.c 
+
+commands.o: ${COMM}/commands.c ${COMM}/commands.h
+	${CC} ${CFLAGS} -c ${COMM}/commands.c
+
+udp.o: ${COMM}/udp.c ${COMM}/commands.h ${COMM}/receiver.h ${COMM}/telemetry.h ${COMM}/udp.h
+	${CC} ${CFLAGS} -c ${COMM}/udp.c
+
+receiver.o: ${COMM}/receiver.c ${COMM}/commands.h ${COMM}/receiver.h
+	${CC} ${CFLAGS} -c ${COMM}/receiver.c 
+
+telemetry.o: ${COMM}/telemetry.c ${COMM}/telemetry.h
+	${CC} ${CFLAGS} -c ${COMM}/telemetry.c
+
+spacex.o: ${COMM}/spacex.c ${COMM}/spacex.h ${COMM}/telemetry.h
+	${CC} ${CFLAGS} -c ${COMM}/spacex.c
 
 .PHONY: clean
 
