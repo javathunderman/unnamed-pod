@@ -11,9 +11,9 @@
  * thread access.
  */
 typedef struct {
-    volatile short pack_soc;
-    volatile short pack_voltage;
-    volatile short pack_current;
+    volatile short pack_soc;               /* Percent         */
+    volatile short pack_voltage;           /* deci-Volts      */
+    volatile short pack_current;           /* deci-Amps       */
 } CAN_Data;
 
 

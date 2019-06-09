@@ -15,9 +15,9 @@
  *     void
  */
 void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
-    short pack_soc = (short)(msg->Data[0]);
-    short pack_voltage = (short)(msg->Data[2]);
-    short pack_current = (short)(msg->Data[4]);
+    short pack_soc     = *((short *) (&(msg->Data[0])));
+    short pack_voltage = *((short *) (&(msg->Data[2])));
+    short pack_current = *((short *) (&(msg->Data[4])));
     
     __atomic_store_n(&(data->pack_soc), pack_soc, __ATOMIC_RELAXED);
     __atomic_store_n(&(data->pack_voltage), pack_voltage, __ATOMIC_RELAXED);
