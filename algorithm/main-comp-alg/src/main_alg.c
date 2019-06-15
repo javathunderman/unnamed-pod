@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "./sensors/sensors.h"
-#include "./states/states.h"
-#include "./comm/commands.h"
-#include "./comm/spacex.h"
-#include "./comm/udp.h"
+#include "sensors.h"
+#include "states.h"
+#include "commands.h"
+#include "spacex.h"
+#include "udp.h"
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
