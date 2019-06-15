@@ -33,15 +33,16 @@ int main() {
 	// CONFIG LOADING CODE                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	Thresholds thresholds;
-	char filename[] = "config.csv";
-	FILE *config_file = fopen(filename, "r");
+	char path[] = __FILE__;
+	strcpy(&path[strlen(__FILE__)-10], "config.csv");
+	FILE *config_file = fopen(path, "r");
 
 	printf("################################################################\n");
 	printf("#                       reading csv                            #\n");
 	printf("################################################################\n");
 
 	if ( config_file == NULL ) { /* error opening file */
-		printf("ERROR: cannot open file: %s\n", filename);
+		printf("ERROR: cannot open file: %s\n", path);
 		return 0;
 	}
 	else {
