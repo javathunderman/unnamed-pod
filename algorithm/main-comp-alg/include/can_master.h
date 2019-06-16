@@ -15,30 +15,54 @@ typedef enum {
 
 typedef enum {
     /* Isolation Monitor */
-    ISO_STATE,
-    ISO_RESISTANCE,
-    ISO_ERROR,
-    LIPO_VOLTAGE,
+    ISO_STATE_TX,
+    ISO_RESISTANCE_TX,
+    ISO_ERROR_TX,
+    LIPO_VOLTAGE_TX,
     
     /* Motor Controller */
-    READY_TO_TRANSMIT,
-    DISABLE_MOTOR,
-    ENABLE_MOTOR,
-    TRANSMIT_ENABLE,
-    ACCEL_RAMP,
-    DECEL_RAMP,
-    STOP_MOTOR,
-    SET_SPEED,
-    MAX_SPEED,
-    DEVICE_CURRENT,
-    CURRENT_200PC,
-    ACTUAL_SPEED,
-    ACTUAL_CURRENT,
-    ACTUAL_POSITION,
-    
+    READY_TO_TRANSMIT_TX,
+    DISABLE_MOTOR_TX,
+    ENABLE_MOTOR_TX,
+    TRANSMIT_ENABLE_TX,
+    ACCEL_RAMP_TX,
+    DECEL_RAMP_TX,
+    STOP_MOTOR_TX,
+    SET_SPEED_TX,
+    MAX_SPEED_TX,
+    DEVICE_CURRENT_TX,
+    CURRENT_200PC_TX,
+    ACTUAL_SPEED_TX,
+    ACTUAL_CURRENT_TX,
+    ACTUAL_POSITION_TX,
     
     NUM_CAN_REQUESTS
 } CAN_Request;
+
+typedef enum {
+    /* Battery Management System */
+    BMS_PACK_RX,
+    BMS_OTHER_RX,
+    BMS_ERROR_RX,
+    
+    /* Isolation Monitor */
+    ISO_STATE_RX,
+    ISO_RESISTANCE_RX,
+    ISO_ERROR_RX,
+    LIPO_VOLTAGE_RX,
+    
+    /* Motor Controller */
+    READY_TO_TRANSMIT_RX,
+    TRANSMIT_ENABLE_RX,
+    MAX_SPEED_RX,
+    DEVICE_CURRENT_RX,
+    CURRENT_200PC_RX,
+    ACTUAL_SPEED_RX,
+    ACTUAL_CURRENT_RX,
+    ACTUAL_POSITION_RX,
+    
+    NUM_CAN_RESPONSES
+} CAN_Response;
 
 /* This struct holds data received from CAN devices to be used
  * by the state machine.
@@ -68,5 +92,9 @@ typedef struct {
 
 /* Used by state machine */
 int can_send(CAN_Request, CAN_Data *data);
+
+/* CAN master thread */
+void *can_master(void *args);
+
 
 #endif
