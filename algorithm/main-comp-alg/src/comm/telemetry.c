@@ -4,6 +4,7 @@
 #include <time.h>
 #include <errno.h>
 #include <stdio.h>
+#include "spacex.h"
 #include "telemetry.h"
 
 
@@ -40,7 +41,11 @@ void *send_tlm(void *args) {
 
         if(sendto(socket, &tlm, PKT_LENGTH, 0, dest_addr, dest_len) == -1) {
             printf("%s\n", strerror(errno));
-            break;
+            //TODO: Comm Loss
+        }
+
+        if(send_spacex(&tlm) == -1) {
+            //TODO: Comm Loss
         }
 
         UPDATE_DELAY(delay_1)
