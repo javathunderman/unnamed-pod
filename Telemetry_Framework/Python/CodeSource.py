@@ -35,6 +35,7 @@ def imports():
     imports += '#include <time.h>\n'
     imports += '#include <errno.h>\n'
     imports += '#include <stdio.h>\n'
+    imports += '#include "spacex.h"\n'
     imports += '#include "telemetry.h"\n\n\n'
     
     return imports
@@ -65,8 +66,13 @@ def defines(tlm):
 
 def main_thread(tlm):
     # Begin writing send_tlm function
-    main = 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len) {\n'
+    main = 'void *send_tlm(void *args) {\n'
     main += '    Telemetry tlm;\n\n'
+    
+    # Unpack thread arguments
+    main += '    int socket = ((TelemetryArgs *)args)->socket;\n'
+    main += '    SA * dest_addr = ((TelemetryArgs *)args)->dest_addr;\n'
+    main += '    socklen_t dest_len = ((TelemetryArgs *)args)->dest_len;\n\n'
     
     main += current_time()
     
@@ -101,7 +107,11 @@ def main_thread(tlm):
     
     main += '        if(sendto(socket, &tlm, PKT_LENGTH, 0, dest_addr, dest_len) == -1) {\n'
     main += '            printf("%s\\n", strerror(errno));\n'
-    main += '            break;\n'
+    main += '            //TODO: Comm Loss\n'
+    main += '        }\n\n'
+    
+    main += '        if(send_spacex(&tlm) == -1) {\n'
+    main += '            //TODO: Comm Loss\n'
     main += '        }\n\n'
     
     for i in range(0, len(fns)):

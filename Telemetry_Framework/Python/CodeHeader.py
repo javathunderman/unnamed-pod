@@ -22,6 +22,7 @@ def header_definition(tlm):
     header = '#ifndef TELEMETRY_H\n'
     header += '#define TELEMETRY_H\n\n\n'
     header += defines(tlm)
+    header += arg_struct()
     header += struct_definition(tlm)
     header += '\n\n'
     header += main_thread_header()
@@ -36,6 +37,15 @@ def defines(tlm):
     defines += f'#define PORT {tlm.config["target_port"]}\n\n'
     return defines
 
+def arg_struct():
+    struct = 'typedef struct {\n'
+    struct += '    int socket;\n'
+    struct += '    SA * dest_addr;\n'
+    struct += '    socklen_t dest_len;\n'
+    struct += '} TelemetryArgs;\n\n'
+    return struct
+
+
 def struct_definition(tlm):
     struct = "typedef struct {\n"
     
@@ -46,7 +56,7 @@ def struct_definition(tlm):
     return struct
 
 def main_thread_header():
-    return 'void send_tlm(int socket, SA * dest_addr, socklen_t dest_len);\n\n'
+    return 'void *send_tlm(void *args);\n\n'
 
 def function_headers(tlm):
     fractions = set()
