@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -I./include -pthread
+CFLAGS = -I${INCLUDE} -pthread
+CLINK = -L${INCLUDE} -lvs_can_api_x86-64
 SRC = ./src
 INCLUDE = ./include
 COMM = ${SRC}/comm
@@ -8,7 +9,7 @@ SENS = ${SRC}/sensors
 CAN = ${SRC}/can
 
 main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o
-	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o
+	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o ${CLINK}
 
 main_alg.o: ${SRC}/main_alg.c ${INCLUDE}/states.h ${INCLUDE}/sensors.h ${INCLUDE}/commands.h ${INCLUDE}/udp.h
 	${CC} ${CFLAGS} -c ${SRC}/main_alg.c

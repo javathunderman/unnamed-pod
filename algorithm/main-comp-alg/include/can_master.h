@@ -96,5 +96,9 @@ int can_send(CAN_Request, CAN_Data *data);
 /* CAN master thread */
 void *can_master(void *args);
 
+/* CAN initialization */
+int can_init();
+void init_can_requests();
+void init_can_responses();
 
 #endif
