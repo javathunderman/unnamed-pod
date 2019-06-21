@@ -68,6 +68,118 @@ void init_can_requests() {
     request_lookup[LIPO_VOLTAGE_TX].Id = 0xA100101;
     request_lookup[LIPO_VOLTAGE_TX].Size = 1;
     request_lookup[LIPO_VOLTAGE_TX].Data[0] = 0xE4;
+    
+    /* READY_TO_TRANSMIT_TX */
+    request_lookup[READY_TO_TRANSMIT_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[READY_TO_TRANSMIT_TX].Id = 0x201;
+    request_lookup[READY_TO_TRANSMIT_TX].Size = 3;
+    request_lookup[READY_TO_TRANSMIT_TX].Data[0] = 0x3D;
+    request_lookup[READY_TO_TRANSMIT_TX].Data[1] = 0xE2;
+    request_lookup[READY_TO_TRANSMIT_TX].Data[2] = 0x00;
+    
+    /* DISABLE_MOTOR_TX */
+    request_lookup[DISABLE_MOTOR_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[DISABLE_MOTOR_TX].Id = 0x201;
+    request_lookup[DISABLE_MOTOR_TX].Size = 3;
+    request_lookup[DISABLE_MOTOR_TX].Data[0] = 0x51;
+    request_lookup[DISABLE_MOTOR_TX].Data[1] = 0x04;
+    request_lookup[DISABLE_MOTOR_TX].Data[2] = 0x00;
+    
+    /* ENABLE_MOTOR_TX */
+    request_lookup[ENABLE_MOTOR_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[ENABLE_MOTOR_TX].Id = 0x201;
+    request_lookup[ENABLE_MOTOR_TX].Size = 3;
+    request_lookup[ENABLE_MOTOR_TX].Data[0] = 0x51;
+    request_lookup[ENABLE_MOTOR_TX].Data[1] = 0x00;
+    request_lookup[ENABLE_MOTOR_TX].Data[2] = 0x00;
+    
+    /* TRANSMIT_ENABLE_TX */
+    request_lookup[TRANSMIT_ENABLE_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[TRANSMIT_ENABLE_TX].Id = 0x201;
+    request_lookup[TRANSMIT_ENABLE_TX].Size = 3;
+    request_lookup[TRANSMIT_ENABLE_TX].Data[0] = 0x3D;
+    request_lookup[TRANSMIT_ENABLE_TX].Data[1] = 0xE8;
+    request_lookup[TRANSMIT_ENABLE_TX].Data[2] = 0x00;
+    
+    /* ACCEL_RAMP_TX */
+    request_lookup[ACCEL_RAMP_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[ACCEL_RAMP_TX].Id = 0x201;
+    request_lookup[ACCEL_RAMP_TX].Size = 3;
+    request_lookup[ACCEL_RAMP_TX].Data[0] = 0x35;
+    request_lookup[ACCEL_RAMP_TX].Data[1] = 0xF4;
+    request_lookup[ACCEL_RAMP_TX].Data[2] = 0x01;
+    
+    /* DECEL_RAMP_TX */
+    request_lookup[DECEL_RAMP_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[DECEL_RAMP_TX].Id = 0x201;
+    request_lookup[DECEL_RAMP_TX].Size = 3;
+    request_lookup[DECEL_RAMP_TX].Data[0] = 0xED;
+    request_lookup[DECEL_RAMP_TX].Data[1] = 0xE8;
+    request_lookup[DECEL_RAMP_TX].Data[2] = 0x03;
+    
+    /* STOP_MOTOR_TX */
+    request_lookup[STOP_MOTOR_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[STOP_MOTOR_TX].Id = 0x201;
+    request_lookup[STOP_MOTOR_TX].Size = 3;
+    request_lookup[STOP_MOTOR_TX].Data[0] = 0x31;
+    request_lookup[STOP_MOTOR_TX].Data[1] = 0x00;
+    request_lookup[STOP_MOTOR_TX].Data[2] = 0x00;
+    
+    /* SET_SPEED_TX */
+    request_lookup[SET_SPEED_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[SET_SPEED_TX].Id = 0x201;
+    request_lookup[SET_SPEED_TX].Size = 3;
+    request_lookup[SET_SPEED_TX].Data[0] = 0x31;
+    request_lookup[SET_SPEED_TX].Data[1] = 0x00;  //TODO: Percent Max Speed
+    request_lookup[SET_SPEED_TX].Data[2] = 0x00;  //TODO: Percent Max Speed
+    
+    /* MAX_SPEED_TX */
+    request_lookup[MAX_SPEED_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[MAX_SPEED_TX].Id = 0x201;
+    request_lookup[MAX_SPEED_TX].Size = 3;
+    request_lookup[MAX_SPEED_TX].Data[0] = 0x3D;
+    request_lookup[MAX_SPEED_TX].Data[1] = 0xCE;
+    request_lookup[MAX_SPEED_TX].Data[2] = 0x00;
+    
+    /* DEVICE_CURRENT_TX */
+    request_lookup[DEVICE_CURRENT_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[DEVICE_CURRENT_TX].Id = 0x201;
+    request_lookup[DEVICE_CURRENT_TX].Size = 3;
+    request_lookup[DEVICE_CURRENT_TX].Data[0] = 0x3D;
+    request_lookup[DEVICE_CURRENT_TX].Data[1] = 0xC6;
+    request_lookup[DEVICE_CURRENT_TX].Data[2] = 0x00;
+    
+    /* CURRENT_200PC_TX */
+    request_lookup[CURRENT_200PC_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[CURRENT_200PC_TX].Id = 0x201;
+    request_lookup[CURRENT_200PC_TX].Size = 3;
+    request_lookup[CURRENT_200PC_TX].Data[0] = 0x3D;
+    request_lookup[CURRENT_200PC_TX].Data[1] = 0xD9;
+    request_lookup[CURRENT_200PC_TX].Data[2] = 0x00;
+    
+    /* ACTUAL_SPEED_TX */
+    request_lookup[ACTUAL_SPEED_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[ACTUAL_SPEED_TX].Id = 0x201;
+    request_lookup[ACTUAL_SPEED_TX].Size = 3;
+    request_lookup[ACTUAL_SPEED_TX].Data[0] = 0x3D;
+    request_lookup[ACTUAL_SPEED_TX].Data[1] = 0x30;
+    request_lookup[ACTUAL_SPEED_TX].Data[2] = 0x00;
+    
+    /* ACTUAL_CURRENT_TX */
+    request_lookup[ACTUAL_CURRENT_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[ACTUAL_CURRENT_TX].Id = 0x201;
+    request_lookup[ACTUAL_CURRENT_TX].Size = 3;
+    request_lookup[ACTUAL_CURRENT_TX].Data[0] = 0x3D;
+    request_lookup[ACTUAL_CURRENT_TX].Data[1] = 0x20;
+    request_lookup[ACTUAL_CURRENT_TX].Data[2] = 0x00;
+    
+    /* ACTUAL_POSITION_TX */
+    request_lookup[ACTUAL_POSITION_TX].Flags = VSCAN_FLAGS_STANDARD;
+    request_lookup[ACTUAL_POSITION_TX].Id = 0x201;
+    request_lookup[ACTUAL_POSITION_TX].Size = 3;
+    request_lookup[ACTUAL_POSITION_TX].Data[0] = 0x3D;
+    request_lookup[ACTUAL_POSITION_TX].Data[1] = 0x5E;
+    request_lookup[ACTUAL_POSITION_TX].Data[2] = 0x00;
 }
 
 void init_can_responses() {
