@@ -120,7 +120,7 @@ typedef struct {
     
     volatile short percent_max_speed;                   
     
-    volatile short true current;                        /* ADC units */
+    volatile short true_current;                        /* ADC units */
     
     volatile int revolutions;                           /* revolutions */
     
