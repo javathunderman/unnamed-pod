@@ -7,8 +7,8 @@ STATES = ${SRC}/states
 SENS = ${SRC}/sensors
 CAN = ${SRC}/can
 
-main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o
-	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o
+main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o
+	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o
 
 main_alg.o: ${SRC}/main_alg.c ${INCLUDE}/states.h ${INCLUDE}/sensors.h ${INCLUDE}/commands.h ${INCLUDE}/udp.h
 	${CC} ${CFLAGS} -c ${SRC}/main_alg.c
@@ -52,8 +52,11 @@ telemetry.o: ${COMM}/telemetry.c ${INCLUDE}/telemetry.h
 spacex.o: ${COMM}/spacex.c ${INCLUDE}/spacex.h ${INCLUDE}/telemetry.h
 	${CC} ${CFLAGS} -c ${COMM}/spacex.c
 
-can_handlers.o: ${CAN}/can_handlers.c ${INCLUDE}/can_handlers.h ${INCLUDE}/vs_can_api.h
+can_handlers.o: ${CAN}/can_handlers.c ${INCLUDE}/can_handlers.h ${INCLUDE}/can_master.h ${INCLUDE}/vs_can_api.h
 	${CC} ${CFLAGS} -c ${CAN}/can_handlers.c
+
+can_master.o: ${CAN}/can_master.c ${INCLUDE}/can_master.h ${INCLUDE}/can_handlers.h ${INCLUDE}/vs_can_api.h
+	${CC} ${CFLAGS} -c ${CAN}/can_master.c
 
 .PHONY: clean
 

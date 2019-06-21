@@ -1,5 +1,6 @@
 #include "vs_can_api.h"
 #include "can_handlers.h"
+#include "can_master.h"
 
 
 /* This function updates state machine's CAN_Data with:

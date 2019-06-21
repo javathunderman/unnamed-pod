@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "can_master.h"
+#include "can_handlers.h"
 #include "vs_can_api.h"
 
 
@@ -44,6 +45,16 @@ int can_init() {
     init_can_responses();
 }
 
+/* This function initializes the request_lookup array with CAN messages
+ * to be sent during the run. This function must run during startup before any
+ * CAN messages are sent.
+ *
+ * Params:
+ *     None
+ * 
+ * Returns:
+ *     None
+ */
 void init_can_requests() {
     /* ISO_STATE_TX */
     request_lookup[ISO_STATE_TX].Flags = VSCAN_FLAGS_EXTENDED;
@@ -178,7 +189,7 @@ void init_can_requests() {
     request_lookup[ACTUAL_POSITION_TX].Id = 0x201;
     request_lookup[ACTUAL_POSITION_TX].Size = 3;
     request_lookup[ACTUAL_POSITION_TX].Data[0] = 0x3D;
-    request_lookup[ACTUAL_POSITION_TX].Data[1] = 0x5E;
+    request_lookup[ACTUAL_POSITION_TX].Data[1] = 0x6E;
     request_lookup[ACTUAL_POSITION_TX].Data[2] = 0x00;
 }
 
