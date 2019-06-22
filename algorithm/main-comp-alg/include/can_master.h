@@ -88,29 +88,29 @@ typedef struct {
     volatile short avg_temp;
     volatile short high_temp;
     
-    volatile short failsafe_status;
-    volatile short dtc_flags_1;
+    volatile char failsafe_status;
+    volatile char dtc_flags_1;
     volatile short dtc_flags_2;
     volatile short rolling counter;
     
-    volatile short status_flags;
+    volatile char status_flags;
     
     volatile short electrical_isolation;                /* ohm/V */
-    volatile short electrical_isolation_uncert;         
+    volatile char electrical_isolation_uncert;         
     volatile short energy_stored;                       /* mJ */
-    volatile short energy_stored_uncert;
+    volatile char energy_stored_uncert;
     
     volatile short rp_iso_resistance;                   /* kohm */
-    volatile short rp_iso_resistance_uncert;
+    volatile char rp_iso_resistance_uncert;
     volatile short rn_iso_resistance;                   /* kohm */
-    volatile short rn_iso_resistance_uncert;
+    volatile char rn_iso_resistance_uncert;
     
-    volatile short error_flags;
+    volatile char error_flags;
     
     volatile short battery_volt;                        /* V */
-    volatile short battery_volt_uncert;
+    volatile char battery_volt_uncert;
     volatile short max_battery_volt;                    /* V */
-    volatile short max_battery_volt_uncert;
+    volatile char max_battery_volt_uncert;
     
     volatile short max_speed;                           /* rpm */
     
