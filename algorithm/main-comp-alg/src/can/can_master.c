@@ -14,7 +14,7 @@ VSCAN_MSG response_lookup[NUM_CAN_RESPONSES];
  * sent or received.
  *
  * Params:
- *     None
+ *     void
  *
  * Returns:
  *      0 -> success
@@ -50,10 +50,10 @@ int can_init() {
  * CAN messages are sent.
  *
  * Params:
- *     None
+ *     void
  * 
  * Returns:
- *     None
+ *     void
  */
 void init_can_requests() {
     /* ISO_STATE_TX */
@@ -194,7 +194,98 @@ void init_can_requests() {
 }
 
 void init_can_responses() {
+    /* BMS_PACK_RX */
+    response_lookup[BMS_PACK_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[BMS_PACK_RX].Id = 0x301;
+    response_lookup[BMS_PACK_RX].Size = 0;
     
+    /* BMS_OTHER_RX */
+    response_lookup[BMS_OTHER_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[BMS_OTHER_RX].Id = 0x302;
+    response_lookup[BMS_OTHER_RX].Size = 0;
+    
+    /* BMS_ERROR_RX */
+    response_lookup[BMS_ERROR_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[BMS_ERROR_RX].Id = 0x303;
+    response_lookup[BMS_ERROR_RX].Size = 0;
+    
+    /* ISO_STATE_RX */
+    response_lookup[ISO_STATE_RX].Flags = VSCAN_FLAGS_EXTENDED;
+    response_lookup[ISO_STATE_RX].Id = 0xA100100;
+    response_lookup[ISO_STATE_RX].Size = 1;
+    response_lookup[ISO_STATE_RX].Data[0] = 0xE0;
+    
+    /* ISO_RESISTANCE_RX */
+    response_lookup[ISO_RESISTANCE_RX].Flags = VSCAN_FLAGS_EXTENDED;
+    response_lookup[ISO_RESISTANCE_RX].Id = 0xA100100;
+    response_lookup[ISO_RESISTANCE_RX].Size = 1;
+    response_lookup[ISO_RESISTANCE_RX].Data[0] = 0xE1;
+    
+    /* ISO_ERROR_RX */
+    response_lookup[ISO_ERROR_RX].Flags = VSCAN_FLAGS_EXTENDED;
+    response_lookup[ISO_ERROR_RX].Id = 0xA100100;
+    response_lookup[ISO_ERROR_RX].Size = 1;
+    response_lookup[ISO_ERROR_RX].Data[0] = 0xE5;
+    
+    /* LIPO_VOLTAGE_RX */
+    response_lookup[LIPO_VOLTAGE_RX].Flags = VSCAN_FLAGS_EXTENDED;
+    response_lookup[LIPO_VOLTAGE_RX].Id = 0xA100100;
+    response_lookup[LIPO_VOLTAGE_RX].Size = 1;
+    response_lookup[LIPO_VOLTAGE_RX].Data[0] = 0xE4;
+    
+    /* READY_TO_TRANSMIT_RX */
+    response_lookup[READY_TO_TRANSMIT_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[READY_TO_TRANSMIT_RX].Id = 0x181;
+    response_lookup[READY_TO_TRANSMIT_RX].Size = 4;
+    response_lookup[READY_TO_TRANSMIT_RX].Data[0] = 0xE2;
+    response_lookup[READY_TO_TRANSMIT_RX].Data[0] = 0x01;
+    response_lookup[READY_TO_TRANSMIT_RX].Data[0] = 0x00;
+    response_lookup[READY_TO_TRANSMIT_RX].Data[0] = 0x00;
+    
+    /* TRANSMIT_ENABLE_RX */
+    response_lookup[TRANSMIT_ENABLE_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[TRANSMIT_ENABLE_RX].Id = 0x181;
+    response_lookup[TRANSMIT_ENABLE_RX].Size = 4;
+    response_lookup[TRANSMIT_ENABLE_RX].Data[0] = 0xE8;
+    response_lookup[TRANSMIT_ENABLE_RX].Data[0] = 0x01;
+    response_lookup[TRANSMIT_ENABLE_RX].Data[0] = 0x00;
+    response_lookup[TRANSMIT_ENABLE_RX].Data[0] = 0x00;
+    
+    /* MAX_SPEED_RX */
+    response_lookup[MAX_SPEED_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[MAX_SPEED_RX].Id = 0x181;
+    response_lookup[MAX_SPEED_RX].Size = 1;
+    response_lookup[MAX_SPEED_RX].Data[0] = 0xCE;
+    
+    /* DEVICE_CURRENT_RX */
+    response_lookup[DEVICE_CURRENT_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[DEVICE_CURRENT_RX].Id = 0x181;
+    response_lookup[DEVICE_CURRENT_RX].Size = 1;
+    response_lookup[DEVICE_CURRENT_RX].Data[0] = 0xC6;
+    
+    /* CURRENT_200PC_RX */
+    response_lookup[CURRENT_200PC_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[CURRENT_200PC_RX].Id = 0x181;
+    response_lookup[CURRENT_200PC_RX].Size = 1;
+    response_lookup[CURRENT_200PC_RX].Data[0] = 0xD9;
+    
+    /* ACTUAL_SPEED_RX */
+    response_lookup[ACTUAL_SPEED_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[ACTUAL_SPEED_RX].Id = 0x181;
+    response_lookup[ACTUAL_SPEED_RX].Size = 1;
+    response_lookup[ACTUAL_SPEED_RX].Data[0] = 0x30;
+    
+    /* ACTUAL_CURRENT_RX */
+    response_lookup[ACTUAL_CURRENT_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[ACTUAL_CURRENT_RX].Id = 0x181;
+    response_lookup[ACTUAL_CURRENT_RX].Size = 1;
+    response_lookup[ACTUAL_CURRENT_RX].Data[0] = 0x20;
+    
+    /* ACTUAL_POSITION_RX */
+    response_lookup[ACTUAL_POSITION_RX].Flags = VSCAN_FLAGS_STANDARD;
+    response_lookup[ACTUAL_POSITION_RX].Id = 0x181;
+    response_lookup[ACTUAL_POSITION_RX].Size = 1;
+    response_lookup[ACTUAL_POSITION_RX].Data[0] = 0x6E;
 }
 
 void *can_master(void *args) {

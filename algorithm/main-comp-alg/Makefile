@@ -8,8 +8,8 @@ STATES = ${SRC}/states
 SENS = ${SRC}/sensors
 CAN = ${SRC}/can
 
-main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o
-	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_handlers.o can_master.o ${CLINK}
+main: main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_master.o can_handlers.o
+	${CC} ${CFLAGS} -o main main_alg.o commands.o accelerate.o estop.o initialize.o normbrake.o service.o startup.o standby.o idle.o udp.o receiver.o telemetry.o spacex.o can_master.o can_handlers.o ${CLINK}
 
 main_alg.o: ${SRC}/main_alg.c ${INCLUDE}/states.h ${INCLUDE}/sensors.h ${INCLUDE}/commands.h ${INCLUDE}/udp.h
 	${CC} ${CFLAGS} -c ${SRC}/main_alg.c

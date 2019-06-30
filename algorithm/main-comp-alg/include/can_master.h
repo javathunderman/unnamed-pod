@@ -91,7 +91,7 @@ typedef struct {
     volatile char failsafe_status;
     volatile char dtc_flags_1;
     volatile short dtc_flags_2;
-    volatile short rolling counter;
+    volatile short rolling_counter;
     
     volatile char status_flags;
     
