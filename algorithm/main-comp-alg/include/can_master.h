@@ -130,15 +130,16 @@ typedef struct {
 } CAN_Data;
 
 
+/* Global variables */
+extern VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
+extern VSCAN_MSG response_lookup[NUM_CAN_RESPONSES];
+extern VSCAN_HANDLE handle;
+
+
 /* Used by state machine */
 int can_send(CAN_Request, CAN_Data *data);
 
 /* CAN master thread */
 void *can_master(void *args);
-
-/* CAN initialization */
-int can_init();
-void init_can_requests();
-void init_can_responses();
 
 #endif
