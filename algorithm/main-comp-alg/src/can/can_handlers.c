@@ -20,9 +20,9 @@ void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
     short pack_voltage = *((short *) (&(msg->Data[2])));
     short pack_current = *((short *) (&(msg->Data[4])));
     
-    __atomic_store_n(&(data->pack_soc), pack_soc, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->pack_voltage), pack_voltage, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->pack_current), pack_current, __ATOMIC_RELAXED);
+    STORE(data->pack_soc, pack_soc)
+    STORE(data->pack_voltage, pack_voltage)
+    STORE(data->pack_current, pack_current)
 }
 
 
@@ -45,10 +45,10 @@ void bms_other_handler(VSCAN_MSG *msg, CAN_Data *data){
     short avg_temp = *((short *) (&(msg->Data[4])));
     short high_temp = *((short *) (&(msg->Data[6])));
 
-    __atomic_store_n(&(data->min_voltage), min_voltage, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->max_voltage), max_voltage, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->avg_temp), avg_temp, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->high_temp), high_temp, __ATOMIC_RELAXED);
+    STORE(data->min_voltage, min_voltage)
+    STORE(data->max_voltage, max_voltage)
+    STORE(data->avg_temp, avg_temp)
+    STORE(data->high_temp, high_temp)
 
 }
 
@@ -73,10 +73,10 @@ void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
     short dtc_flags_2 = *((short *) (&(msg->Data[2])));
     short rolling_counter = *((short *) (&(msg->Data[4])));
 
-    __atomic_store_n(&(data->failsafe_status), failsafe_status, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->dtc_flags_1), dtc_flags_1, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->dtc_flags_2), dtc_flags_2, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->rolling_counter), rolling_counter, __ATOMIC_RELAXED);
+    STORE(data->failsafe_status, failsafe_status)
+    STORE(data->dtc_flags_1, dtc_flags_1)
+    STORE(data->dtc_flags_2, dtc_flags_2)
+    STORE(data->rolling_counter, rolling_counter)
 
 }
 
@@ -104,11 +104,11 @@ void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
     short energy_stored = *((short *) (&(msg->Data[5])));
     char energy_stored_uncert = *((short *) (&(msg->Data[7])));
 
-    __atomic_store_n(&(data->status_flags), status_flags, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->electrical_isolation), electrical_isolation, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->electrical_isolation_uncert), electrical_isolation_uncert, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->energy_stored), energy_stored, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->energy_stored_uncert), energy_stored_uncert, __ATOMIC_RELAXED);
+    STORE(data->status_flags, status_flags)
+    STORE(data->electrical_isolation, electrical_isolation)
+    STORE(data->electrical_isolation_uncert, electrical_isolation_uncert)
+    STORE(data->energy_stored, energy_stored)
+    STORE(data->energy_stored_uncert, energy_stored_uncert)
 
 }
 
@@ -136,11 +136,11 @@ void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
     short rn_iso_resistance = *((short *) (&(msg->Data[5])));
     char rn_iso_resistance_uncert = *((short *) (&(msg->Data[7])));
 
-    __atomic_store_n(&(data->status_flags), status_flags, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->rp_iso_resistance), rp_iso_resistance, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->rp_iso_resistance_uncert), rp_iso_resistance_uncert, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->rn_iso_resistance), rn_iso_resistance , __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->rn_iso_resistance_uncert), rn_iso_resistance_uncert, __ATOMIC_RELAXED);
+    STORE(data->status_flags, status_flags)
+    STORE(data->rp_iso_resistance, rp_iso_resistance)
+    STORE(data->rp_iso_resistance_uncert, rp_iso_resistance_uncert)
+    STORE(data->rn_iso_resistance, rn_iso_resistance )
+    STORE(data->rn_iso_resistance_uncert, rn_iso_resistance_uncert)
 }
 
 
@@ -161,8 +161,8 @@ void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
     char status_flags = *((short *) (&(msg->Data[1])));
     char error_flags = *((short *) (&(msg->Data[2])));
 
-    __atomic_store_n(&(data->status_flags), status_flags, __ATOMIC_RELAXED);
-    __atomic_store_n(&(data->error_flags), error_flags, __ATOMIC_RELAXED);
+    STORE(data->status_flags, status_flags)
+    STORE(data->error_flags, error_flags)
 
 }
 
@@ -190,11 +190,11 @@ void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
    short max_battery_volt = *((short *) (&(msg->Data[5])));
    char max_battery_volt_uncert = *((short *) (&(msg->Data[7])));
 
-   __atomic_store_n(&(data->status_flags), status_flags, __ATOMIC_RELAXED);
-   __atomic_store_n(&(data->battery_volt), battery_volt, __ATOMIC_RELAXED);
-   __atomic_store_n(&(data->battery_volt_uncert), battery_volt_uncert, __ATOMIC_RELAXED);
-   __atomic_store_n(&(data->max_battery_volt), max_battery_volt , __ATOMIC_RELAXED);
-   __atomic_store_n(&(data->max_battery_volt_uncert), max_battery_volt_uncert, __ATOMIC_RELAXED);
+   STORE(data->status_flags, status_flags)
+   STORE(data->battery_volt, battery_volt)
+   STORE(data->battery_volt_uncert, battery_volt_uncert)
+   STORE(data->max_battery_volt, max_battery_volt )
+   STORE(data->max_battery_volt_uncert, max_battery_volt_uncert)
 }
 
 
@@ -212,7 +212,7 @@ void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void max_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
    short max_speed = *((short *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->max_speed), max_speed, __ATOMIC_RELAXED);
+   STORE(data->max_speed, max_speed)
 
 }
 
@@ -231,7 +231,7 @@ void max_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void device_current_handler(VSCAN_MSG *msg, CAN_Data *data){
    short dev_current = *((short *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->dev_current), dev_current, __ATOMIC_RELAXED);
+   STORE(data->dev_current, dev_current)
 }
 
 
@@ -250,7 +250,7 @@ void device_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
    short current_200pc = *((short *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->current_200pc), current_200pc, __ATOMIC_RELAXED);
+   STORE(data->current_200pc, current_200pc)
 
 }
 
@@ -269,7 +269,7 @@ void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
    short percent_max_speed = *((short *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->percent_max_speed), percent_max_speed, __ATOMIC_RELAXED);
+   STORE(data->percent_max_speed, percent_max_speed)
 
 }
 
@@ -288,7 +288,7 @@ void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
    short true_current = *((short *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->true_current), true_current, __ATOMIC_RELAXED);
+   STORE(data->true_current, true_current)
 }
 
 
@@ -307,7 +307,7 @@ void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
    int revolutions = *((int *) (&(msg->Data[1])));
-   __atomic_store_n(&(data->revolutions), revolutions, __ATOMIC_RELAXED);
+   STORE(data->revolutions, revolutions)
 
 
 }

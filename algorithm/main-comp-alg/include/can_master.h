@@ -2,8 +2,12 @@
 #define CAN_MASTER_H
 
 #include <pthread.h>
+#include <stdbool.h>
 #include "vs_can_api.h"
 
+
+/* Used to safely store values in CAN_Data struct */
+#define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
 
 typedef enum {
     IDLE,
@@ -37,7 +41,7 @@ typedef enum {
     ACTUAL_POSITION_TX,
     
     NUM_CAN_REQUESTS
-} CAN_Request;
+} CAN_Request_Index;
 
 typedef enum {
     /* Battery Management System */
@@ -62,6 +66,14 @@ typedef enum {
     ACTUAL_POSITION_RX,
     
     NUM_CAN_RESPONSES
+} CAN_Response_Index;
+
+typedef struct {
+    CAN_State state;
+    int received_count;
+    bool check_timeout;
+    struct timespec timeout_interval;
+    struct timespec last_time;
 } CAN_Response;
 
 /* This struct holds data received from CAN devices to be used
@@ -127,6 +139,7 @@ typedef struct {
     
     /* --- Transmit Data --- */
     volatile CAN_State requests[NUM_CAN_REQUESTS];
+    volatile CAN_Response responses[NUM_CAN_RESPONSES];
 } CAN_Data;
 
 
@@ -137,9 +150,12 @@ extern VSCAN_HANDLE handle;
 
 
 /* Used by state machine */
-int can_send(CAN_Request, CAN_Data *data);
+int can_send(CAN_Request_Index request, CAN_Data *data);
 
 /* CAN master thread */
 void *can_master(void *args);
+
+/* Used internally to handle received can messages */
+void handle_can_message(VSCAN_MSG *msg);
 
 #endif

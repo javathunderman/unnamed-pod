@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
 #include "can_init.h"
 #include "can_master.h"
 #include "vs_can_api.h"
@@ -16,9 +18,9 @@
  *     -1 -> VSCAN_Open failure
  *     -2 -> bitrate configuration failure
  */
-int can_init() {
+int can_init(CAN_Data *data) {
     handle = -1;
-    DWORD rv, bitrate = 500000;
+    DWORD bitrate = 500000;
     char *tty = "10.25.37.4:2001"; //TODO: Verify IP
     
     /* Establish connection to NetCAN device */
@@ -40,7 +42,54 @@ int can_init() {
     init_can_responses();
     
     /* Initialize CAN_Data fields */
+    init_can_data(data);
+    
+    /* Launch master CAN thread */
     //TODO
+}
+
+void init_can_data(CAN_Data *data) {
+    /* Init response fields */
+    for (int i = 0; i < NUM_CAN_RESPONSES; i++) {
+        STORE(data->responses[i].state, IDLE)
+        STORE(data->responses[i].received_count, 0)
+        STORE(data->responses[i].last_time.tv_sec, 0)
+        STORE(data->responses[i].last_time.tv_nsec, 0)
+        STORE(data->responses[i].check_timeout, false)
+         
+        /* Configure timeout per message */
+        switch (i) {
+            case BMS_PACK_RX:
+            case BMS_OTHER_RX:
+            case BMS_ERROR_RX:
+                /* 300ms timeout */
+                STORE(data->responses[i].timeout_interval.tv_sec, 0L)
+                STORE(data->responses[i].timeout_interval.tv_nsec, 300000000L)
+                break;
+            
+            case ISO_STATE_RX:
+            case ISO_RESISTANCE_RX:
+            case ISO_ERROR_RX:
+            case LIPO_VOLTAGE_RX:
+                /* 1.5sec timeout */
+                STORE(data->responses[i].timeout_interval.tv_sec, 1L)
+                STORE(data->responses[i].timeout_interval.tv_nsec, 500000000L)
+                break;
+            
+            case ACTUAL_SPEED_RX:
+            case ACTUAL_CURRENT_RX:
+            case ACTUAL_POSITION_RX:
+                /* 10ms timeout */
+                STORE(data->responses[i].timeout_interval.tv_sec, 0L)
+                STORE(data->responses[i].timeout_interval.tv_nsec, 10000000L)
+                break;
+            
+            default: 
+                /* No timeout */
+                STORE(data->responses[i].timeout_interval.tv_sec, LONG_MAX)
+                STORE(data->responses[i].timeout_interval.tv_nsec, 999999999L)
+        }
+    }
 }
 
 /* This function initializes the request_lookup array with CAN messages
