@@ -106,7 +106,7 @@ typedef struct {
     volatile short dtc_flags_2;
     volatile short rolling_counter;
     
-    volatile char status_flags;
+    volatile char error_flags;
     
     volatile short electrical_isolation;                /* ohm/V */
     volatile char electrical_isolation_uncert;         
@@ -118,7 +118,15 @@ typedef struct {
     volatile short rn_iso_resistance;                   /* kohm */
     volatile char rn_iso_resistance_uncert;
     
-    volatile char error_flags;
+    typedef struct{
+        volatile unsigned int hardware_error: 1;        /*0 if no Hardware error, 1 if hardware error*/
+        volatile unsigned int no_new_estimates: 1;      /*0 if new isolation values have been calculated, 1 if not */
+        volatile unsigned int high_uncertainty: 1;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
+        volatile unsigned int undefined: 1;             /*none*/
+        volatile unsigned int high_battery_volatage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
+        volatile unsigned int low_batter_volatage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
+        volatile unsigned int isolation_status: 2;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
+    }status_bits;                           
     
     volatile short battery_volt;                        /* V */
     volatile char battery_volt_uncert;
