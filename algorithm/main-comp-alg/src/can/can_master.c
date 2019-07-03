@@ -71,8 +71,10 @@ void *can_master(void *args) {
         }
         
         /* Check timeouts */
+        //TODO
         
         /* Write CAN bus messages */
+        //TODO
         
         UPDATE_DELAY(delay)
     }
@@ -96,6 +98,7 @@ void *can_master(void *args) {
  */
 void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
+    int count;
     
     /* Identify message */
     for (int id = 0; id < NUM_CAN_RESPONSES; id++) {
@@ -109,15 +112,18 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
         //TODO: Comm Loss
     }
     
-    /* Update CAN_Data */
+    /* Update CAN_Data metadata for this message */
     STORE(data->responses[msg_id].state, COMPLETE)
-    //LOAD
+    STORE(data->responses[msg_id].last_time.tv_sec, timestamp->tv_sec)
+    STORE(data->responses[msg_id].last_time.tv_nsec, timestamp->tv_nsec)
+    count = LOAD(data->responses[msg_id].received_count)
+    STORE(data->responses[msg_id].received_count, count+1)
     
-    /* Call handler function */
+    /* Call handler function to update CAN_Data fields */
     response_lookup[msg_id].handler(msg, data);
 }
 
-/* This function compares a received CAN message to a lookup message.
+/* This function compares a received CAN message to a template lookup message.
  * This function checks the flags, id, and data bytes specified in the template
  * for equality to determine if the two messages match.
  * 

@@ -6,9 +6,9 @@
 #include "vs_can_api.h"
 
 
-/* Used to safely store values in CAN_Data struct */
+/* Used to safely load/store values in CAN_Data struct */
 #define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
-//#def    LOAD
+#define LOAD(var) __atomic_load_n(&(var), __ATOMIC_RELAXED);
 
 typedef enum {
     IDLE,
@@ -77,6 +77,16 @@ typedef struct {
     struct timespec last_time;
 } CAN_Response;
 
+typedef struct{
+    volatile unsigned int hardware_error: 1;        /*0 if no Hardware error, 1 if hardware error*/
+    volatile unsigned int no_new_estimates: 1;      /*0 if new isolation values have been calculated, 1 if not */
+    volatile unsigned int high_uncertainty: 1;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
+    volatile unsigned int undefined: 1;             /*none*/
+    volatile unsigned int high_battery_volatage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
+    volatile unsigned int low_batter_volatage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
+    volatile unsigned int isolation_status: 2;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
+} Iso_Status_Bits;
+
 /* This struct holds data received from CAN devices to be used
  * by the state machine.
  *
@@ -118,15 +128,7 @@ typedef struct {
     volatile short rn_iso_resistance;                   /* kohm */
     volatile char rn_iso_resistance_uncert;
     
-    typedef struct{
-        volatile unsigned int hardware_error: 1;        /*0 if no Hardware error, 1 if hardware error*/
-        volatile unsigned int no_new_estimates: 1;      /*0 if new isolation values have been calculated, 1 if not */
-        volatile unsigned int high_uncertainty: 1;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
-        volatile unsigned int undefined: 1;             /*none*/
-        volatile unsigned int high_battery_volatage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
-        volatile unsigned int low_batter_volatage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
-        volatile unsigned int isolation_status: 2;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
-    }status_bits;                           
+    volatile Iso_Status_Bits status_bits;
     
     volatile short battery_volt;                        /* V */
     volatile char battery_volt_uncert;
