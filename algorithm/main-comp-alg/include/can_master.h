@@ -82,8 +82,8 @@ typedef struct{
     volatile unsigned int no_new_estimates: 1;      /*0 if new isolation values have been calculated, 1 if not */
     volatile unsigned int high_uncertainty: 1;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
     volatile unsigned int undefined: 1;             /*none*/
-    volatile unsigned int high_battery_volatage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
-    volatile unsigned int low_batter_volatage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
+    volatile unsigned int high_battery_voltage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
+    volatile unsigned int low_batter_voltage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
     volatile unsigned int isolation_status: 2;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
 } Iso_Status_Bits;
 
