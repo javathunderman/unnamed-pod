@@ -312,7 +312,7 @@ void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
 
 }
 
-/* This function updates the feilds of the Iso_status_bits struct inside the CAN_Data
+/* This function updates the feilds of the Iso_Status_Bits struct inside CAN_Data
  *
  * Params: 
  *     CAN_Data *data -> pointer to CAN_data struct used by state machine
@@ -321,13 +321,12 @@ void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-
-private void set_status_bits(CAN_DATA *data, char status_flags){
-    STORE(data->status_bits->hardware_error, ((status_flags >> 7) & 0x0001));
-    STORE(data->status_bits->no_new_estimates, ((status_flags >> 6) & 0x0001));
-    STORE(data->status_bits->high_uncertainty, ((status_flags >> 5) & 0x0001));
-    STORE(data->status_bits->undefined, ((status_flags >> 4) & 0x0001));
-    STORE(data->status_bits->high_battery_voltage, ((status_flags >> 3) & 0x0001));
-    STORE(data->status_bits->low_batter_voltage, ((status_flags >> 2) & 0x0001));
-    STORE(data->status_bits->isolation_status, ((status_flags >> 1) & 0x0011));
+static void set_status_bits(CAN_Data *data, char status_flags) {
+    STORE(data->status_bits.hardware_error, ((status_flags >> 7) & 0x0001));
+    STORE(data->status_bits.no_new_estimates, ((status_flags >> 6) & 0x0001));
+    STORE(data->status_bits.high_uncertainty, ((status_flags >> 5) & 0x0001));
+    STORE(data->status_bits.undefined, ((status_flags >> 4) & 0x0001));
+    STORE(data->status_bits.high_battery_voltage, ((status_flags >> 3) & 0x0001));
+    STORE(data->status_bits.low_batter_voltage, ((status_flags >> 2) & 0x0001));
+    STORE(data->status_bits.isolation_status, ((status_flags >> 1) & 0x0011));
 }

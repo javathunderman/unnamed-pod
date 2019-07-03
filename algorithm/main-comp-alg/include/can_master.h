@@ -70,12 +70,19 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    CAN_State state;
-    int received_count;
+    int rx_count;
     bool check_timeout;
     struct timespec timeout_interval;
     struct timespec last_time;
 } CAN_Response;
+
+typedef struct {
+    CAN_State state;
+    int tx_count;
+    bool check_timeout;
+    struct timespec timeout_interval;
+    struct timespec sent_time;
+} CAN_Request;
 
 typedef struct{
     volatile unsigned int hardware_error: 1;        /*0 if no Hardware error, 1 if hardware error*/

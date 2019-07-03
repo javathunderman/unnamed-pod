@@ -113,11 +113,10 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
     }
     
     /* Update CAN_Data metadata for this message */
-    STORE(data->responses[msg_id].state, COMPLETE)
     STORE(data->responses[msg_id].last_time.tv_sec, timestamp->tv_sec)
     STORE(data->responses[msg_id].last_time.tv_nsec, timestamp->tv_nsec)
-    count = LOAD(data->responses[msg_id].received_count)
-    STORE(data->responses[msg_id].received_count, count+1)
+    count = LOAD(data->responses[msg_id].rx_count)
+    STORE(data->responses[msg_id].rx_count, count+1)
     
     /* Call handler function to update CAN_Data fields */
     response_lookup[msg_id].handler(msg, data);

@@ -22,4 +22,7 @@ void actual_speed_handler(VSCAN_MSG *msg, CAN_Data *data);
 void actual_current_handler(VSCAN_MSG *msg, CAN_Data *data);
 void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data);
 
+/* Used internally to set isolation monitor status bits */
+static void set_status_bits(CAN_Data *data, char status_flags);
+
 #endif

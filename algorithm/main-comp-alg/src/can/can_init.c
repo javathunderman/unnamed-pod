@@ -52,8 +52,7 @@ int can_init(CAN_Data *data) {
 void init_can_data(CAN_Data *data) {
     /* Init response fields */
     for (int i = 0; i < NUM_CAN_RESPONSES; i++) {
-        STORE(data->responses[i].state, IDLE)
-        STORE(data->responses[i].received_count, 0)
+        STORE(data->responses[i].rx_count, 0)
         STORE(data->responses[i].last_time.tv_sec, 0)
         STORE(data->responses[i].last_time.tv_nsec, 0)
         STORE(data->responses[i].check_timeout, false)
