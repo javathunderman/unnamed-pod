@@ -20,7 +20,7 @@ compile with the command: gcc demo_rx.c rs232.c -Wall -Wextra -o2 -o test_rx
 #endif
 
 #include "rs232.h"
-
+#include "imu.h"
 
 
 int main()
@@ -29,7 +29,8 @@ int main()
       cport_nr=0,        /* /dev/ttyS0 (COM1 on windows) */
       bdrate=9600;       /* 9600 baud */
 
-  unsigned char buf[4096];
+  unsigned char buf[33];
+  IMUData data;
 
   char mode[]={'8','N','1',0};
 
@@ -43,7 +44,7 @@ int main()
 
   while(1)
   {
-    n = RS232_PollComport(cport_nr, buf, 4095);
+    n = RS232_PollComport(cport_nr, buf, 32);
 
     if(n > 0)
     {
@@ -59,6 +60,25 @@ int main()
 
       printf("received %i bytes: %s\n", n, (char *)buf);
     }
+
+	//Table 4 https://www.memsense.com/assets/docs/uploads/ms-imu3020/MS-IMU3020_PSUG.pdf
+	//data.sync1 = buff[0];
+	//data.sync2 = buff[1];
+	//data.message_type = buff[2];
+	//data.payload_size = buff[3];
+
+	//unsure how MSB and LSB are used here
+	//data. = buff[];
+	//data. = buff[];
+	data.x_accel = (buff[8]<<4) ^ buff[7];
+	data.y_accel = (buff[12]<<4) ^ buff[11];
+	data.z_accel = (buff[16]<<4) ^ buff[15];
+
+	//data. = buff[];
+	//data. = buff[];
+	data.x_gyro = (buff[22]<<4) ^ buff[21];
+	data.x_gyro = (buff[26]<<4) ^ buff[25];
+	data.x_gyro = (buff[30]<<4) ^ buff[29];
 
 #ifdef _WIN32
     Sleep(100);
