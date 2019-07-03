@@ -327,7 +327,7 @@ private void set_status_bits(CAN_DATA *data, char status_flags){
     STORE(data->status_bits->no_new_estimates, ((status_flags >> 6) & 0x0001));
     STORE(data->status_bits->high_uncertainty, ((status_flags >> 5) & 0x0001));
     STORE(data->status_bits->undefined, ((status_flags >> 4) & 0x0001));
-    STORE(data->status_bits->high_battery_volatage, ((status_flags >> 3) & 0x0001));
-    STORE(data->status_bits->low_batter_volatage, ((status_flags >> 2) & 0x0001));
+    STORE(data->status_bits->high_battery_voltage, ((status_flags >> 3) & 0x0001));
+    STORE(data->status_bits->low_batter_voltage, ((status_flags >> 2) & 0x0001));
     STORE(data->status_bits->isolation_status, ((status_flags >> 1) & 0x0011));
 }
