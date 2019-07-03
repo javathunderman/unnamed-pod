@@ -8,6 +8,7 @@
 
 /* Used to safely store values in CAN_Data struct */
 #define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
+//#def    LOAD
 
 typedef enum {
     IDLE,
@@ -142,10 +143,14 @@ typedef struct {
     volatile CAN_Response responses[NUM_CAN_RESPONSES];
 } CAN_Data;
 
+typedef struct {
+    VSCAN_MSG msg;
+    void (*handler)(VSCAN_MSG *msg, CAN_Data *data);
+} CAN_Response_Lookup;
 
 /* Global variables */
 extern VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
-extern VSCAN_MSG response_lookup[NUM_CAN_RESPONSES];
+extern CAN_Response_Lookup response_lookup[NUM_CAN_RESPONSES];
 extern VSCAN_HANDLE handle;
 
 
@@ -156,6 +161,7 @@ int can_send(CAN_Request_Index request, CAN_Data *data);
 void *can_master(void *args);
 
 /* Used internally to handle received can messages */
-void handle_can_message(VSCAN_MSG *msg);
+void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp);
+bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received);
 
 #endif
