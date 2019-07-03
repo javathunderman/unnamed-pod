@@ -178,7 +178,7 @@ int can_send(CAN_Request_Index request, CAN_Data *data);
 void *can_master(void *args);
 
 /* Used internally to handle received can messages */
-void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp);
-bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received);
+static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp);
+static bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received);
 
 #endif

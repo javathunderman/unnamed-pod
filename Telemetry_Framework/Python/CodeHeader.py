@@ -21,6 +21,7 @@ from fractions import Fraction
 def header_definition(tlm):
     header = '#ifndef TELEMETRY_H\n'
     header += '#define TELEMETRY_H\n\n\n'
+    header += includes()
     header += defines(tlm)
     header += arg_struct()
     header += struct_definition(tlm)
@@ -30,6 +31,9 @@ def header_definition(tlm):
     header += '\n\n#endif'
     
     return header
+
+def includes():
+    return '#include <sys/socket.h>\n\n'
 
 def defines(tlm):
     defines = '#define SA struct sockaddr\n'
@@ -81,7 +85,7 @@ def function_headers(tlm):
     headers = ''
     for i in range(0, len(functions)):
         frac = functions[i]
-        headers += 'void update_telemetry_'
+        headers += 'static void update_telemetry_'
         headers += f'{frac.numerator}_{frac.denominator}'
         headers += '(Telemetry *tlm);\n'
     

@@ -96,7 +96,7 @@ void *can_master(void *args) {
  * Returns:
  *     void
  */
-void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
+static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
     int count;
     
@@ -134,7 +134,7 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
  *     true  -> messages match
  *     false -> messages do not match
  */
-bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received) {
+static bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received) {
     if (lookup->Flags != received->Flags)
         return false;
     

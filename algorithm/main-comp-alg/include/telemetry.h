@@ -2,6 +2,8 @@
 #define TELEMETRY_H
 
 
+#include <sys/socket.h>
+
 #define SA struct sockaddr
 #define TO_USEC 1000000
 #define PORT 8187
@@ -76,7 +78,7 @@ typedef struct {
 
 void *send_tlm(void *args);
 
-void update_telemetry_1_1(Telemetry *tlm);
+static void update_telemetry_1_1(Telemetry *tlm);
 
 
 #endif
