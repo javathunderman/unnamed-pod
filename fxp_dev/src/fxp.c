@@ -16,6 +16,6 @@ int ltofxp32(fxp32 * fxp ,long bytes, unsigned short iwl) {
 }
 
 double fxp32tod(fxp32 fxp){
-	(fxp->word)|(pow(2,fxp->))
+	return 0;
 }
 

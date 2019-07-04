@@ -3,6 +3,12 @@
 #include "NiFpga_test_brake_actuation.h"
 #include "NiFpga.h"
 
+void default_fpga(Fpga *fpga) {
+	fpga->status = NiFpga_Status_Success;
+	fpga->bit_path = "./FPGA/" "NiFpga_test_brake_actuation_Bitfile";
+	fpga->resource = "RIO0";
+	fpga->signature = "NiFpga_test_brake_actuation_Signature";
+}
 
 NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_Initialize());
@@ -32,6 +38,18 @@ NiFpga_Status refresh_cache(Fpga *fpga) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1802C, &(fpga->cache.fxp_pressure_20)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18030, &(fpga->cache.fxp_pressure_21)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18034, &(fpga->cache.fxp_pressure_22)));
+	return fpga->status;
+}
+
+NiFpga_Status fpclose(Fpga *fpga, uint32_t attr) {
+	NiFpga_MergeStatus(&(fpga->status), NiFpga_Close(fpga->session, attr));
+	
+	return fpga->status;
+}
+
+NiFpga_Status fpfinalize(Fpga *fpga) {
+	NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());
+	
 	return fpga->status;
 }
 

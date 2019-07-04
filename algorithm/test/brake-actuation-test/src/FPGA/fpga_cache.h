@@ -19,9 +19,9 @@ typedef struct {
 
 typedef struct {
 	NiFpga_Status status;
-	char *bit_path;
-	char *signature;
-	char *resource;
+	const char *bit_path;
+	const char *signature;
+	const char *resource;
 	NiFpga_Session session;
 	Cache cache;
 } Fpga;

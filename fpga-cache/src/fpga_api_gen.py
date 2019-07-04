@@ -15,7 +15,11 @@ root = tk.Tk()
 root.withdraw()
 
 header = filedialog.askopenfilename()
-bit = nt.basename(filedialog.askopenfilename()).split('.')[0] + '_Bitfile'
+base =  nt.basename(filedialog.askopenfilename()).split('.')[0]
+bit = base + '_Bitfile'
+sig = base + '_Signature'
+resource = "RIO0"
+
 
 win_path = '/'.join(header.split('/')[0:-1])+'/'
 header = nt.basename(header)
@@ -120,9 +124,9 @@ fpga = Block('typedef struct {', '} Fpga;')
 
 # Metadata for the connection to the FPGA
 fpga.add('NiFpga_Status status;')
-fpga.add('char *bit_path;')
-fpga.add('char *signature;')
-fpga.add('char *resource;')
+fpga.add('const char *bit_path;')
+fpga.add('const char *signature;')
+fpga.add('const char *resource;')
 fpga.add('NiFpga_Session session;')
 
 
@@ -178,10 +182,13 @@ for line in includes:
 src_out.write('\n')
 
 # Create the method for populating the default values into an FPGA struct
-default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
-default_fpga.add('fpga->bit_path')
-# src_out.write(default_fpga)
+default_fpga.add(f'fpga->bit_path = "./FPGA/" "{bit}";')
+default_fpga.add(f'fpga->resource = "{resource}";')
+default_fpga.add(f'fpga->signature = "{sig}";')
+
+src_out.write(str(default_fpga))
 src_out.write('\n')
 
 init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {','}')
@@ -222,12 +229,18 @@ src_out.write('\n')
 close = Block('NiFpga_Status fpclose(Fpga *fpga, uint32_t attr) {', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Close(fpga->session, attr));')
 close.add('')
-close.add('return fpga->status')
+close.add('return fpga->status;')
+
+src_out.write(str(close))
+src_out.write('\n')
 
 finalize = Block('NiFpga_Status fpfinalize(Fpga *fpga) {', '}')
-close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
+finalize.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
 finalize.add('')
-finalize.add('return fpga->status')
+finalize.add('return fpga->status;')
+
+src_out.write(str(finalize))
+src_out.write('\n')
 
 for cont in conts:
     c_block = Block(f'NiFpga_Status write_{cont[1]}(Fpga *fpga, {cont[0]} v) {{', '}')
@@ -247,7 +260,7 @@ for line in includes:
     src_test.write(f'#include {line}\n')
 src_test.write('\n')
 
-default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
 default_fpga.add('fpga->bit_path')
 
