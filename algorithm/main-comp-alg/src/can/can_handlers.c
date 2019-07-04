@@ -325,11 +325,11 @@ void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void set_status_bits(CAN_Data *data, char status_flags) {
-    /*STORE(data->status_bits.hardware_error, ((status_flags >> 7) & 0x0001));
-    STORE(data->status_bits.no_new_estimates, ((status_flags >> 6) & 0x0001));
-    STORE(data->status_bits.high_uncertainty, ((status_flags >> 5) & 0x0001));
-    STORE(data->status_bits.undefined, ((status_flags >> 4) & 0x0001));
-    STORE(data->status_bits.high_battery_voltage, ((status_flags >> 3) & 0x0001));
-    STORE(data->status_bits.low_batter_voltage, ((status_flags >> 2) & 0x0001));
-    STORE(data->status_bits.isolation_status, ((status_flags >> 1) & 0x0011));*/
+    STORE(data->status_bits.hardware_error, ((status_flags >> 7) & 0x01));
+    STORE(data->status_bits.no_new_estimates, ((status_flags >> 6) & 0x01));
+    STORE(data->status_bits.high_uncertainty, ((status_flags >> 5) & 0x01));
+    STORE(data->status_bits.undefined, ((status_flags >> 4) & 0x01));
+    STORE(data->status_bits.high_battery_voltage, ((status_flags >> 3) & 0x01));
+    STORE(data->status_bits.low_batter_voltage, ((status_flags >> 2) & 0x01));
+    STORE(data->status_bits.isolation_status, ((status_flags >> 1) & 0x02));
 }
