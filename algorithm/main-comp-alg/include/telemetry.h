@@ -78,7 +78,7 @@ typedef struct {
 
 void *send_tlm(void *args);
 
-static void update_telemetry_1_1(Telemetry *tlm);
+void update_telemetry_1_1(Telemetry *tlm);
 
 
 #endif

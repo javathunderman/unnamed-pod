@@ -2,6 +2,9 @@
 #include "can_handlers.h"
 #include "can_master.h"
 
+/* Used internally to set isolation monitor status bits */
+static void set_status_bits(CAN_Data *data, char status_flags);
+
 
 /* This function updates state machine's CAN_Data with:
  *     Pack State of Charge
@@ -321,7 +324,7 @@ void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-static void set_status_bits(CAN_Data *data, char status_flags) {
+void set_status_bits(CAN_Data *data, char status_flags) {
     STORE(data->status_bits.hardware_error, ((status_flags >> 7) & 0x0001));
     STORE(data->status_bits.no_new_estimates, ((status_flags >> 6) & 0x0001));
     STORE(data->status_bits.high_uncertainty, ((status_flags >> 5) & 0x0001));

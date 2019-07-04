@@ -101,7 +101,7 @@ def main_thread(tlm):
     fns = CodeHeader.function_headers(tlm).splitlines()
     clk = 'CLOCK_MONOTONIC'
     for i in range(0, len(fns)):
-        call = fns[i][12:].replace("Telemetry *", "&")
+        call = fns[i][5:].replace("Telemetry *", "&")
         main += f'        clock_nanosleep({clk}, TIMER_ABSTIME, &delay_{i+1}, NULL);\n'
         main += f'        {call}\n\n'
     

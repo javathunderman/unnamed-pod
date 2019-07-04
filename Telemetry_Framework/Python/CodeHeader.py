@@ -85,7 +85,7 @@ def function_headers(tlm):
     headers = ''
     for i in range(0, len(functions)):
         frac = functions[i]
-        headers += 'static void update_telemetry_'
+        headers += 'void update_telemetry_'
         headers += f'{frac.numerator}_{frac.denominator}'
         headers += '(Telemetry *tlm);\n'
     

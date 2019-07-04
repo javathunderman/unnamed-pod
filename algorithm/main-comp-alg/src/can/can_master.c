@@ -17,6 +17,9 @@
 
 #define CAN_BUF_LEN 100
 
+/* Used internally to handle received can messages */
+static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp);
+static bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received);
 
 /* Global variables */
 VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
@@ -43,6 +46,7 @@ void *can_master(void *args) {
     VSCAN_MSG read_buffer[CAN_BUF_LEN];
     DWORD num_read;
     VSCAN_STATUS status;
+    int i;
     
     /* Initialize loop timing */
     struct timespec now;
@@ -63,7 +67,7 @@ void *can_master(void *args) {
         /* Read CAN bus messages */
         status = VSCAN_Read(handle, read_buffer, CAN_BUF_LEN, &num_read);
         if (status == VSCAN_ERR_OK) {
-            for (int i = 0; i < num_read; i++) {
+            for (i = 0; i < num_read; i++) {
                 handle_can_message(data, &(read_buffer[i]), &delay);
             }
         } else {
@@ -96,12 +100,12 @@ void *can_master(void *args) {
  * Returns:
  *     void
  */
-static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
+void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
-    int count;
+    int count, id;
     
     /* Identify message */
-    for (int id = 0; id < NUM_CAN_RESPONSES; id++) {
+    for (id = 0; id < NUM_CAN_RESPONSES; id++) {
         if (check_match(&(response_lookup[id].msg), msg)) {
             msg_id = id;
             break;
@@ -134,14 +138,16 @@ static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *
  *     true  -> messages match
  *     false -> messages do not match
  */
-static bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received) {
+bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received) {
+    int i;
+    
     if (lookup->Flags != received->Flags)
         return false;
     
     if (lookup->Id != received->Id)
         return false;
     
-    for (int i = 0; i < lookup->Size; i++) {
+    for (i = 0; i < lookup->Size; i++) {
         if (lookup->Data[i] != received->Data[i])
             return false;
     }

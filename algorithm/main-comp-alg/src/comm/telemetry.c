@@ -52,7 +52,7 @@ void *send_tlm(void *args) {
     }
 }
 
-static void update_telemetry_1_1(Telemetry *tlm) {
+void update_telemetry_1_1(Telemetry *tlm) {
     tlm->POD_TEMP = 0;
     tlm->POD_PRESSURE = 0;
     tlm->ACCEL_X = 0;
