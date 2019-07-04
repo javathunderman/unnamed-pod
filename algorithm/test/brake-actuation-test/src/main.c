@@ -77,6 +77,7 @@ void test(FILE * const file, Fpga * fpga){
     fprintf(file, "Time, Brake State, Drain State, P_14, P_15, P_16, P_17");
     //Perform your test and log it to the CSV.
     while(1){
+    	refresh_cache(fpga);
         if (poll(&mypoll, 1, 100)) {
             scanf("%c", &c);
             if (c == 'q') {
@@ -84,10 +85,10 @@ void test(FILE * const file, Fpga * fpga){
                 break;
             } else if (c == 'b') {
                 printf("TOGGLING BRAKES\n");
-                write_set_brakes(fpga, NOT((fpga->cache.current_brake_state)));
+                write_set_brakes(fpga, fpga->cache.current_brake_state);
             } else if (c == 'd') {
             	printf("TOGGLING DRAIN VALVE\n");
-            	write_set_drain_valve(fpga, NOT((fpga->cache.current_drain_valve_state)));
+            	write_set_drain_valve(fpga, NOT(fpga->cache.current_drain_valve_state));
             }
         }
         // Get timing for data logging
@@ -101,7 +102,7 @@ void test(FILE * const file, Fpga * fpga){
         		booltos(fpga->cache.current_brake_state), booltos(fpga->cache.current_drain_valve_state),
         		fxptof(fpga->cache.fxp_pressure_14), fxptof(fpga->cache.fxp_pressure_15),
         		fxptof(fpga->cache.fxp_pressure_16), fxptof(fpga->cache.fxp_pressure_17));
-        refresh_cache(fpga);
+
     }
 }
 float fxptof(int32_t fxp) {

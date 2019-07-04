@@ -38,6 +38,10 @@ NiFpga_Status refresh_cache(Fpga *fpga) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1802C, &(fpga->cache.fxp_pressure_20)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18030, &(fpga->cache.fxp_pressure_21)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18034, &(fpga->cache.fxp_pressure_22)));
+
+	if(fpga->status != NiFpga_Status_Success) {
+		printf("Failure to refresh FPGA\n");
+	}
 	return fpga->status;
 }
 
