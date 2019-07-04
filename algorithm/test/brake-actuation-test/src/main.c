@@ -15,9 +15,12 @@
 #include <poll.h>
 #include "FPGA/fpga_cache.h"
 
+
 #define TEST "Brake_Actuation" //Name of the test, must be under 50 characters
 #define DT 100          //Timing interval for logging in millis
 #define LEN 5           //Length of time to log in seconds.
+#define NOT(x) x==NiFpga_False ? NiFpga_True : NiFpga_False
+#define booltos(x) x==NiFpga_False ? "False" : "True"
 
 float fxptof(int32_t fxp);
 
@@ -81,10 +84,10 @@ void test(FILE * const file, Fpga * fpga){
                 break;
             } else if (c == 'b') {
                 printf("TOGGLING BRAKES\n");
-                write_set_brakes(fpga, !(fpga->cache.current_brake_state));
+                write_set_brakes(fpga, NOT((fpga->cache.current_brake_state)));
             } else if (c == 'd') {
             	printf("TOGGLING DRAIN VALVE\n");
-            	write_set_drain_valve(fpga, !(fpga->cache.current_drain_valve_state));
+            	write_set_drain_valve(fpga, NOT((fpga->cache.current_drain_valve_state)));
             }
         }
         // Get timing for data logging
@@ -94,8 +97,8 @@ void test(FILE * const file, Fpga * fpga){
 
         // Update FPGA cache to fetch new values
 
-        fprintf(file, "%f, %d, %d, %f, %f, %f, %f\n", time,
-        		fpga->cache.current_brake_state, fpga->cache.current_drain_valve_state,
+        fprintf(file, "%f, %s, %s, %f, %f, %f, %f\n", time,
+        		booltos(fpga->cache.current_brake_state), booltos(fpga->cache.current_drain_valve_state),
         		fxptof(fpga->cache.fxp_pressure_14), fxptof(fpga->cache.fxp_pressure_15),
         		fxptof(fpga->cache.fxp_pressure_16), fxptof(fpga->cache.fxp_pressure_17));
         refresh_cache(fpga);
