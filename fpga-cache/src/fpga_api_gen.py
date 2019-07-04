@@ -99,8 +99,8 @@ for line in h:
     else:
         if(i == 0 and p_bit.match(line)):
             name = R.search(p_bit, line).group(1)
-            p_dec = R.compile(f'\s*{name}_Indicator(.+)_(\w+)\s*=\s*(.+),$')
-            p_cont = R.compile(f'\s*{name}_Control(.+)_(\w+)\s*=\s*(.+),$')
+            p_dec = R.compile(f'\s*{name}_Indicator([^_]+)_(\w+)\s*=\s*(.+),$')
+            p_cont = R.compile(f'\s*{name}_Control([^_]+)_(\w+)\s*=\s*(.+),$')
             i = 1
         elif(i == 1 and p_dec.match(line)):
             r = R.search(p_dec, line)
@@ -181,7 +181,7 @@ src_out.write('\n')
 default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
 default_fpga.add('fpga->bit_path')
-src_out.write(default_fpga)
+# src_out.write(default_fpga)
 src_out.write('\n')
 
 init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {','}')
@@ -239,7 +239,7 @@ for cont in conts:
 src_out.close()
 
 #Create Mock Cache .c
-src_test = open(win_path + 'fpga_cache.c', 'w')
+src_test = open(win_path + 'fpga_cache_test.c', 'w')
 
 #Includes
 src_test.write('#include "fpga_cache.h"\n\n')
