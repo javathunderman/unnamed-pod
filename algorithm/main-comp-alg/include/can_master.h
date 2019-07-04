@@ -10,6 +10,9 @@
 #define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
 #define LOAD(var) __atomic_load_n(&(var), __ATOMIC_RELAXED);
 
+#define SEQ_STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_SEQ_CST);
+#define SEQ_LOAD(var) __atomic_load_n(&(var), __ATOMIC_SEQ_CST);
+
 typedef enum {
     IDLE,
     SEND,

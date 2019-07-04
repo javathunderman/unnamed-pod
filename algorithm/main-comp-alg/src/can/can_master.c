@@ -44,8 +44,10 @@ void *can_master(void *args) {
     /* Buffer to read CAN messages into */
     CAN_Data *data = (CAN_Data *)args;
     VSCAN_MSG read_buffer[CAN_BUF_LEN];
-    DWORD num_read;
+    DWORD ret_val;
     VSCAN_STATUS status;
+    CAN_State state;
+    bool flush;
     int i;
     
     /* Initialize loop timing */
@@ -65,9 +67,9 @@ void *can_master(void *args) {
         clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &delay, NULL);
         
         /* Read CAN bus messages */
-        status = VSCAN_Read(handle, read_buffer, CAN_BUF_LEN, &num_read);
+        status = VSCAN_Read(handle, read_buffer, CAN_BUF_LEN, &ret_val);
         if (status == VSCAN_ERR_OK) {
-            for (i = 0; i < num_read; i++) {
+            for (i = 0; i < ret_val; i++) {
                 handle_can_message(data, &(read_buffer[i]), &delay);
             }
         } else {
@@ -78,7 +80,37 @@ void *can_master(void *args) {
         //TODO
         
         /* Write CAN bus messages */
-        //TODO
+        for (i = 0; i < NUM_CAN_REQUESTS; i++) {
+            /* Check SEND requests */
+            state = SEQ_LOAD(data->requests[i].state)
+            
+            if (state == SEND) {
+                /* Send message */
+                status = VSCAN_Write(handle, &(request_lookup[i]), 1, &ret_val);
+                if (ret_val != 1 || status != VSCAN_ERR_OK) {
+                    //TODO: Comm Loss
+                }
+                
+                /* Flush write-buffer this cycle */
+                flush = true;
+                
+                /* Update to WAITING state */
+                SEQ_STORE(data->requests[i].state, WAITING)
+                
+                /* Record timestamp */
+                STORE(data->requests[i].sent_time.tv_sec, delay.tv_sec)
+                STORE(data->requests[i].sent_time.tv_nsec, delay.tv_nsec)
+            }
+        }
+        
+        /* Flush write-buffer if anything was written */
+        if (flush) {
+            status = VSCAN_Flush(handle);
+            if (status != VSCAN_ERR_OK) {
+                //TODO: Comm Loss
+            }
+            flush = false;
+        }
         
         UPDATE_DELAY(delay)
     }
@@ -119,8 +151,8 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
     /* Update CAN_Data metadata for this message */
     STORE(data->responses[msg_id].last_time.tv_sec, timestamp->tv_sec)
     STORE(data->responses[msg_id].last_time.tv_nsec, timestamp->tv_nsec)
-    count = LOAD(data->responses[msg_id].rx_count)
-    STORE(data->responses[msg_id].rx_count, count+1)
+    count = SEQ_LOAD(data->responses[msg_id].rx_count)
+    SEQ_STORE(data->responses[msg_id].rx_count, count+1)
     
     /* Call handler function to update CAN_Data fields */
     response_lookup[msg_id].handler(msg, data);
