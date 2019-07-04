@@ -62,18 +62,22 @@ int test_num(const char* test_name){
  */
 void test(FILE * const file, Fpga * fpga){
 	refresh_cache(fpga);
-    float time = 0;
+
+	struct timeval start, cur;
+	float time = 0;
+	gettimeofday(&start, NULL);
+
     char c;
     struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI };
 
     printf("%s", greeting);
-
+    fprintf(file, "Time, Brake State, Drain State, P_14, P_15, P_16, P_17");
     //Perform your test and log it to the CSV.
     while(1){
         if (poll(&mypoll, 1, 100)) {
             scanf("%c", &c);
             if (c == 'q') {
-                printf("EXITING"); 
+                printf("EXITING\n");
                 break;
             } else if (c == 'b') {
                 printf("TOGGLING BRAKES\n");
@@ -83,10 +87,15 @@ void test(FILE * const file, Fpga * fpga){
             	write_set_drain_valve(fpga, !(fpga->cache.current_drain_valve_state));
             }
         }
-        
+        // Get timing for data logging
+        gettimeofday(&cur, NULL);
+		time = cur.tv_sec - start.tv_sec;
+		time += (0.000001f * (cur.tv_usec - start.tv_usec));
+
         // Update FPGA cache to fetch new values
 
-        fprintf(file, "%f, %f, %f, %f, %f\n", time,
+        fprintf(file, "%f, %d, %d, %f, %f, %f, %f\n", time,
+        		fpga->cache.current_brake_state, fpga->cache.current_drain_valve_state,
         		fxptof(fpga->cache.fxp_pressure_14), fxptof(fpga->cache.fxp_pressure_15),
         		fxptof(fpga->cache.fxp_pressure_16), fxptof(fpga->cache.fxp_pressure_17));
         refresh_cache(fpga);
