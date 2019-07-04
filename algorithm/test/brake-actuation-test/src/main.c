@@ -12,12 +12,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/time.h>
+#include <poll.h>
 #include "FPGA/fpga_cache.h"
 
 #define TEST "Brake_Actuation" //Name of the test, must be under 50 characters
 #define DT 100          //Timing interval for logging in millis
 #define LEN 5           //Length of time to log in seconds.
 
+float fxptof(int32_t fxp);
 
 
 
@@ -26,10 +28,12 @@ char *greeting =     "########################################\n"
                      "###       BRAKE ACTUATION TEST       ###\n"
                      "###              7/4/2019            ###\n"
                      "########################################\n"
-                     "#    Press 'q'    #      Press 'b'     #\n"
-                     "#                 #      to toggle     #\n"
-                     "#     to quit     #   state of brakes  #\n"
-                     "########################################\n";
+                     "#    Press 'd'    #      Press 'b'     #\n"
+                     "#    to toggle    #      to toggle     #\n"
+                     "# state of drain  #   state of brakes  #\n"
+                     "########################################\n"
+					 "# Press 'q' to quit and stop execution #\n"
+					 "########################################\n";
 
 
 /*
@@ -57,9 +61,8 @@ int test_num(const char* test_name){
  * are not exac
  */
 void test(FILE * const file, Fpga * fpga){
-    struct timeval start, cur;
+	refresh_cache(fpga);
     float time = 0;
-    gettimeofday(&start, NULL);
     char c;
     struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI };
 
@@ -74,22 +77,24 @@ void test(FILE * const file, Fpga * fpga){
                 break;
             } else if (c == 'b') {
                 printf("TOGGLING BRAKES\n");
-                write_set_brakes(fpga, !(fpga->current_brake_state));
+                write_set_brakes(fpga, !(fpga->cache.current_brake_state));
+            } else if (c == 'd') {
+            	printf("TOGGLING DRAIN VALVE\n");
+            	write_set_drain_valve(fpga, !(fpga->cache.current_drain_valve_state));
             }
         }
         
         // Update FPGA cache to fetch new values
+
+        fprintf(file, "%f, %f, %f, %f, %f\n", time,
+        		fxptof(fpga->cache.fxp_pressure_14), fxptof(fpga->cache.fxp_pressure_15),
+        		fxptof(fpga->cache.fxp_pressure_16), fxptof(fpga->cache.fxp_pressure_17));
         refresh_cache(fpga);
-        //Measure values and log
-        gettimeofday(&cur, NULL);
-        time = cur.tv_sec - start.tv_sec;
-        time += (0.000001f * (cur.tv_usec - start.tv_usec));
-        fprintf(file, "%f, %f\n", time, 0.0);
-        usleep(1000*DT);
-        printf("Time: %f\n", time);
     }
 }
-
+float fxptof(int32_t fxp) {
+	return fxp / 65536.0f;
+}
 int main(void) {
     uint32_t default_attr = 0;
     char fname[128];
