@@ -54,8 +54,8 @@ void *can_master(void *args) {
         printf("clock_gettime() error: %s\n", strerror(errno));
         //TODO: Comm Loss
     }
-    __time_t sec = now.tv_sec;
-    __syscall_slong_t nsec = now.tv_nsec;
+    time_t sec = now.tv_sec;
+    long nsec = now.tv_nsec;
 
     INIT_TIMES(now, CAN_FREQ)
     struct timespec delay = {sec, nsec};

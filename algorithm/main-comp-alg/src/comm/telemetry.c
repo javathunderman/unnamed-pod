@@ -28,8 +28,8 @@ void *send_tlm(void *args) {
         printf("clock_gettime() error: %s\n", strerror(errno));
         exit(-3);
     }
-    __time_t sec = now.tv_sec;
-    __syscall_slong_t nsec = now.tv_nsec;
+    time_t sec = now.tv_sec;
+    long nsec = now.tv_nsec;
 
     INIT_TIMES(now, 1000000000L)
     struct timespec delay_1 = {sec, nsec};

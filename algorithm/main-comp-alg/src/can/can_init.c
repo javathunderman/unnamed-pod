@@ -50,13 +50,13 @@ int can_init(CAN_Data *data) {
 }
 
 void init_can_data(CAN_Data *data) {
-    /* Init response fields */
     int i;
     
+    /* Init response fields */
     for (i = 0; i < NUM_CAN_RESPONSES; i++) {
         STORE(data->responses[i].rx_count, 0)
-        STORE(data->responses[i].last_time.tv_sec, 0)
-        STORE(data->responses[i].last_time.tv_nsec, 0)
+        STORE(data->responses[i].last_time.tv_sec, 0L)
+        STORE(data->responses[i].last_time.tv_nsec, 0L)
         STORE(data->responses[i].check_timeout, false)
          
         /* Configure timeout per message */
@@ -91,6 +91,17 @@ void init_can_data(CAN_Data *data) {
                 STORE(data->responses[i].timeout_interval.tv_sec, LONG_MAX)
                 STORE(data->responses[i].timeout_interval.tv_nsec, 999999999L)
         }
+    }
+    
+    /* Init request fields */
+    for (i = 0; i < NUM_CAN_RESPONSES; i++) {
+        STORE(data->requests[i].state, IDLE)
+        STORE(data->requests[i].tx_count, 0)
+        STORE(data->requests[i].check_timeout, true)
+        STORE(data->requests[i].sent_time.tv_sec, 0L)
+        STORE(data->requests[i].sent_time.tv_nsec, 0L)
+        STORE(data->requests[i].timeout_interval.tv_sec, 0L)
+        STORE(data->requests[i].timeout_interval.tv_nsec, 10000000L) /* 10ms timeout */
     }
 }
 
