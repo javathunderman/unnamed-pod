@@ -10,6 +10,9 @@
 #define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
 #define LOAD(var) __atomic_load_n(&(var), __ATOMIC_RELAXED);
 
+#define SEQ_STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_SEQ_CST);
+#define SEQ_LOAD(var) __atomic_load_n(&(var), __ATOMIC_SEQ_CST);
+
 typedef enum {
     IDLE,
     SEND,
@@ -70,7 +73,7 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    int rx_count;
+    unsigned char rx_count;
     bool check_timeout;
     struct timespec timeout_interval;
     struct timespec last_time;
@@ -78,20 +81,21 @@ typedef struct {
 
 typedef struct {
     CAN_State state;
-    int tx_count;
+    unsigned char tx_count;
     bool check_timeout;
+    unsigned char timeout_count;
     struct timespec timeout_interval;
     struct timespec sent_time;
 } CAN_Request;
 
 typedef struct{
-    volatile unsigned int hardware_error: 1;        /*0 if no Hardware error, 1 if hardware error*/
-    volatile unsigned int no_new_estimates: 1;      /*0 if new isolation values have been calculated, 1 if not */
-    volatile unsigned int high_uncertainty: 1;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
-    volatile unsigned int undefined: 1;             /*none*/
-    volatile unsigned int high_battery_voltage: 1; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
-    volatile unsigned int low_batter_voltage: 1;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
-    volatile unsigned int isolation_status: 2;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
+    volatile unsigned char hardware_error;        /*0 if no Hardware error, 1 if hardware error*/
+    volatile unsigned char no_new_estimates;      /*0 if new isolation values have been calculated, 1 if not */
+    volatile unsigned char high_uncertainty;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
+    volatile unsigned char undefined;             /*none*/
+    volatile unsigned char high_battery_voltage; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
+    volatile unsigned char low_batter_voltage;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
+    volatile unsigned char isolation_status;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
 } Iso_Status_Bits;
 
 /* This struct holds data received from CAN devices to be used
@@ -156,7 +160,7 @@ typedef struct {
     
     
     /* --- Transmit Data --- */
-    volatile CAN_State requests[NUM_CAN_REQUESTS];
+    volatile CAN_Request requests[NUM_CAN_REQUESTS];
     volatile CAN_Response responses[NUM_CAN_RESPONSES];
 } CAN_Data;
 
