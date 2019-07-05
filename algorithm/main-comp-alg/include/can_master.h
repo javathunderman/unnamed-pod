@@ -7,11 +7,11 @@
 
 
 /* Used to safely load/store values in CAN_Data struct */
-#define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
-#define LOAD(var) __atomic_load_n(&(var), __ATOMIC_RELAXED);
+#define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
+#define LOAD(var) (__atomic_load_n(&(var), __ATOMIC_RELAXED))
 
-#define SEQ_STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_SEQ_CST);
-#define SEQ_LOAD(var) __atomic_load_n(&(var), __ATOMIC_SEQ_CST);
+#define SEQ_STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_SEQ_CST))
+#define SEQ_LOAD(var) (__atomic_load_n(&(var), __ATOMIC_SEQ_CST))
 
 typedef enum {
     IDLE,
@@ -73,19 +73,19 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    unsigned char rx_count;
-    bool check_timeout;
-    struct timespec timeout_interval;
-    struct timespec last_time;
+    volatile unsigned char rx_count;
+    volatile bool check_timeout;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec last_time;
 } CAN_Response;
 
 typedef struct {
-    CAN_State state;
-    unsigned char tx_count;
-    bool check_timeout;
-    unsigned char timeout_count;
-    struct timespec timeout_interval;
-    struct timespec sent_time;
+    volatile CAN_State state;
+    volatile unsigned char tx_count;
+    volatile bool check_timeout;
+    volatile unsigned char timeout_count;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec sent_time;
 } CAN_Request;
 
 typedef struct{

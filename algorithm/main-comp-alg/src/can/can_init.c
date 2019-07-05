@@ -54,10 +54,10 @@ void init_can_data(CAN_Data *data) {
     
     /* Init response fields */
     for (i = 0; i < NUM_CAN_RESPONSES; i++) {
-        STORE(data->responses[i].rx_count, 0)
-        STORE(data->responses[i].last_time.tv_sec, 0L)
-        STORE(data->responses[i].last_time.tv_nsec, 0L)
-        STORE(data->responses[i].check_timeout, false)
+        STORE(data->responses[i].rx_count, 0);
+        STORE(data->responses[i].last_time.tv_sec, 0L);
+        STORE(data->responses[i].last_time.tv_nsec, 0L);
+        STORE(data->responses[i].check_timeout, false);
          
         /* Configure timeout per message */
         switch (i) {
@@ -65,8 +65,8 @@ void init_can_data(CAN_Data *data) {
             case BMS_OTHER_RX:
             case BMS_ERROR_RX:
                 /* 300ms timeout */
-                STORE(data->responses[i].timeout_interval.tv_sec, 0L)
-                STORE(data->responses[i].timeout_interval.tv_nsec, 300000000L)
+                STORE(data->responses[i].timeout_interval.tv_sec, 0L);
+                STORE(data->responses[i].timeout_interval.tv_nsec, 300000000L);
                 break;
             
             case ISO_STATE_RX:
@@ -74,34 +74,34 @@ void init_can_data(CAN_Data *data) {
             case ISO_ERROR_RX:
             case LIPO_VOLTAGE_RX:
                 /* 1.5sec timeout */
-                STORE(data->responses[i].timeout_interval.tv_sec, 1L)
-                STORE(data->responses[i].timeout_interval.tv_nsec, 500000000L)
+                STORE(data->responses[i].timeout_interval.tv_sec, 1L);
+                STORE(data->responses[i].timeout_interval.tv_nsec, 500000000L);
                 break;
             
             case ACTUAL_SPEED_RX:
             case ACTUAL_CURRENT_RX:
             case ACTUAL_POSITION_RX:
                 /* 10ms timeout */
-                STORE(data->responses[i].timeout_interval.tv_sec, 0L)
-                STORE(data->responses[i].timeout_interval.tv_nsec, 10000000L)
+                STORE(data->responses[i].timeout_interval.tv_sec, 0L);
+                STORE(data->responses[i].timeout_interval.tv_nsec, 10000000L);
                 break;
             
             default: 
                 /* No timeout */
-                STORE(data->responses[i].timeout_interval.tv_sec, LONG_MAX)
-                STORE(data->responses[i].timeout_interval.tv_nsec, 999999999L)
+                STORE(data->responses[i].timeout_interval.tv_sec, LONG_MAX);
+                STORE(data->responses[i].timeout_interval.tv_nsec, 999999999L);
         }
     }
     
     /* Init request fields */
     for (i = 0; i < NUM_CAN_RESPONSES; i++) {
-        STORE(data->requests[i].state, IDLE)
-        STORE(data->requests[i].tx_count, 0)
-        STORE(data->requests[i].check_timeout, true)
-        STORE(data->requests[i].sent_time.tv_sec, 0L)
-        STORE(data->requests[i].sent_time.tv_nsec, 0L)
-        STORE(data->requests[i].timeout_interval.tv_sec, 0L)
-        STORE(data->requests[i].timeout_interval.tv_nsec, 10000000L) /* 10ms timeout */
+        STORE(data->requests[i].state, IDLE);
+        STORE(data->requests[i].tx_count, 0);
+        STORE(data->requests[i].check_timeout, true);
+        STORE(data->requests[i].sent_time.tv_sec, 0L);
+        STORE(data->requests[i].sent_time.tv_nsec, 0L);
+        STORE(data->requests[i].timeout_interval.tv_sec, 0L);
+        STORE(data->requests[i].timeout_interval.tv_nsec, 10000000L); /* 10ms timeout */
     }
 }
 
