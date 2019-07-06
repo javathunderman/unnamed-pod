@@ -113,31 +113,31 @@ typedef struct {
     /* --- Receive Data --- */
     
     /* Battery Management System */
-    volatile short pack_soc;               /* Percent         */
-    volatile short pack_voltage;           /* deci-Volts      */
-    volatile short pack_current;           /* deci-Amps       */
+    volatile unsigned short pack_soc;               /* Percent         */
+    volatile unsigned short pack_voltage;           /* deci-Volts      */
+    volatile unsigned short pack_current;           /* deci-Amps       */
     
-    volatile short min_voltage;                         /* 10E-4 V */
-    volatile short max_voltage;                         /* 10E-4 V */
-    volatile short avg_temp;                            /* Celcius */
-    volatile short high_temp;                           /* Celcius */
+    volatile unsigned short min_voltage;                         /* 10E-4 V */
+    volatile unsigned short max_voltage;                         /* 10E-4 V */
+    volatile unsigned short avg_temp;                            /* Celcius */
+    volatile unsigned short high_temp;                           /* Celcius */
     
-    volatile char failsafe_status;                      /* Bit Flags */
-    volatile char dtc_flags_1;                          /* Bit Flags */
-    volatile short dtc_flags_2;                         /* Bit Flags */
-    volatile short rolling_counter;                     /* Counter   */
+    volatile unsigned char failsafe_status;                      /* Bit Flags */
+    volatile unsigned char dtc_flags_1;                          /* Bit Flags */
+    volatile unsigned short dtc_flags_2;                         /* Bit Flags */
+    volatile unsigned short rolling_counter;                     /* Counter   */
     
-    volatile char error_flags;
+    volatile unsigned char error_flags;
     
-    volatile short electrical_isolation;                /* ohm/V */
-    volatile char electrical_isolation_uncert;         
-    volatile short energy_stored;                       /* mJ */
-    volatile char energy_stored_uncert;
+    volatile unsigned short electrical_isolation;                /* ohm/V */
+    volatile unsigned char electrical_isolation_uncert;         
+    volatile unsigned short energy_stored;                       /* mJ */
+    volatile unsigned char energy_stored_uncert;
     
-    volatile short rp_iso_resistance;                   /* kohm */
-    volatile char rp_iso_resistance_uncert;
-    volatile short rn_iso_resistance;                   /* kohm */
-    volatile char rn_iso_resistance_uncert;
+    volatile unsigned short rp_iso_resistance;                   /* kohm */
+    volatile unsigned char rp_iso_resistance_uncert;
+    volatile unsigned short rn_iso_resistance;                   /* kohm */
+    volatile unsigned char rn_iso_resistance_uncert;
     
     volatile Iso_Status_Bits status_bits;
     
