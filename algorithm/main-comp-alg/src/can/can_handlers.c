@@ -200,7 +200,31 @@ void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
    STORE(data->max_battery_volt_uncert, max_battery_volt_uncert);
 }
 
+/* This function updates state machine's CAN_Data with:
+ * Unsure
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void ready_to_transmit_handler(VSCAN_MSG *msg, CAN_Data *data){
+    
+}
 
+/* This function updates state machine's CAN_Data with:
+ * Unsure
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void transmit_enable_handler(VSCAN_MSG *msg, CAN_Data *data){
+    
+}
 
 
 /* This function updates state machine's CAN_Data with:
@@ -270,7 +294,7 @@ void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
    short percent_max_speed = *((short *) (&(msg->Data[1])));
    STORE(data->percent_max_speed, percent_max_speed);
 
@@ -289,7 +313,7 @@ void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_current_handler(VSCAN_MSG *msg, CAN_Data *data){
    short true_current = *((short *) (&(msg->Data[1])));
    STORE(data->true_current, true_current);
 }
@@ -308,7 +332,7 @@ void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data){
    int revolutions = *((int *) (&(msg->Data[1])));
    STORE(data->revolutions, revolutions);
 
