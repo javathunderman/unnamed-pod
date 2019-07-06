@@ -20,9 +20,9 @@ static void set_status_bits(CAN_Data *data, char status_flags);
  *     void
  */
 void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
-    short pack_soc     = *((short *) (&(msg->Data[0])));
-    short pack_voltage = *((short *) (&(msg->Data[2])));
-    short pack_current = *((short *) (&(msg->Data[4])));
+    unsigned short pack_soc     = *((unsigned short *) (&(msg->Data[0])));
+    unsigned short pack_voltage = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short pack_current = *((unsigned short *) (&(msg->Data[4])));
     
     STORE(data->pack_soc, pack_soc);
     STORE(data->pack_voltage, pack_voltage);
@@ -44,10 +44,10 @@ void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
  *     void
  */
 void bms_other_handler(VSCAN_MSG *msg, CAN_Data *data){
-    short min_voltage = *((short *) (&(msg->Data[0])));
-    short max_voltage = *((short *) (&(msg->Data[2])));
-    short avg_temp = *((short *) (&(msg->Data[4])));
-    short high_temp = *((short *) (&(msg->Data[6])));
+    unsigned short min_voltage = *((unsigned short *) (&(msg->Data[0])));
+    unsigned short max_voltage = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short avg_temp = *((unsigned short *) (&(msg->Data[4])));
+    unsigned short high_temp = *((unsigned short *) (&(msg->Data[6])));
 
     STORE(data->min_voltage, min_voltage);
     STORE(data->max_voltage, max_voltage);
@@ -72,10 +72,10 @@ void bms_other_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char failsafe_status = *((short *) (&(msg->Data[0])));
-    char dtc_flags_1 = *((short *) (&(msg->Data[1])));
-    short dtc_flags_2 = *((short *) (&(msg->Data[2])));
-    short rolling_counter = *((short *) (&(msg->Data[4])));
+    unsigned char failsafe_status = *((unsigned char *) (&(msg->Data[0])));
+    unsigned char dtc_flags_1 = *((unsigned char *) (&(msg->Data[1])));
+    unsigned short dtc_flags_2 = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short rolling_counter = *((unsigned short *) (&(msg->Data[4])));
 
     STORE(data->failsafe_status, failsafe_status);
     STORE(data->dtc_flags_1, dtc_flags_1);
