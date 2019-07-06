@@ -187,7 +187,7 @@ void check_timeouts(CAN_Data *data, struct timespec *now) {
  */
 void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
-    int count, id;
+    int count, id, req_id;
     
     /* Identify message */
     for (id = 0; id < NUM_CAN_RESPONSES; id++) {
@@ -209,6 +209,12 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
     
     /* Call handler function to update CAN_Data fields */
     response_lookup[msg_id].handler(msg, data);
+    
+    /* If this msg satisfies a request, mark request as COMPLETE */
+    req_id = response_lookup[msg_id].request_num;
+    if (req_id != -1) {
+        SEQ_STORE(data->requests[req_id].state, COMPLETE);
+    }
 }
 
 /* This function compares a received CAN message to a template lookup message.

@@ -167,6 +167,7 @@ typedef struct {
 typedef struct {
     VSCAN_MSG msg;
     void (*handler)(VSCAN_MSG *msg, CAN_Data *data);
+    int request_num;
 } CAN_Response_Lookup;
 
 /* Global variables */

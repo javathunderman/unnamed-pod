@@ -12,7 +12,7 @@
  * sent or received.
  *
  * Params:
- *     void
+ *     CAN_Data *data -> pointer to CAN_Data struct used by state machine
  *
  * Returns:
  *      0 -> success
@@ -49,6 +49,17 @@ int can_init(CAN_Data *data) {
     //TODO
 }
 
+/* This function initializes the CAN_Data struct by zeroing all data values
+ * and setting default values for all CAN message metadata.  All CAN responses
+ * and requests are initialized with timeouts, but leave check_timeout FALSE.
+ * The requesting code must set check_timeout to TRUE to use timeouts.
+ *
+ * Params:
+ *     CAN_Data *data -> pointer to CAN_Data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
 void init_can_data(CAN_Data *data) {
     int i;
     
@@ -97,12 +108,51 @@ void init_can_data(CAN_Data *data) {
     for (i = 0; i < NUM_CAN_RESPONSES; i++) {
         STORE(data->requests[i].state, IDLE);
         STORE(data->requests[i].tx_count, 0);
-        STORE(data->requests[i].check_timeout, true);
+        STORE(data->requests[i].check_timeout, false);
         STORE(data->requests[i].sent_time.tv_sec, 0L);
         STORE(data->requests[i].sent_time.tv_nsec, 0L);
         STORE(data->requests[i].timeout_interval.tv_sec, 0L);
         STORE(data->requests[i].timeout_interval.tv_nsec, 10000000L); /* 10ms timeout */
     }
+    
+    /* Init values to 0 */
+    STORE(data->pack_soc, 0);
+    STORE(data->pack_voltage, 0);
+    STORE(data->pack_current, 0);
+    STORE(data->min_voltage, 0);
+    STORE(data->max_voltage, 0);
+    STORE(data->avg_temp, 0);
+    STORE(data->high_temp, 0);
+    STORE(data->failsafe_status, 0);
+    STORE(data->dtc_flags_1, 0);
+    STORE(data->dtc_flags_2, 0);
+    STORE(data->rolling_counter, 0);
+    STORE(data->error_flags, 0);
+    STORE(data->electrical_isolation, 0);
+    STORE(data->electrical_isolation_uncert, 0);
+    STORE(data->energy_stored, 0);
+    STORE(data->energy_stored_uncert, 0);
+    STORE(data->rp_iso_resistance, 0);
+    STORE(data->rp_iso_resistance_uncert, 0);
+    STORE(data->rn_iso_resistance, 0);
+    STORE(data->rn_iso_resistance_uncert, 0);
+    STORE(data->status_bits.hardware_error, 0);
+    STORE(data->status_bits.no_new_estimates, 0);
+    STORE(data->status_bits.high_uncertainty, 0);
+    STORE(data->status_bits.undefined, 0);
+    STORE(data->status_bits.high_battery_voltage, 0);
+    STORE(data->status_bits.low_batter_voltage, 0);
+    STORE(data->status_bits.isolation_status, 0);
+    STORE(data->battery_volt, 0);
+    STORE(data->battery_volt_uncert, 0);
+    STORE(data->max_battery_volt, 0);
+    STORE(data->max_battery_volt_uncert, 0);
+    STORE(data->max_speed, 0);
+    STORE(data->dev_current, 0);
+    STORE(data->current_200pc, 0);
+    STORE(data->percent_max_speed, 0);
+    STORE(data->true_current, 0);
+    STORE(data->revolutions, 0);
 }
 
 /* This function initializes the request_lookup array with CAN messages
@@ -269,18 +319,21 @@ void init_can_responses() {
     response_lookup[BMS_PACK_RX].msg.Id = 0x301;
     response_lookup[BMS_PACK_RX].msg.Size = 0;
     response_lookup[BMS_PACK_RX].handler = bms_pack_handler;
+    response_lookup[BMS_PACK_RX].request_num = -1;
     
     /* BMS_OTHER_RX */
     response_lookup[BMS_OTHER_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
     response_lookup[BMS_OTHER_RX].msg.Id = 0x302;
     response_lookup[BMS_OTHER_RX].msg.Size = 0;
     response_lookup[BMS_OTHER_RX].handler = bms_other_handler;
+    response_lookup[BMS_OTHER_RX].request_num = -1;
     
     /* BMS_ERROR_RX */
     response_lookup[BMS_ERROR_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
     response_lookup[BMS_ERROR_RX].msg.Id = 0x303;
     response_lookup[BMS_ERROR_RX].msg.Size = 0;
     response_lookup[BMS_ERROR_RX].handler = bms_error_handler;
+    response_lookup[BMS_ERROR_RX].request_num = -1;
     
     /* ISO_STATE_RX */
     response_lookup[ISO_STATE_RX].msg.Flags = VSCAN_FLAGS_EXTENDED;
@@ -288,6 +341,7 @@ void init_can_responses() {
     response_lookup[ISO_STATE_RX].msg.Size = 1;
     response_lookup[ISO_STATE_RX].msg.Data[0] = 0xE0;
     response_lookup[ISO_STATE_RX].handler = iso_state_handler;
+    response_lookup[ISO_STATE_RX].request_num = ISO_STATE_TX;
     
     /* ISO_RESISTANCE_RX */
     response_lookup[ISO_RESISTANCE_RX].msg.Flags = VSCAN_FLAGS_EXTENDED;
@@ -295,6 +349,7 @@ void init_can_responses() {
     response_lookup[ISO_RESISTANCE_RX].msg.Size = 1;
     response_lookup[ISO_RESISTANCE_RX].msg.Data[0] = 0xE1;
     response_lookup[ISO_RESISTANCE_RX].handler = iso_resistance_handler;
+    response_lookup[ISO_RESISTANCE_RX].request_num = ISO_RESISTANCE_TX;
     
     /* ISO_ERROR_RX */
     response_lookup[ISO_ERROR_RX].msg.Flags = VSCAN_FLAGS_EXTENDED;
@@ -302,6 +357,7 @@ void init_can_responses() {
     response_lookup[ISO_ERROR_RX].msg.Size = 1;
     response_lookup[ISO_ERROR_RX].msg.Data[0] = 0xE5;
     response_lookup[ISO_ERROR_RX].handler = iso_error_handler;
+    response_lookup[ISO_ERROR_RX].request_num = ISO_ERROR_TX;
     
     /* LIPO_VOLTAGE_RX */
     response_lookup[LIPO_VOLTAGE_RX].msg.Flags = VSCAN_FLAGS_EXTENDED;
@@ -309,6 +365,7 @@ void init_can_responses() {
     response_lookup[LIPO_VOLTAGE_RX].msg.Size = 1;
     response_lookup[LIPO_VOLTAGE_RX].msg.Data[0] = 0xE4;
     response_lookup[LIPO_VOLTAGE_RX].handler = lipo_handler;
+    response_lookup[LIPO_VOLTAGE_RX].request_num = LIPO_VOLTAGE_TX;
     
     /* READY_TO_TRANSMIT_RX */
     response_lookup[READY_TO_TRANSMIT_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -319,6 +376,7 @@ void init_can_responses() {
     response_lookup[READY_TO_TRANSMIT_RX].msg.Data[0] = 0x00;
     response_lookup[READY_TO_TRANSMIT_RX].msg.Data[0] = 0x00;
     response_lookup[READY_TO_TRANSMIT_RX].handler = ready_to_transmit_handler;
+    response_lookup[READY_TO_TRANSMIT_RX].request_num = READY_TO_TRANSMIT_TX;
     
     /* TRANSMIT_ENABLE_RX */
     response_lookup[TRANSMIT_ENABLE_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -329,6 +387,7 @@ void init_can_responses() {
     response_lookup[TRANSMIT_ENABLE_RX].msg.Data[0] = 0x00;
     response_lookup[TRANSMIT_ENABLE_RX].msg.Data[0] = 0x00;
     response_lookup[TRANSMIT_ENABLE_RX].handler = transmit_enable_handler;
+    response_lookup[TRANSMIT_ENABLE_RX].request_num = TRANSMIT_ENABLE_TX;
     
     /* MAX_SPEED_RX */
     response_lookup[MAX_SPEED_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -336,6 +395,7 @@ void init_can_responses() {
     response_lookup[MAX_SPEED_RX].msg.Size = 1;
     response_lookup[MAX_SPEED_RX].msg.Data[0] = 0xCE;
     response_lookup[MAX_SPEED_RX].handler = max_speed_handler;
+    response_lookup[MAX_SPEED_RX].request_num = MAX_SPEED_TX;
     
     /* DEVICE_CURRENT_RX */
     response_lookup[DEVICE_CURRENT_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -343,6 +403,7 @@ void init_can_responses() {
     response_lookup[DEVICE_CURRENT_RX].msg.Size = 1;
     response_lookup[DEVICE_CURRENT_RX].msg.Data[0] = 0xC6;
     response_lookup[DEVICE_CURRENT_RX].handler = device_current_handler;
+    response_lookup[DEVICE_CURRENT_RX].request_num = DEVICE_CURRENT_TX;
     
     /* CURRENT_200PC_RX */
     response_lookup[CURRENT_200PC_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -350,6 +411,7 @@ void init_can_responses() {
     response_lookup[CURRENT_200PC_RX].msg.Size = 1;
     response_lookup[CURRENT_200PC_RX].msg.Data[0] = 0xD9;
     response_lookup[CURRENT_200PC_RX].handler = current_200pc_handler;
+    response_lookup[CURRENT_200PC_RX].request_num = CURRENT_200PC_TX;
     
     /* ACTUAL_SPEED_RX */
     response_lookup[ACTUAL_SPEED_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -357,6 +419,7 @@ void init_can_responses() {
     response_lookup[ACTUAL_SPEED_RX].msg.Size = 1;
     response_lookup[ACTUAL_SPEED_RX].msg.Data[0] = 0x30;
     response_lookup[ACTUAL_SPEED_RX].handler = actual_speed_handler;
+    response_lookup[ACTUAL_SPEED_RX].request_num = ACTUAL_SPEED_TX;
     
     /* ACTUAL_CURRENT_RX */
     response_lookup[ACTUAL_CURRENT_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -364,6 +427,7 @@ void init_can_responses() {
     response_lookup[ACTUAL_CURRENT_RX].msg.Size = 1;
     response_lookup[ACTUAL_CURRENT_RX].msg.Data[0] = 0x20;
     response_lookup[ACTUAL_CURRENT_RX].handler = actual_current_handler;
+    response_lookup[ACTUAL_CURRENT_RX].request_num = ACTUAL_CURRENT_TX;
     
     /* ACTUAL_POSITION_RX */
     response_lookup[ACTUAL_POSITION_RX].msg.Flags = VSCAN_FLAGS_STANDARD;
@@ -371,5 +435,6 @@ void init_can_responses() {
     response_lookup[ACTUAL_POSITION_RX].msg.Size = 1;
     response_lookup[ACTUAL_POSITION_RX].msg.Data[0] = 0x6E;
     response_lookup[ACTUAL_POSITION_RX].handler = actual_position_handler;
+    response_lookup[ACTUAL_POSITION_RX].request_num = ACTUAL_POSITION_TX;
 }
 
