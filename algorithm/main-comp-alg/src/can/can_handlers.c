@@ -102,11 +102,11 @@ void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
+    char status_flags = *((char *) (&(msg->Data[1])));
     short electrical_isolation = *((short *) (&(msg->Data[2])));
-    char electrical_isolation_uncert = *((short *) (&(msg->Data[4])));
+    char electrical_isolation_uncert = *((char *) (&(msg->Data[4])));
     short energy_stored = *((short *) (&(msg->Data[5])));
-    char energy_stored_uncert = *((short *) (&(msg->Data[7])));
+    char energy_stored_uncert = *((char *) (&(msg->Data[7])));
 
     set_status_bits(data, status_flags);
     STORE(data->electrical_isolation, bswap_16(electrical_isolation));
@@ -134,11 +134,11 @@ void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
+    char status_flags = *((char *) (&(msg->Data[1])));
     short rp_iso_resistance = *((short *) (&(msg->Data[2])));
-    char rp_iso_resistance_uncert = *((short *) (&(msg->Data[4])));
+    char rp_iso_resistance_uncert = *((char *) (&(msg->Data[4])));
     short rn_iso_resistance = *((short *) (&(msg->Data[5])));
-    char rn_iso_resistance_uncert = *((short *) (&(msg->Data[7])));
+    char rn_iso_resistance_uncert = *((char *) (&(msg->Data[7])));
 
     set_status_bits(data, status_flags);
     STORE(data->rp_iso_resistance, bswap_16(rp_iso_resistance));
@@ -162,8 +162,8 @@ void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
-    char error_flags = *((short *) (&(msg->Data[2])));
+    char status_flags = *((char *) (&(msg->Data[1])));
+    char error_flags = *((char *) (&(msg->Data[2])));
 
     set_status_bits(data, status_flags);
     STORE(data->error_flags, error_flags);
@@ -188,11 +188,11 @@ void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
-   char status_flags = *((short *) (&(msg->Data[1])));
+   char status_flags = *((char *) (&(msg->Data[1])));
    short battery_volt = *((short *) (&(msg->Data[2])));
-   char battery_volt_uncert = *((short *) (&(msg->Data[4])));
+   char battery_volt_uncert = *((char *) (&(msg->Data[4])));
    short max_battery_volt = *((short *) (&(msg->Data[5])));
-   char max_battery_volt_uncert = *((short *) (&(msg->Data[7])));
+   char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
 
    set_status_bits(data, status_flags);
    STORE(data->battery_volt, bswap_16(battery_volt));
