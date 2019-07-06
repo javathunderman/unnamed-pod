@@ -1,3 +1,4 @@
+#include <byteswap.h>
 #include "vs_can_api.h"
 #include "can_handlers.h"
 #include "can_master.h"
@@ -23,9 +24,9 @@ void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
     short pack_voltage = *((short *) (&(msg->Data[2])));
     short pack_current = *((short *) (&(msg->Data[4])));
     
-    STORE(data->pack_soc, pack_soc);
-    STORE(data->pack_voltage, pack_voltage);
-    STORE(data->pack_current, pack_current);
+    STORE(data->pack_soc, bswap_16(pack_soc));
+    STORE(data->pack_voltage, bswap_16(pack_voltage));
+    STORE(data->pack_current, bswap_16(pack_current));
 }
 
 
