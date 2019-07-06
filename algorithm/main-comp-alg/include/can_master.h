@@ -117,15 +117,15 @@ typedef struct {
     volatile short pack_voltage;           /* deci-Volts      */
     volatile short pack_current;           /* deci-Amps       */
     
-    volatile short min_voltage;
-    volatile short max_voltage;
-    volatile short avg_temp;
-    volatile short high_temp;
+    volatile short min_voltage;                         /* 10E-4 V */
+    volatile short max_voltage;                         /* 10E-4 V */
+    volatile short avg_temp;                            /* Celcius */
+    volatile short high_temp;                           /* Celcius */
     
-    volatile char failsafe_status;
-    volatile char dtc_flags_1;
-    volatile short dtc_flags_2;
-    volatile short rolling_counter;
+    volatile char failsafe_status;                      /* Bit Flags */
+    volatile char dtc_flags_1;                          /* Bit Flags */
+    volatile short dtc_flags_2;                         /* Bit Flags */
+    volatile short rolling_counter;                     /* Counter   */
     
     volatile char error_flags;
     
