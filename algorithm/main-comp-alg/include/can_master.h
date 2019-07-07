@@ -7,11 +7,11 @@
 
 
 /* Used to safely load/store values in CAN_Data struct */
-#define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
-#define LOAD(var) __atomic_load_n(&(var), __ATOMIC_RELAXED);
+#define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
+#define LOAD(var) (__atomic_load_n(&(var), __ATOMIC_RELAXED))
 
-#define SEQ_STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_SEQ_CST);
-#define SEQ_LOAD(var) __atomic_load_n(&(var), __ATOMIC_SEQ_CST);
+#define SEQ_STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_SEQ_CST))
+#define SEQ_LOAD(var) (__atomic_load_n(&(var), __ATOMIC_SEQ_CST))
 
 typedef enum {
     IDLE,
@@ -73,19 +73,19 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    unsigned char rx_count;
-    bool check_timeout;
-    struct timespec timeout_interval;
-    struct timespec last_time;
+    volatile unsigned char rx_count;
+    volatile bool check_timeout;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec last_time;
 } CAN_Response;
 
 typedef struct {
-    CAN_State state;
-    unsigned char tx_count;
-    bool check_timeout;
-    unsigned char timeout_count;
-    struct timespec timeout_interval;
-    struct timespec sent_time;
+    volatile CAN_State state;
+    volatile unsigned char tx_count;
+    volatile bool check_timeout;
+    volatile unsigned char timeout_count;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec sent_time;
 } CAN_Request;
 
 typedef struct{
@@ -113,31 +113,31 @@ typedef struct {
     /* --- Receive Data --- */
     
     /* Battery Management System */
-    volatile short pack_soc;               /* Percent         */
-    volatile short pack_voltage;           /* deci-Volts      */
-    volatile short pack_current;           /* deci-Amps       */
+    volatile unsigned short pack_soc;               /* Percent         */
+    volatile unsigned short pack_voltage;           /* deci-Volts      */
+    volatile unsigned short pack_current;           /* deci-Amps       */
     
-    volatile short min_voltage;
-    volatile short max_voltage;
-    volatile short avg_temp;
-    volatile short high_temp;
+    volatile unsigned short min_voltage;                         /* 10E-4 V */
+    volatile unsigned short max_voltage;                         /* 10E-4 V */
+    volatile unsigned short avg_temp;                            /* Celcius */
+    volatile unsigned short high_temp;                           /* Celcius */
     
-    volatile char failsafe_status;
-    volatile char dtc_flags_1;
-    volatile short dtc_flags_2;
-    volatile short rolling_counter;
+    volatile unsigned char failsafe_status;                      /* Bit Flags */
+    volatile unsigned char dtc_flags_1;                          /* Bit Flags */
+    volatile unsigned short dtc_flags_2;                         /* Bit Flags */
+    volatile unsigned short rolling_counter;                     /* Counter   */
     
-    volatile char error_flags;
+    volatile unsigned char error_flags;
     
-    volatile short electrical_isolation;                /* ohm/V */
-    volatile char electrical_isolation_uncert;         
-    volatile short energy_stored;                       /* mJ */
-    volatile char energy_stored_uncert;
+    volatile unsigned short electrical_isolation;                /* ohm/V */
+    volatile unsigned char electrical_isolation_uncert;         
+    volatile unsigned short energy_stored;                       /* mJ */
+    volatile unsigned char energy_stored_uncert;
     
-    volatile short rp_iso_resistance;                   /* kohm */
-    volatile char rp_iso_resistance_uncert;
-    volatile short rn_iso_resistance;                   /* kohm */
-    volatile char rn_iso_resistance_uncert;
+    volatile unsigned short rp_iso_resistance;                   /* kohm */
+    volatile unsigned char rp_iso_resistance_uncert;
+    volatile unsigned short rn_iso_resistance;                   /* kohm */
+    volatile unsigned char rn_iso_resistance_uncert;
     
     volatile Iso_Status_Bits status_bits;
     
@@ -167,6 +167,7 @@ typedef struct {
 typedef struct {
     VSCAN_MSG msg;
     void (*handler)(VSCAN_MSG *msg, CAN_Data *data);
+    int request_num;
 } CAN_Response_Lookup;
 
 /* Global variables */

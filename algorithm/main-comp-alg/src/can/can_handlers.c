@@ -1,3 +1,4 @@
+#include <byteswap.h>
 #include "vs_can_api.h"
 #include "can_handlers.h"
 #include "can_master.h"
@@ -19,13 +20,13 @@ static void set_status_bits(CAN_Data *data, char status_flags);
  *     void
  */
 void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
-    short pack_soc     = *((short *) (&(msg->Data[0])));
-    short pack_voltage = *((short *) (&(msg->Data[2])));
-    short pack_current = *((short *) (&(msg->Data[4])));
+    unsigned short pack_soc     = *((unsigned short *) (&(msg->Data[0])));
+    unsigned short pack_voltage = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short pack_current = *((unsigned short *) (&(msg->Data[4])));
     
-    STORE(data->pack_soc, pack_soc)
-    STORE(data->pack_voltage, pack_voltage)
-    STORE(data->pack_current, pack_current)
+    STORE(data->pack_soc, pack_soc);
+    STORE(data->pack_voltage, pack_voltage);
+    STORE(data->pack_current, pack_current);
 }
 
 
@@ -43,15 +44,15 @@ void bms_pack_handler(VSCAN_MSG *msg, CAN_Data *data) {
  *     void
  */
 void bms_other_handler(VSCAN_MSG *msg, CAN_Data *data){
-    short min_voltage = *((short *) (&(msg->Data[0])));
-    short max_voltage = *((short *) (&(msg->Data[2])));
-    short avg_temp = *((short *) (&(msg->Data[4])));
-    short high_temp = *((short *) (&(msg->Data[6])));
+    unsigned short min_voltage = *((unsigned short *) (&(msg->Data[0])));
+    unsigned short max_voltage = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short avg_temp = *((unsigned short *) (&(msg->Data[4])));
+    unsigned short high_temp = *((unsigned short *) (&(msg->Data[6])));
 
-    STORE(data->min_voltage, min_voltage)
-    STORE(data->max_voltage, max_voltage)
-    STORE(data->avg_temp, avg_temp)
-    STORE(data->high_temp, high_temp)
+    STORE(data->min_voltage, min_voltage);
+    STORE(data->max_voltage, max_voltage);
+    STORE(data->avg_temp, avg_temp);
+    STORE(data->high_temp, high_temp);
 
 }
 
@@ -71,15 +72,15 @@ void bms_other_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char failsafe_status = *((short *) (&(msg->Data[0])));
-    char dtc_flags_1 = *((short *) (&(msg->Data[1])));
-    short dtc_flags_2 = *((short *) (&(msg->Data[2])));
-    short rolling_counter = *((short *) (&(msg->Data[4])));
+    unsigned char failsafe_status = *((unsigned char *) (&(msg->Data[0])));
+    unsigned char dtc_flags_1 = *((unsigned char *) (&(msg->Data[1])));
+    unsigned short dtc_flags_2 = *((unsigned short *) (&(msg->Data[2])));
+    unsigned short rolling_counter = *((unsigned short *) (&(msg->Data[4])));
 
-    STORE(data->failsafe_status, failsafe_status)
-    STORE(data->dtc_flags_1, dtc_flags_1)
-    STORE(data->dtc_flags_2, dtc_flags_2)
-    STORE(data->rolling_counter, rolling_counter)
+    STORE(data->failsafe_status, failsafe_status);
+    STORE(data->dtc_flags_1, dtc_flags_1);
+    STORE(data->dtc_flags_2, dtc_flags_2);
+    STORE(data->rolling_counter, rolling_counter);
 
 }
 
@@ -88,7 +89,7 @@ void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
 
 /* This function updates state machine's CAN_Data with:
  *     Status Flags
- *     Electrical Isolation (ohm/vol)
+ *     Electrical Isolation (ohm/vol);
  *     Electrical Isolation Uncertainty
  *     Energy Stored
  *     Energy Stored Uncertainty
@@ -101,17 +102,17 @@ void bms_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
+    char status_flags = *((char *) (&(msg->Data[1])));
     short electrical_isolation = *((short *) (&(msg->Data[2])));
-    char electrical_isolation_uncert = *((short *) (&(msg->Data[4])));
+    char electrical_isolation_uncert = *((char *) (&(msg->Data[4])));
     short energy_stored = *((short *) (&(msg->Data[5])));
-    char energy_stored_uncert = *((short *) (&(msg->Data[7])));
+    char energy_stored_uncert = *((char *) (&(msg->Data[7])));
 
     set_status_bits(data, status_flags);
-    STORE(data->electrical_isolation, electrical_isolation)
-    STORE(data->electrical_isolation_uncert, electrical_isolation_uncert)
-    STORE(data->energy_stored, energy_stored)
-    STORE(data->energy_stored_uncert, energy_stored_uncert)
+    STORE(data->electrical_isolation, bswap_16(electrical_isolation));
+    STORE(data->electrical_isolation_uncert, electrical_isolation_uncert);
+    STORE(data->energy_stored, bswap_16(energy_stored));
+    STORE(data->energy_stored_uncert, energy_stored_uncert);
 
 }
 
@@ -133,17 +134,17 @@ void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
+    char status_flags = *((char *) (&(msg->Data[1])));
     short rp_iso_resistance = *((short *) (&(msg->Data[2])));
-    char rp_iso_resistance_uncert = *((short *) (&(msg->Data[4])));
+    char rp_iso_resistance_uncert = *((char *) (&(msg->Data[4])));
     short rn_iso_resistance = *((short *) (&(msg->Data[5])));
-    char rn_iso_resistance_uncert = *((short *) (&(msg->Data[7])));
+    char rn_iso_resistance_uncert = *((char *) (&(msg->Data[7])));
 
     set_status_bits(data, status_flags);
-    STORE(data->rp_iso_resistance, rp_iso_resistance)
-    STORE(data->rp_iso_resistance_uncert, rp_iso_resistance_uncert)
-    STORE(data->rn_iso_resistance, rn_iso_resistance )
-    STORE(data->rn_iso_resistance_uncert, rn_iso_resistance_uncert)
+    STORE(data->rp_iso_resistance, bswap_16(rp_iso_resistance));
+    STORE(data->rp_iso_resistance_uncert, rp_iso_resistance_uncert);
+    STORE(data->rn_iso_resistance, bswap_16(rn_iso_resistance));
+    STORE(data->rn_iso_resistance_uncert, rn_iso_resistance_uncert);
 }
 
 
@@ -161,11 +162,11 @@ void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
-    char status_flags = *((short *) (&(msg->Data[1])));
-    char error_flags = *((short *) (&(msg->Data[2])));
+    char status_flags = *((char *) (&(msg->Data[1])));
+    char error_flags = *((char *) (&(msg->Data[2])));
 
     set_status_bits(data, status_flags);
-    STORE(data->error_flags, error_flags)
+    STORE(data->error_flags, error_flags);
 
 }
 
@@ -187,20 +188,44 @@ void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
-   char status_flags = *((short *) (&(msg->Data[1])));
+   char status_flags = *((char *) (&(msg->Data[1])));
    short battery_volt = *((short *) (&(msg->Data[2])));
-   char battery_volt_uncert = *((short *) (&(msg->Data[4])));
+   char battery_volt_uncert = *((char *) (&(msg->Data[4])));
    short max_battery_volt = *((short *) (&(msg->Data[5])));
-   char max_battery_volt_uncert = *((short *) (&(msg->Data[7])));
+   char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
 
    set_status_bits(data, status_flags);
-   STORE(data->battery_volt, battery_volt)
-   STORE(data->battery_volt_uncert, battery_volt_uncert)
-   STORE(data->max_battery_volt, max_battery_volt )
-   STORE(data->max_battery_volt_uncert, max_battery_volt_uncert)
+   STORE(data->battery_volt, bswap_16(battery_volt));
+   STORE(data->battery_volt_uncert, battery_volt_uncert);
+   STORE(data->max_battery_volt, bswap_16(max_battery_volt));
+   STORE(data->max_battery_volt_uncert, max_battery_volt_uncert);
 }
 
+/* This function updates state machine's CAN_Data with:
+ * None
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void ready_to_transmit_handler(VSCAN_MSG *msg, CAN_Data *data){
+    
+}
 
+/* This function updates state machine's CAN_Data with:
+ * None
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void transmit_enable_handler(VSCAN_MSG *msg, CAN_Data *data){
+    
+}
 
 
 /* This function updates state machine's CAN_Data with:
@@ -215,7 +240,7 @@ void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void max_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
    short max_speed = *((short *) (&(msg->Data[1])));
-   STORE(data->max_speed, max_speed)
+   STORE(data->max_speed, max_speed);
 
 }
 
@@ -234,7 +259,7 @@ void max_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void device_current_handler(VSCAN_MSG *msg, CAN_Data *data){
    short dev_current = *((short *) (&(msg->Data[1])));
-   STORE(data->dev_current, dev_current)
+   STORE(data->dev_current, dev_current);
 }
 
 
@@ -253,7 +278,7 @@ void device_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
    short current_200pc = *((short *) (&(msg->Data[1])));
-   STORE(data->current_200pc, current_200pc)
+   STORE(data->current_200pc, current_200pc);
 
 }
 
@@ -270,9 +295,9 @@ void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
    short percent_max_speed = *((short *) (&(msg->Data[1])));
-   STORE(data->percent_max_speed, percent_max_speed)
+   STORE(data->percent_max_speed, percent_max_speed);
 
 }
 
@@ -289,9 +314,9 @@ void true_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_current_handler(VSCAN_MSG *msg, CAN_Data *data){
    short true_current = *((short *) (&(msg->Data[1])));
-   STORE(data->true_current, true_current)
+   STORE(data->true_current, true_current);
 }
 
 
@@ -308,9 +333,9 @@ void true_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  * Returns:
  *     void
  */
-void true_position_handler(VSCAN_MSG *msg, CAN_Data *data){
+void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data){
    int revolutions = *((int *) (&(msg->Data[1])));
-   STORE(data->revolutions, revolutions)
+   STORE(data->revolutions, revolutions);
 
 
 }
