@@ -6,6 +6,7 @@
 #include "can_master.h"
 #include "can_handlers.h"
 #include "vs_can_api.h"
+#include "abort_run.h"
 
 
 #define CAN_FREQ 1000000L /* 1 kHz */
@@ -54,8 +55,9 @@ void *can_master(void *args) {
     /* Initialize loop timing */
     struct timespec now;
     if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
+        ABORT_RUN;
         printf("clock_gettime() error: %s\n", strerror(errno));
-        //TODO: Comm Loss
+        return NULL;
     }
     time_t sec = now.tv_sec;
     long nsec = now.tv_nsec;
@@ -74,7 +76,9 @@ void *can_master(void *args) {
                 handle_can_message(data, &(read_buffer[i]), &delay);
             }
         } else {
-            //TODO: Comm Loss
+            ABORT_RUN;
+            printf("VSCAN_Read error status=%d\n", status);
+            return NULL;
         }
         
         /* Check timeouts */
@@ -89,7 +93,9 @@ void *can_master(void *args) {
                 /* Send message */
                 status = VSCAN_Write(handle, &(request_lookup[i]), 1, &ret_val);
                 if (ret_val != 1 || status != VSCAN_ERR_OK) {
-                    //TODO: Comm Loss
+                    ABORT_RUN;
+                    printf("VSCAN_Write error status=%d\n", status);
+                    return NULL;
                 }
                 
                 /* Flush write-buffer this cycle */
@@ -108,7 +114,9 @@ void *can_master(void *args) {
         if (flush) {
             status = VSCAN_Flush(handle);
             if (status != VSCAN_ERR_OK) {
-                //TODO: Comm Loss
+                ABORT_RUN;
+                printf("VSCAN_Flush error status=%d\n", status);
+                return NULL;
             }
             flush = false;
         }
@@ -146,7 +154,9 @@ void check_timeouts(CAN_Data *data, struct timespec *now) {
             d_ns = now->tv_nsec - SEQ_LOAD(data->responses[i].last_time.tv_nsec);
             
             if (d_s > interval.tv_sec || (d_s == interval.tv_sec && d_ns > interval.tv_nsec)) {
-                //TODO: Comm Loss
+                ABORT_RUN;
+                printf("CAN_Response timeout msg_id=%d\n", i);
+                return;
             }
         }
     }
@@ -186,7 +196,7 @@ void check_timeouts(CAN_Data *data, struct timespec *now) {
  */
 void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
-    int count, id, req_id;
+    int count, id, req_id, n;
     
     /* Identify message */
     for (id = 0; id < NUM_CAN_RESPONSES; id++) {
@@ -197,7 +207,13 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
     }
     
     if (msg_id == -1) {
-        //TODO: Comm Loss
+        ABORT_RUN;
+        printf("Unrecognized CAN message id=%ld, flags=%d\n", msg->Id, msg->Flags);
+        for (n = 0; n < msg->Size; n++) {
+            printf("\tData[%d]=0x%0x\n", n, msg->Data[n]);
+        }
+        printf("\n");
+        return;
     }
     
     /* Update CAN_Data metadata for this message */

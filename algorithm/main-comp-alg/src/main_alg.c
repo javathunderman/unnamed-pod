@@ -10,6 +10,8 @@
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
+int g_abort_run = 0;
+
 int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT COMMAND BUFFER                                                                          //
@@ -135,6 +137,10 @@ int main() {
 	
 	//main state loop
 	while (1) {
+		if (g_abort_run) {
+			next_state = ESTOP_SID;
+		}
+		
 		read_cmd(&cb, &command);
 		next_state = (*fp_arr[next_state])(&thresholds, command);
 	}

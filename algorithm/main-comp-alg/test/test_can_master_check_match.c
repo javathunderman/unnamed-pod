@@ -143,25 +143,6 @@ static void test_check_match_data3(void **state) {
     assert_true(check_match(&msg1, &msg2));
 }
 
-/******************************************************************************/
-/***    MOCK VSCAN API                                                      ***/
-/******************************************************************************/
-
-VSCAN_STATUS __wrap_VSCAN_Read(VSCAN_HANDLE Handle, VSCAN_MSG *Buf, DWORD Size, DWORD *Read) {
-    /* Not used during these tests */
-    return VSCAN_ERR_OK;
-}
-
-VSCAN_STATUS __wrap_VSCAN_Write(VSCAN_HANDLE Handle, VSCAN_MSG *Buf, DWORD Size, DWORD *Written) {
-    /* Not used during these tests */
-    return VSCAN_ERR_OK;
-}
-
-VSCAN_STATUS VSCAN_Flush(VSCAN_HANDLE Handle) {
-    /* Not used during these tests */
-    return VSCAN_ERR_OK;
-}
-
 
 int main(void) {
     const struct CMUnitTest tests[] = {

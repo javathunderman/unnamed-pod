@@ -11,10 +11,10 @@
 #include "states.h"
 
 
-/* Globals for Spacex communication */
-int spacex_socket;
-struct sockaddr_in spacex_addr;
-SpaceXFrame msg;
+/* Static variables for SpaceX communication */
+static int spacex_socket;
+static struct sockaddr_in spacex_addr;
+static SpaceXFrame msg;
 
 /* This function initializes variables for communication to SpaceX.
  * This function needs to be called before send_spacex().

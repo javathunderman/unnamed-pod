@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <stdbool.h>
+#include <string.h>
+#include <errno.h>
 #include "commands.h"
 #include "receiver.h"
+#include "abort_run.h"
 
 #define RECV_LEN 100
 
@@ -28,8 +31,9 @@ void *recv_cmds(void *args) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */
         len = recvfrom(sock, &buffer, RECV_LEN, 0, NULL, NULL);
         if (len == -1) {
-            printf("Receiver Error\n");
-            //TODO Comm Loss
+            ABORT_RUN;
+            printf("Receiver Error: recvfrom returned -1: %s\n", strerror(errno));
+            //TODO: return, rebuild socket, relaunch only if != ETIMEDOUT
         }
 
         /* Verify magic word, pass command to state machine */
@@ -40,8 +44,8 @@ void *recv_cmds(void *args) {
                 //TODO Telemeter success
             } else {
                 if (cmd != NONE) {
+                    ABORT_RUN;
                     printf("Invalid Command: %d\n", cmd);
-                    //TODO Comm Loss
                 }
             }
         }

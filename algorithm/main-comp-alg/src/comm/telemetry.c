@@ -4,6 +4,7 @@
 #include <time.h>
 #include <errno.h>
 #include <stdio.h>
+#include "abort_run.h"
 #include "spacex.h"
 #include "telemetry.h"
 
@@ -25,8 +26,9 @@ void *send_tlm(void *args) {
 
     struct timespec now;
     if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
+        ABORT_RUN;
         printf("clock_gettime() error: %s\n", strerror(errno));
-        exit(-3);
+        return NULL;
     }
     time_t sec = now.tv_sec;
     long nsec = now.tv_nsec;
@@ -40,12 +42,12 @@ void *send_tlm(void *args) {
         update_telemetry_1_1(&tlm);
 
         if(sendto(socket, &tlm, PKT_LENGTH, 0, dest_addr, dest_len) == -1) {
-            printf("%s\n", strerror(errno));
-            //TODO: Comm Loss
+            ABORT_RUN;
+            printf("Telemetry sendto() error: %s\n", strerror(errno));
         }
 
         if(send_spacex(&tlm) == -1) {
-            //TODO: Comm Loss
+            ABORT_RUN;
         }
 
         UPDATE_DELAY(delay_1)
