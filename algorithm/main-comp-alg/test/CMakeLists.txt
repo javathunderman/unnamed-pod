@@ -8,11 +8,11 @@ add_cmocka_test(test_handlers
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY})
 
 add_cmocka_test(test_can_master_check_match
-                SOURCES test_can_master_check_match.c
+                SOURCES test_can_master_check_match.c mock_g_abort_run.c
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})
 
 add_cmocka_test(test_can_master_handle_can_message
-                SOURCES test_can_master_handle_can_message.c
+                SOURCES test_can_master_handle_can_message.c mock_g_abort_run.c ${ALG_PATH}/src/can/can_init.c ${ALG_PATH}/src/can/can_handlers.c
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
-                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} "-Wl,--wrap=VSCAN_Open,--wrap=VSCAN_Ioctl")
+                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})

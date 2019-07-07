@@ -6,6 +6,7 @@
 #include "states.h"
 #include "commands.h"
 #include "spacex.h"
+#include "abort_run.h"
 #include "udp.h"
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
