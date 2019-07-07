@@ -132,7 +132,6 @@ void *can_master(void *args) {
  */
 void check_timeouts(CAN_Data *data, struct timespec *now) {
     int i;
-    bool check;
     time_t d_s;
     long d_ns;
     struct timespec interval;
@@ -154,7 +153,7 @@ void check_timeouts(CAN_Data *data, struct timespec *now) {
     
     /* Check requests */
     for (i = 0; i < NUM_CAN_REQUESTS; i++) {
-        if ((SEQ_LOAD(data->requests[i].check_timeout) == WAITING) && SEQ_LOAD(data->requests[i].check_timeout)) {
+        if ((SEQ_LOAD(data->requests[i].state) == WAITING) && SEQ_LOAD(data->requests[i].check_timeout)) {
             interval.tv_sec = SEQ_LOAD(data->requests[i].timeout_interval.tv_sec);
             interval.tv_nsec = SEQ_LOAD(data->requests[i].timeout_interval.tv_nsec);
             d_s = now->tv_sec - SEQ_LOAD(data->requests[i].sent_time.tv_sec);

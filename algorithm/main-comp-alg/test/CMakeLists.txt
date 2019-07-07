@@ -5,3 +5,13 @@ add_cmocka_test(test_handlers
                 SOURCES test_can_handlers.c
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY})
+
+add_cmocka_test(test_can_master_check_match
+                SOURCES test_can_master_check_match.c
+                COMPILE_OPTIONS ${INCLUDE_FLAGS}
+                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY})
+set_property(TARGET
+                 test_can_master_check_match
+             PROPERTY
+                 LINK_FLAGS
+                    "${DEFAULT_LINK_FLAGS} -Wl,--wrap=VSCAN_Read,--wrap=VSCAN_Write,--wrap=VSCAN_Flush")

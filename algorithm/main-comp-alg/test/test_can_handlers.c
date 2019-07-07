@@ -63,8 +63,8 @@ static void test_bms_other_handler(void **state) {
     msg.Data[5] = 0x00;
     
     /* 39 C */
-    msg.Data[4] = 0x27;
-    msg.Data[5] = 0x00;
+    msg.Data[6] = 0x27;
+    msg.Data[7] = 0x00;
     
     bms_other_handler(&msg, &data);
     
