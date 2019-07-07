@@ -2,6 +2,11 @@
 #define __FPGA_CACHE__
 #include "NiFpga_test_brake_actuation.h"
 #include "NiFpga.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#define DEBUG_LINE(status) if(NiFpga_IsError(status)){printf("FPGA_Failure on line: %d with status : %d", \
+		__LINE__, status); exit(1);}
 
 typedef struct {
 	NiFpga_Bool current_brake_state;

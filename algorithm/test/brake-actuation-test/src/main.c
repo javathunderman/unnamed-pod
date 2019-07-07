@@ -64,6 +64,7 @@ int test_num(const char* test_name){
  * are not exac
  */
 void test(FILE * const file, Fpga * fpga){
+	run_fpga(fpga, 0);
 	refresh_cache(fpga);
 
 	struct timeval start, cur;
@@ -123,10 +124,12 @@ int main(void) {
 
     Fpga fpga_dat;
     Fpga * fpga = &fpga_dat;
+    default_fpga(fpga);
     init_fpga(fpga, 0);
 
     test(file, fpga);
     fclose(file);
+    write_stop(fpga, 1);
     fpclose(fpga, default_attr);
     fpfinalize(fpga);
     puts("Test Complete!");
