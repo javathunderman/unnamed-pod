@@ -109,6 +109,40 @@ static void test_can_master_handle_can_message_metadata(void **state) {
     assert_false(g_abort_run);
 }
 
+static void test_can_master_handle_can_message_state(void **state) {
+    CAN_Data data;
+    VSCAN_MSG msg;
+    struct timespec timestamp = {111L, 222L};
+    
+    UNUSED(state);
+    
+    /* Init CAN_Data */
+    init_can_requests();
+    init_can_responses();
+    init_can_data(&data);
+    
+    /* Setup ACTUAL_SPEED_RX message */
+    msg.Flags = VSCAN_FLAGS_STANDARD;
+    msg.Id = 0x181;
+    msg.Size = 4;
+    msg.Data[0] = 0x30;
+    msg.Data[1] = 0x00;
+    msg.Data[2] = 0x00;
+    msg.Data[3] = 0xFF;
+    
+    /* Setup ACTUAL_SPEED_TX request */
+    data.requests[ACTUAL_SPEED_TX].state = WAITING;
+    
+    /* Handle message */
+    g_abort_run = 0;
+    assert_false(g_abort_run);
+    
+    handle_can_message(&data, &msg, &timestamp);
+    
+    assert_true(data.requests[ACTUAL_SPEED_TX].state == COMPLETE);
+    assert_false(g_abort_run);
+}
+
 /******************************************************************************/
 /***    RUN TESTS                                                           ***/
 /******************************************************************************/
@@ -117,6 +151,7 @@ int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_can_master_handle_can_message_unknown),
         cmocka_unit_test(test_can_master_handle_can_message_metadata),
+        cmocka_unit_test(test_can_master_handle_can_message_state),
     };
     
     return cmocka_run_group_tests(tests, NULL, NULL);

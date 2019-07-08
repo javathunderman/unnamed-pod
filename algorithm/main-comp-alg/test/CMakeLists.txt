@@ -12,7 +12,17 @@ add_cmocka_test(test_can_master_check_match
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})
 
+add_cmocka_test(test_can_master_timeout_overrun
+                SOURCES test_can_master_timeout_overrun.c mock_g_abort_run.c
+                COMPILE_OPTIONS ${INCLUDE_FLAGS}
+                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})
+
 add_cmocka_test(test_can_master_handle_can_message
                 SOURCES test_can_master_handle_can_message.c mock_g_abort_run.c ${ALG_PATH}/src/can/can_init.c ${ALG_PATH}/src/can/can_handlers.c
+                COMPILE_OPTIONS ${INCLUDE_FLAGS}
+                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})
+
+add_cmocka_test(test_can_master_check_timeouts
+                SOURCES test_can_master_check_timeouts.c mock_g_abort_run.c ${ALG_PATH}/src/can/can_init.c ${ALG_PATH}/src/can/can_handlers.c
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB})

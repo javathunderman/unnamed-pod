@@ -105,10 +105,11 @@ void init_can_data(CAN_Data *data) {
     }
     
     /* Init request fields */
-    for (i = 0; i < NUM_CAN_RESPONSES; i++) {
+    for (i = 0; i < NUM_CAN_REQUESTS; i++) {
         STORE(data->requests[i].state, IDLE);
         STORE(data->requests[i].tx_count, 0);
         STORE(data->requests[i].check_timeout, false);
+        STORE(data->requests[i].timeout_count, 0);
         STORE(data->requests[i].sent_time.tv_sec, 0L);
         STORE(data->requests[i].sent_time.tv_nsec, 0L);
         STORE(data->requests[i].timeout_interval.tv_sec, 0L);
