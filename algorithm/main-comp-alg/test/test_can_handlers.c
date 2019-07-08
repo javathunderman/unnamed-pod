@@ -74,6 +74,9 @@ static void test_bms_other_handler(void **state) {
     assert_true(data.high_temp == 39);
 }
 
+/******************************************************************************/
+/***    RUN TESTS                                                           ***/
+/******************************************************************************/
 
 int main(void) {
     const struct CMUnitTest tests[] = {
