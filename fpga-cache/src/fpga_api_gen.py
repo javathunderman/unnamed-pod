@@ -184,9 +184,9 @@ src_out.write('\n')
 # Create the method for populating the default values into an FPGA struct
 default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
-default_fpga.add(f'fpga->bit_path = "./FPGA/" "{bit}";')
+default_fpga.add(f'fpga->bit_path = "./FPGA/" {bit};')
 default_fpga.add(f'fpga->resource = "{resource}";')
-default_fpga.add(f'fpga->signature = "{sig}";')
+default_fpga.add(f'fpga->signature = {sig};')
 
 src_out.write(str(default_fpga))
 src_out.write('\n')
@@ -244,7 +244,7 @@ src_out.write('\n')
 
 for cont in conts:
     c_block = Block(f'NiFpga_Status write_{cont[1]}(Fpga *fpga, {cont[0]} v) {{', '}')
-    c_block.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Write{dec[3]}(fpga->session, {dec[2]}, v));')
+    c_block.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Write{cont[3]}(fpga->session, {cont[2]}, v));')
     c_block.add('return fpga->status;')
 
     src_out.write(str(c_block))
