@@ -73,7 +73,7 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    volatile unsigned char rx_count;
+    volatile unsigned int rx_count;
     volatile bool check_timeout;
     volatile struct timespec timeout_interval;
     volatile struct timespec last_time;
@@ -81,9 +81,9 @@ typedef struct {
 
 typedef struct {
     volatile CAN_State state;
-    volatile unsigned char tx_count;
+    volatile unsigned int tx_count;
     volatile bool check_timeout;
-    volatile unsigned char timeout_count;
+    volatile unsigned int timeout_count;
     volatile struct timespec timeout_interval;
     volatile struct timespec sent_time;
 } CAN_Request;
