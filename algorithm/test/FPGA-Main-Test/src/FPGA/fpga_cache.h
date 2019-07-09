@@ -76,7 +76,7 @@ NiFpga_Status write_thresh_reset_index(Fpga *fpga, uint8_t v);
 
 NiFpga_Status write_thresh_write_index(Fpga *fpga, uint8_t v);
 
-NiFpga_Status write_thresh_f_ratio(Fpga *fpga, uint32_t v);
+NiFpga_Status write_thresh_ratio(Fpga *fpga, uint32_t v);
 
 NiFpga_Status write_thresh_persistence(Fpga *fpga, uint32_t v);
 
