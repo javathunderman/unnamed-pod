@@ -30,6 +30,11 @@ typedef struct {
 	uint64_t fault_long_1;
 	uint64_t fault_long_2;
 	uint64_t fault_long_3;
+	uint8_t thresh_index;
+	int32_t thresh_minimum;
+	int32_t thresh_maximum;
+	uint32_t thresh_persistence;
+	uint32_t thresh_ratio;
 } Cache;
 
 typedef struct {
@@ -69,6 +74,10 @@ NiFpga_Status write_stop(Fpga *fpga, NiFpga_Bool v);
 NiFpga_Status write_thresh_latch_new(Fpga *fpga, NiFpga_Bool v);
 
 NiFpga_Status write_thresh_reset(Fpga *fpga, NiFpga_Bool v);
+
+NiFpga_Status write_thresh_minimum(Fpga *fpga, int32_t minimum);
+
+NiFpga_Status write_thresh_maximum(Fpga *fpga, int32_t maximum);
 
 NiFpga_Status write_thresh_read_index(Fpga *fpga, uint8_t v);
 
