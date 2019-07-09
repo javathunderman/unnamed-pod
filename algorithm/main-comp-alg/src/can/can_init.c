@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <pthread.h>
 #include "can_init.h"
 #include "can_handlers.h"
 #include "can_master.h"
@@ -18,9 +19,11 @@
  *      0 -> success
  *     -1 -> VSCAN_Open failure
  *     -2 -> bitrate configuration failure
+ *     -3 -> pthread failure
  */
 int can_init(CAN_Data *data) {
     handle = -1;
+    pthread_t can_tid;
     DWORD bitrate = 500000;
     char *tty = "10.25.37.4:2001"; //TODO: Verify IP
     
@@ -46,7 +49,14 @@ int can_init(CAN_Data *data) {
     init_can_data(data);
     
     /* Launch master CAN thread */
-    //TODO
+    if (pthread_create(&can_tid, NULL, can_master, data) != 0) {
+        printf("can_master pthread create failed...\n");
+        return -3;
+    } else {
+        printf("Created can_master thread...\n");
+    }
+    
+    return 0;
 }
 
 /* This function initializes the CAN_Data struct by zeroing all data values
