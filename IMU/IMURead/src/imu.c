@@ -23,25 +23,24 @@ compile with the command: gcc demo_rx.c rs232.c -Wall -Wextra -o2 -o test_rx
 #include "imu.h"
 
 
-int main()
-{
+int main(){
   int i, n,
-      cport_nr=0,        /* /dev/ttyS0 (COM1 on windows) */
-      bdrate=9600;       /* 9600 baud */
+      cport_nr=1,        /* /dev/ttyS0 (COM1 on windows) */
+      bdrate=460800;       /* 9600 baud */
 
   unsigned char buf[33];
   IMUData data;
 
   char mode[]={'8','N','1',0};
 
-
+  printf("Attempting to open com port cport=%d, bdrate=%d\n", cport_nr, bdrate);
   if(RS232_OpenComport(cport_nr, bdrate, mode, 0))
   {
     printf("Can not open comport\n");
 
     return(0);
   }
-
+  printf("Successfully opened com port\n");
   while(1)
   {
     n = RS232_PollComport(cport_nr, buf, 32);
@@ -58,9 +57,9 @@ int main()
         }
       }
 
-      printf("received %i bytes: %s\n", n, (char *)buf);
+      printf("cleaned: received %i bytes: %s\n", n, (char *)buf);
     }
-
+    printf("received %i bytes: %s\n", n, (char *)buf);
 	//Table 4 https://www.memsense.com/assets/docs/uploads/ms-imu3020/MS-IMU3020_PSUG.pdf
 	//data.sync1 = buff[0];
 	//data.sync2 = buff[1];
@@ -77,8 +76,9 @@ int main()
 	//data. = buff[];
 	//data. = buff[];
 	data.x_gyro = (buf[22]<<4) ^ buf[21];
-	data.x_gyro = (buf[26]<<4) ^ buf[25];
-	data.x_gyro = (buf[30]<<4) ^ buf[29];
+	data.y_gyro = (buf[26]<<4) ^ buf[25];
+	data.z_gyro = (buf[30]<<4) ^ buf[29];
+	printf("x_accel=%.3f, y_accel=%.3f, z_accel=%.3f, gyro=%.3f\n", data.x_accel, data.y_accel, data.z_accel, data.x_gyro);
 
 #ifdef _WIN32
     Sleep(100);
