@@ -5,6 +5,7 @@
 #include <errno.h>
 #include "commands.h"
 #include "receiver.h"
+#include "priority.h"
 #include "abort_run.h"
 
 #define RECV_LEN 100
@@ -26,7 +27,14 @@ void *recv_cmds(void *args) {
     CommandBuffer *cb = ((ReceiverArgs *)args)->cb;
     char buffer[RECV_LEN];
     int cmd, len;
-
+    const struct sched_param priority = {CMD_RECEIVE_PRIO};
+    
+    /* Set thread priority */
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) != 0) {
+        printf("Failed to set CMD thread priority\n");
+        return NULL;
+    }
+    
     while (1) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */
         len = recvfrom(sock, &buffer, RECV_LEN, 0, NULL, NULL);

@@ -4,8 +4,10 @@
 #include <time.h>
 #include <errno.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "abort_run.h"
 #include "spacex.h"
+#include "priority.h"
 #include "telemetry.h"
 
 
@@ -23,6 +25,13 @@ void *send_tlm(void *args) {
     int socket = ((TelemetryArgs *)args)->socket;
     SA * dest_addr = ((TelemetryArgs *)args)->dest_addr;
     socklen_t dest_len = ((TelemetryArgs *)args)->dest_len;
+    const struct sched_param priority = {TLM_SEND_PRIO};
+
+    /* Set thread priority */
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) != 0) {
+        printf("Failed to set TLM thread priority\n");
+        return NULL;
+    }
 
     struct timespec now;
     if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {

@@ -6,6 +6,7 @@
 #include "can_master.h"
 #include "can_handlers.h"
 #include "vs_can_api.h"
+#include "priority.h"
 #include "abort_run.h"
 
 
@@ -48,6 +49,13 @@ void *can_master(void *args) {
     /* Buffer to read CAN messages into */
     CAN_Data *data = (CAN_Data *)args;
     VSCAN_MSG read_buffer[CAN_BUF_LEN];
+    const struct sched_param priority = {CAN_MASTER_PRIO};
+    
+    /* Set thread priority */
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) != 0) {
+        printf("Failed to set CAN thread priority\n");
+        return NULL;
+    }
     
     /* Initialize loop timing */
     struct timespec now;
@@ -146,6 +154,8 @@ int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
             return -3;
         }
     }
+    
+    return 0;
 }
 
 /* This function iterates through all responses and requests to determine if
