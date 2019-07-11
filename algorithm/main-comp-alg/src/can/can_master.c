@@ -24,7 +24,7 @@ static void check_timeouts(CAN_Data *data, struct timespec *now);
 static void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp);
 static bool check_match(VSCAN_MSG *lookup, VSCAN_MSG *received);
 static bool timeout_overrun(struct timespec *start, struct timespec *stop, struct timespec *timeout);
-static int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now);
+static void can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now);
 
 /* Global variables */
 VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
@@ -92,17 +92,14 @@ void *can_master(void *args) {
  *     timespec struct *now -> pointer to current CLOCK_MONOTONIC time
  *
  * Returns:
- *      0 -> success
- *     -1 -> read error
- *     -2 -> write error
- *     -3 -> flush error
+ *     void
  */
-int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
+void can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
     DWORD ret_val;
     VSCAN_STATUS status;
     CAN_State state;
     bool flush = false;
-    int i;
+    unsigned int count, i;
     
     /* Read CAN bus messages */
     status = VSCAN_Read(handle, read_buffer, CAN_BUF_LEN, &ret_val);
@@ -113,7 +110,6 @@ int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
     } else {
         ABORT_RUN;
         printf("VSCAN_Read error status=%d\n", status);
-        return -1;
     }
     
     /* Check timeouts */
@@ -130,18 +126,19 @@ int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
             if (ret_val != 1 || status != VSCAN_ERR_OK) {
                 ABORT_RUN;
                 printf("VSCAN_Write error status=%d\n", status);
-                return -2;
+            } else {
+                /* Flush write-buffer this cycle */
+                flush = true;
+                
+                /* Update to WAITING state */
+                SEQ_STORE(data->requests[i].state, WAITING);
+                
+                /* Record timestamp and increment tx_count */
+                SEQ_STORE(data->requests[i].sent_time.tv_sec, now->tv_sec);
+                SEQ_STORE(data->requests[i].sent_time.tv_nsec, now->tv_nsec);
+                count = SEQ_LOAD(data->requests[i].tx_count);
+                SEQ_STORE(data->requests[i].tx_count, count + 1);
             }
-            
-            /* Flush write-buffer this cycle */
-            flush = true;
-            
-            /* Update to WAITING state */
-            SEQ_STORE(data->requests[i].state, WAITING);
-            
-            /* Record timestamp */
-            SEQ_STORE(data->requests[i].sent_time.tv_sec, now->tv_sec);
-            SEQ_STORE(data->requests[i].sent_time.tv_nsec, now->tv_nsec);
         }
     }
     
@@ -151,11 +148,8 @@ int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
         if (status != VSCAN_ERR_OK) {
             ABORT_RUN;
             printf("VSCAN_Flush error status=%d\n", status);
-            return -3;
         }
     }
-    
-    return 0;
 }
 
 /* This function iterates through all responses and requests to determine if
@@ -174,7 +168,7 @@ int can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
 void check_timeouts(CAN_Data *data, struct timespec *stop) {
     int i;
     struct timespec start, timeout;
-    unsigned char count;
+    unsigned int count;
     
     /* Check responses */
     for (i = 0; i < NUM_CAN_RESPONSES; i++) {
@@ -226,7 +220,8 @@ void check_timeouts(CAN_Data *data, struct timespec *stop) {
  */
 void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timestamp) {
     int msg_id = -1;
-    int count, id, req_id, n;
+    int id, req_id, n;
+    unsigned int count;
     
     /* Identify message */
     for (id = 0; id < NUM_CAN_RESPONSES; id++) {

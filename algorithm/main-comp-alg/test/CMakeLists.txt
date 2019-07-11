@@ -26,3 +26,13 @@ add_cmocka_test(test_can_master_check_timeouts
                 SOURCES test_can_master_check_timeouts.c mock_g_abort_run.c ${ALG_PATH}/src/can/can_init.c ${ALG_PATH}/src/can/can_handlers.c
                 COMPILE_OPTIONS ${INCLUDE_FLAGS}
                 LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB} "-lpthread")
+
+add_cmocka_test(test_can_master_cycle
+                SOURCES test_can_master_cycle.c mock_g_abort_run.c ${ALG_PATH}/src/can/can_init.c ${ALG_PATH}/src/can/can_handlers.c
+                COMPILE_OPTIONS ${INCLUDE_FLAGS}
+                LINK_LIBRARIES ${CMOCKA_SHARED_LIBRARY} ${VSCAN_LIB} "-lpthread")
+set_property(TARGET
+                 test_can_master_cycle
+             PROPERTY
+                 LINK_FLAGS
+                    "${DEFAULT_LINK_FLAGS} -Wl,--wrap=VSCAN_Flush,--wrap=VSCAN_Write,--wrap=VSCAN_Read")
