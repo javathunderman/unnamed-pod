@@ -16,9 +16,9 @@
 #include "FPGA/fpga_cache.h"
 
 #define LOG_IF_FAIL(status) if(NiFpga_IsError(status)){\
-	printf("FPGA API Failure [line=%d, file %s]", __LINE__, __FILE__);}
+	printf("FPGA API Failure [line=%d, file=%s, status=%d]", __LINE__, __FILE__, status);}
 
-#define TEST "Brake_Actuation" //Name of the test, must be under 50 characters
+#define TEST "HVR" //Name of the test, must be under 50 characters
 #define DT 100          //Timing interval for logging in millis
 #define LEN 5           //Length of time to log in seconds.
 #define NOT(x) x==NiFpga_False ? NiFpga_True : NiFpga_False
@@ -76,7 +76,7 @@ void test(FILE * const file, Fpga * fpga){
     struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI };
 
     printf("%s", greeting);
-    fprintf(file, "Time, HVR1, HVR2, HVR3, HVR4");
+    fprintf(file, "Time, HVR1, HVR2, HVR3, HVR4\n");
     //Perform your test and log it to the CSV.
     while(1){
     	refresh_cache(fpga);
@@ -101,9 +101,6 @@ void test(FILE * const file, Fpga * fpga){
             else if (c == '4') {
             	printf("TOGGLING HVR: %c\n", c);
             	LOG_IF_FAIL(write_hvr_4(fpga, NOT(fpga->cache.HVR_4)))
-            }
-            else {
-            	printf("UNKNOWN COMMAND: %c\n", c);
             }
         }
         // Get timing for data logging

@@ -16,7 +16,7 @@
 #include "FPGA/fpga_cache.h"
 
 
-#define TEST "Brake_Actuation" //Name of the test, must be under 50 characters
+#define TEST "FPGA_main" //Name of the test, must be under 50 characters
 #define DT 100          //Timing interval for logging in millis
 #define LEN 5           //Length of time to log in seconds.
 #define NOT(x) x==NiFpga_False ? NiFpga_True : NiFpga_False
@@ -99,10 +99,13 @@ void test(FILE * const file, Fpga * fpga){
 
         // Update FPGA cache to fetch new values
 
-        fprintf(file, "%f, %s, %s, %f, %f, %f, %f\n", time,
+        fprintf(file, "%f, %s, %s, %f, %f, %s, %s, %s, %s\n", time,
         		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
         		fxptof(fpga->cache.I_av_pb_1), fxptof(fpga->cache.I_av_pb_2),
-        		booltos(fpga->cache.fuse_av_1), booltos(fpga->cache.fuse_av_2));
+        		booltos(fpga->cache.fuse_av_1), booltos(fpga->cache.fuse_av_2),
+        		booltos(fpga->cache.TO_daq_av_fuses), booltos(fpga->cache.TO_daq_pressure),
+        		booltos(fpga->cache.TO_daq_vol_cur), booltos(fpga->cache.TO_dat_pressure),
+        		booltos(fpga->cache.TO_dat_vol_cur));
 
     }
 }
