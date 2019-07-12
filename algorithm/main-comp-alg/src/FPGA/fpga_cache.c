@@ -3,6 +3,8 @@
 #include "NiFpga_main.h"
 #include "NiFpga.h"
 
+
+
 void default_fpga(Fpga *fpga) {
 	fpga->status = NiFpga_Status_Success;
 	fpga->bit_path = "./FPGA/" NiFpga_main_Bitfile;
@@ -52,33 +54,33 @@ NiFpga_Status refresh_cache(Fpga *fpga) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x1801E, &(fpga->cache.count_light_br)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x1801A, &(fpga->cache.count_light_fl)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x18016, &(fpga->cache.count_light_fr)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18114, &(fpga->cache.fxp_P_hp1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18118, &(fpga->cache.fxp_P_hp2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1811C, &(fpga->cache.fxp_P_lp1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18120, &(fpga->cache.fxp_P_lp2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18108, &(fpga->cache.fxp_T_cRIO)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1810C, &(fpga->cache.fxp_T_extra1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18110, &(fpga->cache.fxp_T_extra2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F4, &(fpga->cache.fxp_T_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F8, &(fpga->cache.fxp_T_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18124, &(fpga->cache.fxp_T_piston0)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18128, &(fpga->cache.fxp_T_piston1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1812C, &(fpga->cache.fxp_T_piston2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18130, &(fpga->cache.fxp_T_piston3)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18134, &(fpga->cache.fxp_T_piston4)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18138, &(fpga->cache.fxp_T_piston5)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1813C, &(fpga->cache.fxp_T_piston6)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18140, &(fpga->cache.fxp_T_piston7)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18104, &(fpga->cache.fxp_T_pneum)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18100, &(fpga->cache.fxp_T_pod)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180FC, &(fpga->cache.fxp_T_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18008, &(fpga->cache.fxp_current_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1800C, &(fpga->cache.fxp_current_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18010, &(fpga->cache.fxp_current_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F0, &(fpga->cache.fxp_tape_velocity)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18074, &(fpga->cache.fxp_voltage_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18078, &(fpga->cache.fxp_voltage_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1807C, &(fpga->cache.fxp_voltage_r)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18114, &(fpga->cache.P_hp1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18118, &(fpga->cache.P_hp2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1811C, &(fpga->cache.P_lp1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18120, &(fpga->cache.P_lp2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18108, &(fpga->cache.T_cRIO)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1810C, &(fpga->cache.T_extra1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18110, &(fpga->cache.T_extra2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F4, &(fpga->cache.T_p1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F8, &(fpga->cache.T_p2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18124, &(fpga->cache.T_piston0)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18128, &(fpga->cache.T_piston1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1812C, &(fpga->cache.T_piston2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18130, &(fpga->cache.T_piston3)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18134, &(fpga->cache.T_piston4)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18138, &(fpga->cache.T_piston5)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1813C, &(fpga->cache.T_piston6)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18140, &(fpga->cache.T_piston7)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18104, &(fpga->cache.T_pneum)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18100, &(fpga->cache.T_pod)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180FC, &(fpga->cache.T_r)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18008, &(fpga->cache.current_p1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1800C, &(fpga->cache.current_p2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18010, &(fpga->cache.current_r)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F0, &(fpga->cache.tape_velocity)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18074, &(fpga->cache.voltage_p1)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18078, &(fpga->cache.voltage_p2)));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1807C, &(fpga->cache.voltage_r)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x18064, &(fpga->cache.fault_long_0)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x18068, &(fpga->cache.fault_long_1)));
 	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x1806C, &(fpga->cache.fault_long_2)));
@@ -207,4 +209,6 @@ NiFpga_Status write_thresh_persistence(Fpga *fpga, uint32_t v) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteU32(fpga->session, 0x18048, v));
 	return fpga->status;
 }
+
+
 

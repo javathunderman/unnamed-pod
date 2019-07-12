@@ -7,10 +7,17 @@
  Description : Simple module for FXP manipulation
  ============================================================================
  */
+#include<stdint.h>
 
-typedef struct{
-	long word; // Total word length
-	unsigned short intw_l; // Integer word length
-} fxp32;
+/*
+ * Addition and subtraction work, to make multiplication and division work,
+ * methods need to be written.
+ */
+typedef int32_t fxp32_16;
 
-int ltofxp32(fxp32 * fxp,long bytes, unsigned short iwl);
+fxp32_16 ftofxp(float d);
+fxp32_16 dtofxp(double d);
+float fxptof(fxp32_16 fxp);
+double fxptod(fxp32_16 fxp);
+
+

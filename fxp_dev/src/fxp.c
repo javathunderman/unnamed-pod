@@ -1,21 +1,21 @@
 #include "fxp.h"
 #include <math.h>
 
+#define TWO_TO_THE_16 65536
 
-/*
- * Reinterpret long int as FXP32
- */
-int ltofxp32(fxp32 * fxp ,long bytes, unsigned short iwl) {
-	if(iwl > 32){
-		return 1;
-	}
-	fxp->word = bytes;
-	fxp->intw_l = iwl;
-
-	return 0;
+fxp32_16 ftofxp(float f) {
+	return (fxp32_16)(TWO_TO_THE_16 * f);
 }
 
-double fxp32tod(fxp32 fxp){
-	return 0;
+fxp32_16 dtofxp(double d) {
+	return (fxp32_16)(TWO_TO_THE_16 * d);
+}
+
+float fxptof(fxp32_16 fxp) {
+	return ((float)fxp)/TWO_TO_THE_16;
+}
+
+double fxptod(fxp32_16 fxp) {
+	return ((double)fxp)/TWO_TO_THE_16;
 }
 

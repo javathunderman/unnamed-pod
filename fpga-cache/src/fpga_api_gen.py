@@ -76,6 +76,8 @@ name_to_type = {
             "Dbl": "double",
 }
 
+fxpName = 'fxp32_16'
+
 # the list of includes for the files
 includes = [f'"{header}"', '"NiFpga.h"']
 
@@ -115,6 +117,19 @@ for line in h:
         
 h.close()
 
+# Replace type int32_t for indicators with name fxp_* with {fxpName}
+p_fxp = R.compile('^fxp_(.*)$')
+for i, dec in enumerate(decs):
+    if(dec[0] == 'int32_t' and p_fxp.match(dec[1])):
+        decs[i] = (fxpName, R.search(p_fxp, dec[1]).group(1)) + dec[2:]
+
+# Replace type int32_t for indicators with name fxp_* with {fxpName}
+for i, cont in enumerate(conts):
+    print(cont)
+    if(conts[0] == 'int32_t' and p_fxp.match(cont[1])):
+        conts[i] = (fxpName, R.search(p_fxp, cont[1]).group(1)) + cont[2:]
+        
+
 h_block = Block('typedef struct {', '} Cache;')
 
 for dec in decs:
@@ -140,6 +155,8 @@ header_out.write('#ifndef __FPGA_CACHE__\n#define __FPGA_CACHE__\n')
 for line in includes:
     header_out.write(f'#include {line}\n')
 header_out.write('\n')
+
+header_out.write(f'typedef int32_t {fxpName};\n')
 
 header_out.write(str(h_block))
 header_out.write('\n')

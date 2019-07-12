@@ -3,6 +3,7 @@
 #include "NiFpga_main.h"
 #include "NiFpga.h"
 
+typedef int32_t fxp32_16;
 typedef struct {
 	NiFpga_Bool FIFO_timeout_analog;
 	NiFpga_Bool FIFO_timeout_laser;
@@ -29,33 +30,33 @@ typedef struct {
 	uint16_t count_light_br;
 	uint16_t count_light_fl;
 	uint16_t count_light_fr;
-	int32_t fxp_P_hp1;
-	int32_t fxp_P_hp2;
-	int32_t fxp_P_lp1;
-	int32_t fxp_P_lp2;
-	int32_t fxp_T_cRIO;
-	int32_t fxp_T_extra1;
-	int32_t fxp_T_extra2;
-	int32_t fxp_T_p1;
-	int32_t fxp_T_p2;
-	int32_t fxp_T_piston0;
-	int32_t fxp_T_piston1;
-	int32_t fxp_T_piston2;
-	int32_t fxp_T_piston3;
-	int32_t fxp_T_piston4;
-	int32_t fxp_T_piston5;
-	int32_t fxp_T_piston6;
-	int32_t fxp_T_piston7;
-	int32_t fxp_T_pneum;
-	int32_t fxp_T_pod;
-	int32_t fxp_T_r;
-	int32_t fxp_current_p1;
-	int32_t fxp_current_p2;
-	int32_t fxp_current_r;
-	int32_t fxp_tape_velocity;
-	int32_t fxp_voltage_p1;
-	int32_t fxp_voltage_p2;
-	int32_t fxp_voltage_r;
+	fxp32_16 P_hp1;
+	fxp32_16 P_hp2;
+	fxp32_16 P_lp1;
+	fxp32_16 P_lp2;
+	fxp32_16 T_cRIO;
+	fxp32_16 T_extra1;
+	fxp32_16 T_extra2;
+	fxp32_16 T_p1;
+	fxp32_16 T_p2;
+	fxp32_16 T_piston0;
+	fxp32_16 T_piston1;
+	fxp32_16 T_piston2;
+	fxp32_16 T_piston3;
+	fxp32_16 T_piston4;
+	fxp32_16 T_piston5;
+	fxp32_16 T_piston6;
+	fxp32_16 T_piston7;
+	fxp32_16 T_pneum;
+	fxp32_16 T_pod;
+	fxp32_16 T_r;
+	fxp32_16 current_p1;
+	fxp32_16 current_p2;
+	fxp32_16 current_r;
+	fxp32_16 tape_velocity;
+	fxp32_16 voltage_p1;
+	fxp32_16 voltage_p2;
+	fxp32_16 voltage_r;
 	uint64_t fault_long_0;
 	uint64_t fault_long_1;
 	uint64_t fault_long_2;
