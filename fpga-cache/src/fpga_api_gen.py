@@ -225,7 +225,8 @@ for line in includes:
 src_out.write('\n')
 
 # FXP utilities
-'''
+src_out.write('''
+/* FXP Utilities */
 #define TWO_TO_THE_16 65536
 
 fxp32_16 ftofxp(float f) {
@@ -243,7 +244,7 @@ float fxptof(fxp32_16 fxp) {
 double fxptod(fxp32_16 fxp) {
 	return ((double)fxp)/TWO_TO_THE_16;
 }
-'''
+''')
 # Create the method for populating the default values into an FPGA struct
 default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')

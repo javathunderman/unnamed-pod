@@ -24,7 +24,7 @@
 /**
  * The signature of the FPGA bitfile.
  */
-static const char* const NiFpga_main_Signature = "B5141D4160260B69326D2721B1EB6911";
+static const char* const NiFpga_main_Signature = "A0EAFA0E78549ABFCF267EA04A965F4C";
 
 typedef enum
 {
@@ -40,17 +40,20 @@ typedef enum
    NiFpga_main_IndicatorBool_avb_shutoff_r_state = 0x180AA,
    NiFpga_main_IndicatorBool_brake_state = 0x18082,
    NiFpga_main_IndicatorBool_drain_valve_state = 0x18086,
+   NiFpga_main_IndicatorBool_enable_checks_state = 0x1815E,
    NiFpga_main_IndicatorBool_iso_led_1_state = 0x1809A,
    NiFpga_main_IndicatorBool_iso_led_2_state = 0x1809E,
 } NiFpga_main_IndicatorBool;
 
 typedef enum
 {
+   NiFpga_main_IndicatorU8_cur_thresh_index = 0x18192,
    NiFpga_main_IndicatorU8_light_BL_count = 0x180E2,
    NiFpga_main_IndicatorU8_light_BR_count = 0x180E6,
    NiFpga_main_IndicatorU8_light_FL_count = 0x180DE,
    NiFpga_main_IndicatorU8_light_L_count = 0x180EA,
    NiFpga_main_IndicatorU8_light_R_count = 0x180EE,
+   NiFpga_main_IndicatorU8_light_sensor_status = 0x18162,
 } NiFpga_main_IndicatorU8;
 
 typedef enum
@@ -85,14 +88,28 @@ typedef enum
    NiFpga_main_IndicatorI32_fxp_T_pneum = 0x18104,
    NiFpga_main_IndicatorI32_fxp_T_pod = 0x18100,
    NiFpga_main_IndicatorI32_fxp_T_r = 0x180FC,
+   NiFpga_main_IndicatorI32_fxp_brake_distance = 0x1814C,
+   NiFpga_main_IndicatorI32_fxp_brake_force = 0x18144,
+   NiFpga_main_IndicatorI32_fxp_cur_thresh_max = 0x18184,
+   NiFpga_main_IndicatorI32_fxp_cur_thresh_min = 0x18180,
    NiFpga_main_IndicatorI32_fxp_current_p1 = 0x18008,
    NiFpga_main_IndicatorI32_fxp_current_p2 = 0x1800C,
    NiFpga_main_IndicatorI32_fxp_current_r = 0x18010,
+   NiFpga_main_IndicatorI32_fxp_fusion_distance = 0x1817C,
+   NiFpga_main_IndicatorI32_fxp_imu_distance = 0x18170,
+   NiFpga_main_IndicatorI32_fxp_mc_distance = 0x18174,
+   NiFpga_main_IndicatorI32_fxp_tape_distance = 0x18148,
    NiFpga_main_IndicatorI32_fxp_tape_velocity = 0x180F0,
    NiFpga_main_IndicatorI32_fxp_voltage_p1 = 0x18074,
    NiFpga_main_IndicatorI32_fxp_voltage_p2 = 0x18078,
    NiFpga_main_IndicatorI32_fxp_voltage_r = 0x1807C,
 } NiFpga_main_IndicatorI32;
+
+typedef enum
+{
+   NiFpga_main_IndicatorU32_cur_thresh_persistence = 0x1818C,
+   NiFpga_main_IndicatorU32_cur_thresh_ratio = 0x18188,
+} NiFpga_main_IndicatorU32;
 
 typedef enum
 {
@@ -109,6 +126,7 @@ typedef enum
    NiFpga_main_ControlBool_avb_shutoff_prim_1 = 0x180B6,
    NiFpga_main_ControlBool_avb_shutoff_prim_2 = 0x180BA,
    NiFpga_main_ControlBool_avb_shutoff_res = 0x180BE,
+   NiFpga_main_ControlBool_enable_checks = 0x1815A,
    NiFpga_main_ControlBool_hvr_1 = 0x180C2,
    NiFpga_main_ControlBool_hvr_2 = 0x180C6,
    NiFpga_main_ControlBool_hvr_3 = 0x180CA,
@@ -118,6 +136,8 @@ typedef enum
    NiFpga_main_ControlBool_prim_bat_1 = 0x1802E,
    NiFpga_main_ControlBool_prim_bat_2 = 0x18032,
    NiFpga_main_ControlBool_prim_bat_3 = 0x18036,
+   NiFpga_main_ControlBool_reset_tape_count = 0x18166,
+   NiFpga_main_ControlBool_reset_tape_state = 0x1816A,
    NiFpga_main_ControlBool_stop = 0x1803A,
    NiFpga_main_ControlBool_thresh_latch_new = 0x18052,
    NiFpga_main_ControlBool_thresh_reset = 0x1805A,
@@ -132,6 +152,20 @@ typedef enum
 
 typedef enum
 {
+   NiFpga_main_ControlU16_DAQ_timeout = 0x18152,
+} NiFpga_main_ControlU16;
+
+typedef enum
+{
+   NiFpga_main_ControlI32_fxp_imu_acc = 0x1816C,
+   NiFpga_main_ControlI32_fxp_mc_linear_v = 0x18178,
+   NiFpga_main_ControlI32_fxp_thresh_new_max = 0x18044,
+   NiFpga_main_ControlI32_fxp_thresh_new_min = 0x18040,
+} NiFpga_main_ControlI32;
+
+typedef enum
+{
+   NiFpga_main_ControlU32_FIFO_timeout = 0x18154,
    NiFpga_main_ControlU32_thresh_f_ratio = 0x1804C,
    NiFpga_main_ControlU32_thresh_persistence = 0x18048,
 } NiFpga_main_ControlU32;

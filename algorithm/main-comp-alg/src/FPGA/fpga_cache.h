@@ -17,13 +17,16 @@ typedef struct {
 	NiFpga_Bool avb_shutoff_r_state;
 	NiFpga_Bool brake_state;
 	NiFpga_Bool drain_valve_state;
+	NiFpga_Bool enable_checks_state;
 	NiFpga_Bool iso_led_1_state;
 	NiFpga_Bool iso_led_2_state;
+	uint8_t cur_thresh_index;
 	uint8_t light_BL_count;
 	uint8_t light_BR_count;
 	uint8_t light_FL_count;
 	uint8_t light_L_count;
 	uint8_t light_R_count;
+	uint8_t light_sensor_status;
 	uint16_t count_laser_l;
 	uint16_t count_laser_r;
 	uint16_t count_light_bl;
@@ -50,13 +53,23 @@ typedef struct {
 	fxp32_16 T_pneum;
 	fxp32_16 T_pod;
 	fxp32_16 T_r;
+	fxp32_16 brake_distance;
+	fxp32_16 brake_force;
+	fxp32_16 cur_thresh_max;
+	fxp32_16 cur_thresh_min;
 	fxp32_16 current_p1;
 	fxp32_16 current_p2;
 	fxp32_16 current_r;
+	fxp32_16 fusion_distance;
+	fxp32_16 imu_distance;
+	fxp32_16 mc_distance;
+	fxp32_16 tape_distance;
 	fxp32_16 tape_velocity;
 	fxp32_16 voltage_p1;
 	fxp32_16 voltage_p2;
 	fxp32_16 voltage_r;
+	uint32_t cur_thresh_persistence;
+	uint32_t cur_thresh_ratio;
 	uint64_t fault_long_0;
 	uint64_t fault_long_1;
 	uint64_t fault_long_2;
@@ -120,6 +133,8 @@ NiFpga_Status write_avb_shutoff_prim_2(Fpga *fpga, NiFpga_Bool v);
 
 NiFpga_Status write_avb_shutoff_res(Fpga *fpga, NiFpga_Bool v);
 
+NiFpga_Status write_enable_checks(Fpga *fpga, NiFpga_Bool v);
+
 NiFpga_Status write_hvr_1(Fpga *fpga, NiFpga_Bool v);
 
 NiFpga_Status write_hvr_2(Fpga *fpga, NiFpga_Bool v);
@@ -138,6 +153,10 @@ NiFpga_Status write_prim_bat_2(Fpga *fpga, NiFpga_Bool v);
 
 NiFpga_Status write_prim_bat_3(Fpga *fpga, NiFpga_Bool v);
 
+NiFpga_Status write_reset_tape_count(Fpga *fpga, NiFpga_Bool v);
+
+NiFpga_Status write_reset_tape_state(Fpga *fpga, NiFpga_Bool v);
+
 NiFpga_Status write_stop(Fpga *fpga, NiFpga_Bool v);
 
 NiFpga_Status write_thresh_latch_new(Fpga *fpga, NiFpga_Bool v);
@@ -149,6 +168,18 @@ NiFpga_Status write_thresh_read_index(Fpga *fpga, uint8_t v);
 NiFpga_Status write_thresh_reset_index(Fpga *fpga, uint8_t v);
 
 NiFpga_Status write_thresh_write_index(Fpga *fpga, uint8_t v);
+
+NiFpga_Status write_DAQ_timeout(Fpga *fpga, uint16_t v);
+
+NiFpga_Status write_fxp_imu_acc(Fpga *fpga, int32_t v);
+
+NiFpga_Status write_fxp_mc_linear_v(Fpga *fpga, int32_t v);
+
+NiFpga_Status write_fxp_thresh_new_max(Fpga *fpga, int32_t v);
+
+NiFpga_Status write_fxp_thresh_new_min(Fpga *fpga, int32_t v);
+
+NiFpga_Status write_FIFO_timeout(Fpga *fpga, uint32_t v);
 
 NiFpga_Status write_thresh_f_ratio(Fpga *fpga, uint32_t v);
 
