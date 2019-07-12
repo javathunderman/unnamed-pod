@@ -3,11 +3,9 @@
 #include "NiFpga_main.h"
 #include "NiFpga.h"
 
-
-
 void default_fpga(Fpga *fpga) {
 	fpga->status = NiFpga_Status_Success;
-	fpga->bit_path = "./FPGA/" NiFpga_main_Bitfile;
+	fpga->bit_path = "/home/admin/ProjectFolder/FPGA/" NiFpga_main_Bitfile;
 	fpga->resource = "RIO0";
 	fpga->signature = NiFpga_main_Signature;
 }
@@ -29,62 +27,354 @@ NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr) {
 }
 
 NiFpga_Status refresh_cache(Fpga *fpga) {
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180DA, &(fpga->cache.FIFO_timeout_analog)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180D6, &(fpga->cache.FIFO_timeout_laser)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180D2, &(fpga->cache.FIFO_timeout_retro)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x1808A, &(fpga->cache.HVR_1_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x1808E, &(fpga->cache.HVR_2_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x18092, &(fpga->cache.HVR_3_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x18096, &(fpga->cache.HVR_4_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180A2, &(fpga->cache.avb_shutoff_p1_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180A6, &(fpga->cache.avb_shutoff_p2_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x180AA, &(fpga->cache.avb_shutoff_r_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x18082, &(fpga->cache.brake_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x18086, &(fpga->cache.drain_valve_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x1809A, &(fpga->cache.iso_led_1_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadBool(fpga->session, 0x1809E, &(fpga->cache.iso_led_2_state)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU8(fpga->session, 0x180E2, &(fpga->cache.light_BL_count)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU8(fpga->session, 0x180E6, &(fpga->cache.light_BR_count)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU8(fpga->session, 0x180DE, &(fpga->cache.light_FL_count)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU8(fpga->session, 0x180EA, &(fpga->cache.light_L_count)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU8(fpga->session, 0x180EE, &(fpga->cache.light_R_count)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x1802A, &(fpga->cache.count_laser_l)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x18026, &(fpga->cache.count_laser_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x18022, &(fpga->cache.count_light_bl)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x1801E, &(fpga->cache.count_light_br)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x1801A, &(fpga->cache.count_light_fl)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU16(fpga->session, 0x18016, &(fpga->cache.count_light_fr)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18114, &(fpga->cache.P_hp1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18118, &(fpga->cache.P_hp2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1811C, &(fpga->cache.P_lp1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18120, &(fpga->cache.P_lp2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18108, &(fpga->cache.T_cRIO)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1810C, &(fpga->cache.T_extra1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18110, &(fpga->cache.T_extra2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F4, &(fpga->cache.T_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F8, &(fpga->cache.T_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18124, &(fpga->cache.T_piston0)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18128, &(fpga->cache.T_piston1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1812C, &(fpga->cache.T_piston2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18130, &(fpga->cache.T_piston3)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18134, &(fpga->cache.T_piston4)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18138, &(fpga->cache.T_piston5)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1813C, &(fpga->cache.T_piston6)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18140, &(fpga->cache.T_piston7)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18104, &(fpga->cache.T_pneum)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18100, &(fpga->cache.T_pod)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180FC, &(fpga->cache.T_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18008, &(fpga->cache.current_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1800C, &(fpga->cache.current_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18010, &(fpga->cache.current_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x180F0, &(fpga->cache.tape_velocity)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18074, &(fpga->cache.voltage_p1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x18078, &(fpga->cache.voltage_p2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadI32(fpga->session, 0x1807C, &(fpga->cache.voltage_r)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x18064, &(fpga->cache.fault_long_0)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x18068, &(fpga->cache.fault_long_1)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x1806C, &(fpga->cache.fault_long_2)));
-	NiFpga_IfIsNotError(fpga->status, NiFpga_ReadU64(fpga->session, 0x18070, &(fpga->cache.fault_long_3)));
+	NiFpga_Bool tempNiFpga_Bool;
+	int8_t tempint8_t;
+	uint8_t tempuint8_t;
+	int16_t tempint16_t;
+	uint16_t tempuint16_t;
+	int32_t tempint32_t;
+	uint32_t tempuint32_t;
+	int64_t tempint64_t;
+	uint64_t tempuint64_t;
+	float tempfloat;
+	double tempdouble;
+	fxp32_16 tempfxp32_16;
+	/* Atomically store FIFO_timeout_analog */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180DA, tempNiFpga_Bool))){
+			STORE((fpga->cache.FIFO_timeout_analog), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store FIFO_timeout_laser */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180D6, tempNiFpga_Bool))){
+			STORE((fpga->cache.FIFO_timeout_laser), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store FIFO_timeout_retro */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180D2, tempNiFpga_Bool))){
+			STORE((fpga->cache.FIFO_timeout_retro), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store HVR_1_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1808A, tempNiFpga_Bool))){
+			STORE((fpga->cache.HVR_1_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store HVR_2_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1808E, tempNiFpga_Bool))){
+			STORE((fpga->cache.HVR_2_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store HVR_3_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18092, tempNiFpga_Bool))){
+			STORE((fpga->cache.HVR_3_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store HVR_4_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18096, tempNiFpga_Bool))){
+			STORE((fpga->cache.HVR_4_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store avb_shutoff_p1_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180A2, tempNiFpga_Bool))){
+			STORE((fpga->cache.avb_shutoff_p1_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store avb_shutoff_p2_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180A6, tempNiFpga_Bool))){
+			STORE((fpga->cache.avb_shutoff_p2_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store avb_shutoff_r_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x180AA, tempNiFpga_Bool))){
+			STORE((fpga->cache.avb_shutoff_r_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store brake_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18082, tempNiFpga_Bool))){
+			STORE((fpga->cache.brake_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store drain_valve_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18086, tempNiFpga_Bool))){
+			STORE((fpga->cache.drain_valve_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store iso_led_1_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1809A, tempNiFpga_Bool))){
+			STORE((fpga->cache.iso_led_1_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store iso_led_2_state */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1809E, tempNiFpga_Bool))){
+			STORE((fpga->cache.iso_led_2_state), tempNiFpga_Bool);
+		}
+	}
+	/* Atomically store light_BL_count */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU8(fpga->session, 0x180E2, tempuint8_t))){
+			STORE((fpga->cache.light_BL_count), tempuint8_t);
+		}
+	}
+	/* Atomically store light_BR_count */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU8(fpga->session, 0x180E6, tempuint8_t))){
+			STORE((fpga->cache.light_BR_count), tempuint8_t);
+		}
+	}
+	/* Atomically store light_FL_count */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU8(fpga->session, 0x180DE, tempuint8_t))){
+			STORE((fpga->cache.light_FL_count), tempuint8_t);
+		}
+	}
+	/* Atomically store light_L_count */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU8(fpga->session, 0x180EA, tempuint8_t))){
+			STORE((fpga->cache.light_L_count), tempuint8_t);
+		}
+	}
+	/* Atomically store light_R_count */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU8(fpga->session, 0x180EE, tempuint8_t))){
+			STORE((fpga->cache.light_R_count), tempuint8_t);
+		}
+	}
+	/* Atomically store count_laser_l */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x1802A, tempuint16_t))){
+			STORE((fpga->cache.count_laser_l), tempuint16_t);
+		}
+	}
+	/* Atomically store count_laser_r */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x18026, tempuint16_t))){
+			STORE((fpga->cache.count_laser_r), tempuint16_t);
+		}
+	}
+	/* Atomically store count_light_bl */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x18022, tempuint16_t))){
+			STORE((fpga->cache.count_light_bl), tempuint16_t);
+		}
+	}
+	/* Atomically store count_light_br */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x1801E, tempuint16_t))){
+			STORE((fpga->cache.count_light_br), tempuint16_t);
+		}
+	}
+	/* Atomically store count_light_fl */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x1801A, tempuint16_t))){
+			STORE((fpga->cache.count_light_fl), tempuint16_t);
+		}
+	}
+	/* Atomically store count_light_fr */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU16(fpga->session, 0x18016, tempuint16_t))){
+			STORE((fpga->cache.count_light_fr), tempuint16_t);
+		}
+	}
+	/* Atomically store P_hp1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18114, tempfxp32_16))){
+			STORE((fpga->cache.P_hp1), tempfxp32_16);
+		}
+	}
+	/* Atomically store P_hp2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18118, tempfxp32_16))){
+			STORE((fpga->cache.P_hp2), tempfxp32_16);
+		}
+	}
+	/* Atomically store P_lp1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1811C, tempfxp32_16))){
+			STORE((fpga->cache.P_lp1), tempfxp32_16);
+		}
+	}
+	/* Atomically store P_lp2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18120, tempfxp32_16))){
+			STORE((fpga->cache.P_lp2), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_cRIO */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18108, tempfxp32_16))){
+			STORE((fpga->cache.T_cRIO), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_extra1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1810C, tempfxp32_16))){
+			STORE((fpga->cache.T_extra1), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_extra2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18110, tempfxp32_16))){
+			STORE((fpga->cache.T_extra2), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_p1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x180F4, tempfxp32_16))){
+			STORE((fpga->cache.T_p1), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_p2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x180F8, tempfxp32_16))){
+			STORE((fpga->cache.T_p2), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston0 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18124, tempfxp32_16))){
+			STORE((fpga->cache.T_piston0), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18128, tempfxp32_16))){
+			STORE((fpga->cache.T_piston1), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1812C, tempfxp32_16))){
+			STORE((fpga->cache.T_piston2), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston3 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18130, tempfxp32_16))){
+			STORE((fpga->cache.T_piston3), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston4 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18134, tempfxp32_16))){
+			STORE((fpga->cache.T_piston4), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston5 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18138, tempfxp32_16))){
+			STORE((fpga->cache.T_piston5), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston6 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1813C, tempfxp32_16))){
+			STORE((fpga->cache.T_piston6), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_piston7 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18140, tempfxp32_16))){
+			STORE((fpga->cache.T_piston7), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_pneum */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18104, tempfxp32_16))){
+			STORE((fpga->cache.T_pneum), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_pod */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18100, tempfxp32_16))){
+			STORE((fpga->cache.T_pod), tempfxp32_16);
+		}
+	}
+	/* Atomically store T_r */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x180FC, tempfxp32_16))){
+			STORE((fpga->cache.T_r), tempfxp32_16);
+		}
+	}
+	/* Atomically store current_p1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18008, tempfxp32_16))){
+			STORE((fpga->cache.current_p1), tempfxp32_16);
+		}
+	}
+	/* Atomically store current_p2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1800C, tempfxp32_16))){
+			STORE((fpga->cache.current_p2), tempfxp32_16);
+		}
+	}
+	/* Atomically store current_r */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18010, tempfxp32_16))){
+			STORE((fpga->cache.current_r), tempfxp32_16);
+		}
+	}
+	/* Atomically store tape_velocity */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x180F0, tempfxp32_16))){
+			STORE((fpga->cache.tape_velocity), tempfxp32_16);
+		}
+	}
+	/* Atomically store voltage_p1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18074, tempfxp32_16))){
+			STORE((fpga->cache.voltage_p1), tempfxp32_16);
+		}
+	}
+	/* Atomically store voltage_p2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18078, tempfxp32_16))){
+			STORE((fpga->cache.voltage_p2), tempfxp32_16);
+		}
+	}
+	/* Atomically store voltage_r */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1807C, tempfxp32_16))){
+			STORE((fpga->cache.voltage_r), tempfxp32_16);
+		}
+	}
+	/* Atomically store fault_long_0 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU64(fpga->session, 0x18064, tempuint64_t))){
+			STORE((fpga->cache.fault_long_0), tempuint64_t);
+		}
+	}
+	/* Atomically store fault_long_1 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU64(fpga->session, 0x18068, tempuint64_t))){
+			STORE((fpga->cache.fault_long_1), tempuint64_t);
+		}
+	}
+	/* Atomically store fault_long_2 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU64(fpga->session, 0x1806C, tempuint64_t))){
+			STORE((fpga->cache.fault_long_2), tempuint64_t);
+		}
+	}
+	/* Atomically store fault_long_3 */
+	if(NiFpga_IsNotError(fpga->status)){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadU64(fpga->session, 0x18070, tempuint64_t))){
+			STORE((fpga->cache.fault_long_3), tempuint64_t);
+		}
+	}
 	return fpga->status;
 }
 
@@ -209,6 +499,4 @@ NiFpga_Status write_thresh_persistence(Fpga *fpga, uint32_t v) {
 	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteU32(fpga->session, 0x18048, v));
 	return fpga->status;
 }
-
-
 

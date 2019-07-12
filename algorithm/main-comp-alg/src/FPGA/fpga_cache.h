@@ -73,16 +73,41 @@ typedef struct {
 } Fpga;
 
 
+/* fxp conversion utilities */
+fxp32_16 ftofxp(float d);
+
+fxp32_16 dtofxp(double d);
+
+float fxptof(fxp32_16 fxp);
+
+double fxptod(fxp32_16 fxp);
+
 void default_fpga(Fpga *fpga);
 
+/* FPGA session and library managerment */
+/*
+ * Loads the NiFpga library and establishes a connection to the FPGA, 0 for default arg.
+ */
 NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Deploys the bitfile to the FPGA and begins execution.
+ */
 NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Fetches new values for all FPGA cache methods.
+ */
 NiFpga_Status refresh_cache(Fpga *Fpga);
 
+/*
+ * Closes the connection to the FPGA. Set the stop bool to true before calling.
+ */
 NiFpga_Status fpclose(Fpga *fpga, uint32_t attr);
 
+/*
+ * Closes the NiFpga library
+ */
 NiFpga_Status fpfinalize(Fpga *fpga);
 
 NiFpga_Status write_actuate_brakes(Fpga *fpga, NiFpga_Bool v);

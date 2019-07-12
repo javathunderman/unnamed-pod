@@ -22,6 +22,7 @@ resource = "RIO0"
 
 
 win_path = '/'.join(header.split('/')[0:-1])+'/'
+test_path = '/'.join(header.split('/')[0:-2])+'/test'
 header = nt.basename(header)
 
 
@@ -74,6 +75,7 @@ name_to_type = {
             "U64": "uint64_t",
             "Sgl": "float",
             "Dbl": "double",
+            "fxp32_16" : "fxp32_16",
 }
 
 fxpName = 'fxp32_16'
@@ -125,7 +127,6 @@ for i, dec in enumerate(decs):
 
 # Replace type int32_t for indicators with name fxp_* with {fxpName}
 for i, cont in enumerate(conts):
-    print(cont)
     if(conts[0] == 'int32_t' and p_fxp.match(cont[1])):
         conts[i] = (fxpName, R.search(p_fxp, cont[1]).group(1)) + cont[2:]
         
@@ -166,16 +167,41 @@ header_out.write('\n')
 
 # Create update method
 base_methods ='''
+/* fxp conversion utilities */
+fxp32_16 ftofxp(float d);
+
+fxp32_16 dtofxp(double d);
+
+float fxptof(fxp32_16 fxp);
+
+double fxptod(fxp32_16 fxp);
+
 void default_fpga(Fpga *fpga);
 
+/* FPGA session and library managerment */
+/*
+ * Loads the NiFpga library and establishes a connection to the FPGA, 0 for default arg.
+ */
 NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Deploys the bitfile to the FPGA and begins execution.
+ */
 NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Fetches new values for all FPGA cache methods.
+ */
 NiFpga_Status refresh_cache(Fpga *Fpga);
 
+/*
+ * Closes the connection to the FPGA. Set the stop bool to true before calling.
+ */
 NiFpga_Status fpclose(Fpga *fpga, uint32_t attr);
 
+/*
+ * Closes the NiFpga library
+ */
 NiFpga_Status fpfinalize(Fpga *fpga);
 
 '''
@@ -188,20 +214,40 @@ for cont in conts:
 header_out.write('#endif\n')
 header_out.close()
 
-#Write FPGA Implementation
+# Write FPGA Implementation
 src_out = open(win_path + 'fpga_cache.c', 'w')
 
-#Write includes
+# Write includes
 src_out.write('#include "fpga_cache.h"\n\n')
 
 for line in includes:
     src_out.write(f'#include {line}\n')
 src_out.write('\n')
 
+# FXP utilities
+'''
+#define TWO_TO_THE_16 65536
+
+fxp32_16 ftofxp(float f) {
+	return (fxp32_16)(TWO_TO_THE_16 * f);
+}
+
+fxp32_16 dtofxp(double d) {
+	return (fxp32_16)(TWO_TO_THE_16 * d);
+}
+
+float fxptof(fxp32_16 fxp) {
+	return ((float)fxp)/TWO_TO_THE_16;
+}
+
+double fxptod(fxp32_16 fxp) {
+	return ((double)fxp)/TWO_TO_THE_16;
+}
+'''
 # Create the method for populating the default values into an FPGA struct
 default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
-default_fpga.add(f'fpga->bit_path = "./FPGA/" {bit};')
+default_fpga.add(f'fpga->bit_path = "{path}" {bit};')
 default_fpga.add(f'fpga->resource = "{resource}";')
 default_fpga.add(f'fpga->signature = {sig};')
 
@@ -235,8 +281,19 @@ src_out.write('\n')
 
 refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga) {', '}')
 
+for k, v in name_to_type.items():
+    refresh.add(f'{v} temp{v};')
+                
 for dec in decs:
-    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache.{dec[1]})));')
+    refresh.add(f'/* Atomically store {dec[1]} */')
+    check = Block(f'if(NiFpga_IsNotError(fpga->status)){{')
+    update = Block(f'if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, temp{dec[0]}))){{')
+    update.add(f'STORE((fpga->cache.{dec[1]}), temp{dec[0]});')
+    check.add(update)
+    check.add('}')
+    refresh.add(check)
+    refresh.add('}')
+        
 refresh.add('return fpga->status;\n')
 
 src_out.write(str(refresh))
@@ -269,7 +326,7 @@ for cont in conts:
 src_out.close()
 
 #Create Mock Cache .c
-src_test = open(win_path + 'fpga_cache_test.c', 'w')
+src_test = open(test_path + 'fpga_cache_test.c', 'w')
 
 #Includes
 src_test.write('#include "fpga_cache.h"\n\n')
@@ -280,6 +337,7 @@ src_test.write('\n')
 default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
 default_fpga.add('fpga->bit_path')
+
 
 
 src_test.close()
