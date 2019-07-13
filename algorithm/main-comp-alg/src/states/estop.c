@@ -7,14 +7,18 @@
 #define __ESTOP__
 #endif
 
-int estop_state(Thresholds *thresholds, int command) {
+int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf("EMERGENCY STOP!\n");
 	int pod_velocity = 0;
+
+	if (write_actuate_brakes(*fpga, NiFpga_True) != 0) {
+		printf("ERROR: fpga failed to actuate brakes!");
+	}
 
 	if (command == EMERGENCY_BRAKE) {
 		return ESTOP_SID;
 	}
-	else if (pod_velocity < 1) {
+	else if ((*fpga).cache.tape_velocity <= 0) {
 		printf("Entering Idle state!");
 		return IDLE_SID;
 	}

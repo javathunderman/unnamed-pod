@@ -9,12 +9,38 @@
 #include "abort_run.h"
 #include "udp.h"
 #include "priority.h"
+#include "fpga_cache.h"
+#include "NiFpga.h"
+#include "NiFpga_main.h"
+
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int g_abort_run = 0;
 
 int main() {
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// INIT FPGA                                                                                    //
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	Fpga fpga;
+
+	NiFpga_Status fpga_status = init_fpga(*fpga, uint32_t attr);
+	if (fpga_status < 0) {
+		printf("Failed to initialize fpga, status code %d\n", fpga_status);
+		return 5;
+	}
+	else if (fpga_status > 0) {
+		printf("Warning during fpga initialization, status code %d\n", fpga_status);
+	}
+
+	fpga_status = run_fpga(*fpga, uint32_t attr);
+	if (fpga_status < 0) {
+		printf("Failed to run fpga, status code %d\n", fpga_status);
+		return 5;
+	}
+	else if (fpga_status > 0) {
+		printf("Warning during fpga run, status code %d\n", fpga_status);
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT REAL-TIME SCHEDULING                                                                    //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +165,7 @@ int main() {
 	fp_arr[NORMBRAKE_SID] = &normbrake_state;
 	fp_arr[ESTOP_SID] = &estop_state;
 	fp_arr[IDLE_SID] = &idle_state;
+	fp_arr[ENDRUN_SID] = NULL;
 	
 	printf("################################################################\n");
 	printf("#                     beginning of run                         #\n");
@@ -147,16 +174,32 @@ int main() {
 	//Initial values for state flow
 	int command = 0;
 	int next_state = startup_state(&thresholds, command);
-	
+	bool continueRun = true;
 	//main state loop
-	while (1) {
+	while (continueRun) {
+		fpga_status = refresh_cache(*Fpga);
+		if (fpga_status < 0) {
+			printf("Failed to refresh fpga cache, status code %d\n", fpga_status);
+			return 5;
+		}
+		else if (fpga_status > 0) {
+			printf("Warning during fpga cache refresh, status code %d\n", fpga_status);
+		}
+
 		if (g_abort_run) {
 			next_state = ESTOP_SID;
 		}
 		
 		read_cmd(&cb, &command);
 		next_state = (*fp_arr[next_state])(&thresholds, command);
+		//end loop condition, warning, this does NOT necessarily brake, just makes pod take a nap
+		if (next_state == ENDRUN_SID) {
+			continueRun = false;
+		}
 	}
+
+	fpclose(Fpga *fpga, uint32_t attr);
+	fpfinalize(Fpga *fpga);
 
 	return 0;
 }

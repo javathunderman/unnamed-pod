@@ -7,7 +7,7 @@
 #define __STANDBY__
 #endif
 
-int idle_state(Thresholds *thresholds, int command) { //keeps high power on, but forbids movement
+int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high power on, but forbids movement
 	printf(">> IDLE STATE - Command: %d\n", command);
 
 	if (command == EMERGENCY_BRAKE) {

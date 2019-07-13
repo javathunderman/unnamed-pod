@@ -7,7 +7,7 @@
 #define __ACCELERATE__
 #endif
 
-int accelerate_state(Thresholds *thresholds, int command) {
+int accelerate_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	static int pod_position = 0;
 	int motor_temp = 998; //<- fake temp for logic
 
