@@ -15,9 +15,14 @@ root = tk.Tk()
 root.withdraw()
 
 header = filedialog.askopenfilename()
-bit = nt.basename(filedialog.askopenfilename()).split('.')[0] + '_Bitfile'
+base =  nt.basename(filedialog.askopenfilename()).split('.')[0]
+bit = base + '_Bitfile'
+sig = base + '_Signature'
+resource = "RIO0"
+
 
 win_path = '/'.join(header.split('/')[0:-1])+'/'
+test_path = '/'.join(header.split('/')[0:-2])+'/test'
 header = nt.basename(header)
 
 
@@ -70,7 +75,10 @@ name_to_type = {
             "U64": "uint64_t",
             "Sgl": "float",
             "Dbl": "double",
+            "fxp32_16" : "fxp32_16",
 }
+
+fxpName = 'fxp32_16'
 
 # the list of includes for the files
 includes = [f'"{header}"', '"NiFpga.h"']
@@ -99,8 +107,8 @@ for line in h:
     else:
         if(i == 0 and p_bit.match(line)):
             name = R.search(p_bit, line).group(1)
-            p_dec = R.compile(f'\s*{name}_Indicator(.+)_(\w+)\s*=\s*(.+),$')
-            p_cont = R.compile(f'\s*{name}_Control(.+)_(\w+)\s*=\s*(.+),$')
+            p_dec = R.compile(f'\s*{name}_Indicator([^_]+)_(\w+)\s*=\s*(.+),$')
+            p_cont = R.compile(f'\s*{name}_Control([^_]+)_(\w+)\s*=\s*(.+),$')
             i = 1
         elif(i == 1 and p_dec.match(line)):
             r = R.search(p_dec, line)
@@ -111,6 +119,18 @@ for line in h:
         
 h.close()
 
+# Replace type int32_t for indicators with name fxp_* with {fxpName}
+p_fxp = R.compile('^fxp_(.*)$')
+for i, dec in enumerate(decs):
+    if(dec[0] == 'int32_t' and p_fxp.match(dec[1])):
+        decs[i] = (fxpName, R.search(p_fxp, dec[1]).group(1)) + dec[2:]
+
+# Replace type int32_t for indicators with name fxp_* with {fxpName}
+for i, cont in enumerate(conts):
+    if(conts[0] == 'int32_t' and p_fxp.match(cont[1])):
+        conts[i] = (fxpName, R.search(p_fxp, cont[1]).group(1)) + cont[2:]
+        
+
 h_block = Block('typedef struct {', '} Cache;')
 
 for dec in decs:
@@ -120,9 +140,9 @@ fpga = Block('typedef struct {', '} Fpga;')
 
 # Metadata for the connection to the FPGA
 fpga.add('NiFpga_Status status;')
-fpga.add('char *bit_path;')
-fpga.add('char *signature;')
-fpga.add('char *resource;')
+fpga.add('const char *bit_path;')
+fpga.add('const char *signature;')
+fpga.add('const char *resource;')
 fpga.add('NiFpga_Session session;')
 
 
@@ -137,6 +157,8 @@ for line in includes:
     header_out.write(f'#include {line}\n')
 header_out.write('\n')
 
+header_out.write(f'typedef int32_t {fxpName};\n')
+
 header_out.write(str(h_block))
 header_out.write('\n')
 
@@ -145,16 +167,41 @@ header_out.write('\n')
 
 # Create update method
 base_methods ='''
+/* fxp conversion utilities */
+fxp32_16 ftofxp(float d);
+
+fxp32_16 dtofxp(double d);
+
+float fxptof(fxp32_16 fxp);
+
+double fxptod(fxp32_16 fxp);
+
 void default_fpga(Fpga *fpga);
 
+/* FPGA session and library managerment */
+/*
+ * Loads the NiFpga library and establishes a connection to the FPGA, 0 for default arg.
+ */
 NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Deploys the bitfile to the FPGA and begins execution.
+ */
 NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr);
 
+/*
+ * Fetches new values for all FPGA cache methods.
+ */
 NiFpga_Status refresh_cache(Fpga *Fpga);
 
+/*
+ * Closes the connection to the FPGA. Set the stop bool to true before calling.
+ */
 NiFpga_Status fpclose(Fpga *fpga, uint32_t attr);
 
+/*
+ * Closes the NiFpga library
+ */
 NiFpga_Status fpfinalize(Fpga *fpga);
 
 '''
@@ -167,21 +214,45 @@ for cont in conts:
 header_out.write('#endif\n')
 header_out.close()
 
-#Write FPGA Implementation
+# Write FPGA Implementation
 src_out = open(win_path + 'fpga_cache.c', 'w')
 
-#Write includes
+# Write includes
 src_out.write('#include "fpga_cache.h"\n\n')
 
 for line in includes:
     src_out.write(f'#include {line}\n')
 src_out.write('\n')
 
+# FXP utilities
+src_out.write('''
+/* FXP Utilities */
+#define TWO_TO_THE_16 65536
+
+fxp32_16 ftofxp(float f) {
+	return (fxp32_16)(TWO_TO_THE_16 * f);
+}
+
+fxp32_16 dtofxp(double d) {
+	return (fxp32_16)(TWO_TO_THE_16 * d);
+}
+
+float fxptof(fxp32_16 fxp) {
+	return ((float)fxp)/TWO_TO_THE_16;
+}
+
+double fxptod(fxp32_16 fxp) {
+	return ((double)fxp)/TWO_TO_THE_16;
+}
+''')
 # Create the method for populating the default values into an FPGA struct
-default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
-default_fpga.add('fpga->bit_path')
-src_out.write(default_fpga)
+default_fpga.add(f'fpga->bit_path = "{path}" {bit};')
+default_fpga.add(f'fpga->resource = "{resource}";')
+default_fpga.add(f'fpga->signature = {sig};')
+
+src_out.write(str(default_fpga))
 src_out.write('\n')
 
 init = Block('NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {','}')
@@ -211,8 +282,19 @@ src_out.write('\n')
 
 refresh = Block('NiFpga_Status refresh_cache(Fpga *fpga) {', '}')
 
+for k, v in name_to_type.items():
+    refresh.add(f'{v} temp{v};')
+                
 for dec in decs:
-    refresh.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, &(fpga->cache.{dec[1]})));')
+    refresh.add(f'/* Atomically store {dec[1]} */')
+    check = Block(f'if(NiFpga_IsNotError(fpga->status)){{')
+    update = Block(f'if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_Read{dec[3]}(fpga->session, {dec[2]}, temp{dec[0]}))){{')
+    update.add(f'STORE((fpga->cache.{dec[1]}), temp{dec[0]});')
+    check.add(update)
+    check.add('}')
+    refresh.add(check)
+    refresh.add('}')
+        
 refresh.add('return fpga->status;\n')
 
 src_out.write(str(refresh))
@@ -222,16 +304,22 @@ src_out.write('\n')
 close = Block('NiFpga_Status fpclose(Fpga *fpga, uint32_t attr) {', '}')
 close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Close(fpga->session, attr));')
 close.add('')
-close.add('return fpga->status')
+close.add('return fpga->status;')
+
+src_out.write(str(close))
+src_out.write('\n')
 
 finalize = Block('NiFpga_Status fpfinalize(Fpga *fpga) {', '}')
-close.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
+finalize.add('NiFpga_MergeStatus(&(fpga->status), NiFpga_Finalize());')
 finalize.add('')
-finalize.add('return fpga->status')
+finalize.add('return fpga->status;')
+
+src_out.write(str(finalize))
+src_out.write('\n')
 
 for cont in conts:
     c_block = Block(f'NiFpga_Status write_{cont[1]}(Fpga *fpga, {cont[0]} v) {{', '}')
-    c_block.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Write{dec[3]}(fpga->session, {dec[2]}, v));')
+    c_block.add(f'NiFpga_IfIsNotError(fpga->status, NiFpga_Write{cont[3]}(fpga->session, {cont[2]}, v));')
     c_block.add('return fpga->status;')
 
     src_out.write(str(c_block))
@@ -239,7 +327,7 @@ for cont in conts:
 src_out.close()
 
 #Create Mock Cache .c
-src_test = open(win_path + 'fpga_cache.c', 'w')
+src_test = open(test_path + 'fpga_cache_test.c', 'w')
 
 #Includes
 src_test.write('#include "fpga_cache.h"\n\n')
@@ -247,9 +335,10 @@ for line in includes:
     src_test.write(f'#include {line}\n')
 src_test.write('\n')
 
-default_fpga = Block('void default_fpga(Fpga *fpga, const char*) {','}')
+default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
 default_fpga.add('fpga->bit_path')
+
 
 
 src_test.close()

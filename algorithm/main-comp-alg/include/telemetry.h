@@ -2,6 +2,8 @@
 #define TELEMETRY_H
 
 
+#include <sys/socket.h>
+
 #define SA struct sockaddr
 #define TO_USEC 1000000
 #define PORT 8187

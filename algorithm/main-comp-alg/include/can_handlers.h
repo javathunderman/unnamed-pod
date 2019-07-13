@@ -22,4 +22,5 @@ void actual_speed_handler(VSCAN_MSG *msg, CAN_Data *data);
 void actual_current_handler(VSCAN_MSG *msg, CAN_Data *data);
 void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data);
 
+
 #endif

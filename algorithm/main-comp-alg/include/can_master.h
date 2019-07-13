@@ -6,8 +6,12 @@
 #include "vs_can_api.h"
 
 
-/* Used to safely store values in CAN_Data struct */
-#define STORE(var, val) __atomic_store_n(&(var), val, __ATOMIC_RELAXED);
+/* Used to safely load/store values in CAN_Data struct */
+#define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
+#define LOAD(var) (__atomic_load_n(&(var), __ATOMIC_RELAXED))
+
+#define SEQ_STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_SEQ_CST))
+#define SEQ_LOAD(var) (__atomic_load_n(&(var), __ATOMIC_SEQ_CST))
 
 typedef enum {
     IDLE,
@@ -69,12 +73,30 @@ typedef enum {
 } CAN_Response_Index;
 
 typedef struct {
-    CAN_State state;
-    int received_count;
-    bool check_timeout;
-    struct timespec timeout_interval;
-    struct timespec last_time;
+    volatile unsigned int rx_count;
+    volatile bool check_timeout;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec last_time;
 } CAN_Response;
+
+typedef struct {
+    volatile CAN_State state;
+    volatile unsigned int tx_count;
+    volatile bool check_timeout;
+    volatile unsigned int timeout_count;
+    volatile struct timespec timeout_interval;
+    volatile struct timespec sent_time;
+} CAN_Request;
+
+typedef struct{
+    volatile unsigned char hardware_error;        /*0 if no Hardware error, 1 if hardware error*/
+    volatile unsigned char no_new_estimates;      /*0 if new isolation values have been calculated, 1 if not */
+    volatile unsigned char high_uncertainty;      /*0 if uncertainty is less than 5%, 1 if greater than 5% */
+    volatile unsigned char undefined;             /*none*/
+    volatile unsigned char high_battery_voltage; /*0 if Observed battery voltage less than Max_battery_working_voltage, 1 if greater or not set*/
+    volatile unsigned char low_batter_voltage;   /*0 if observed battery voltage greater than 15 V, 1 if battery voltage is less than 15 V*/
+    volatile unsigned char isolation_status;      /*00 if isolation status is OK, 10 if isolation status < 500 Ohm/V limit, 11 if Isolation fault iso status < 100 Ohm/V limit*/
+} Iso_Status_Bits;
 
 /* This struct holds data received from CAN devices to be used
  * by the state machine.
@@ -91,33 +113,33 @@ typedef struct {
     /* --- Receive Data --- */
     
     /* Battery Management System */
-    volatile short pack_soc;               /* Percent         */
-    volatile short pack_voltage;           /* deci-Volts      */
-    volatile short pack_current;           /* deci-Amps       */
+    volatile unsigned short pack_soc;               /* Percent         */
+    volatile unsigned short pack_voltage;           /* deci-Volts      */
+    volatile unsigned short pack_current;           /* deci-Amps       */
     
-    volatile short min_voltage;
-    volatile short max_voltage;
-    volatile short avg_temp;
-    volatile short high_temp;
+    volatile unsigned short min_voltage;                         /* 10E-4 V */
+    volatile unsigned short max_voltage;                         /* 10E-4 V */
+    volatile unsigned short avg_temp;                            /* Celcius */
+    volatile unsigned short high_temp;                           /* Celcius */
     
-    volatile char failsafe_status;
-    volatile char dtc_flags_1;
-    volatile short dtc_flags_2;
-    volatile short rolling_counter;
+    volatile unsigned char failsafe_status;                      /* Bit Flags */
+    volatile unsigned char dtc_flags_1;                          /* Bit Flags */
+    volatile unsigned short dtc_flags_2;                         /* Bit Flags */
+    volatile unsigned short rolling_counter;                     /* Counter   */
     
-    volatile char status_flags;
+    volatile unsigned char error_flags;
     
-    volatile short electrical_isolation;                /* ohm/V */
-    volatile char electrical_isolation_uncert;         
-    volatile short energy_stored;                       /* mJ */
-    volatile char energy_stored_uncert;
+    volatile unsigned short electrical_isolation;                /* ohm/V */
+    volatile unsigned char electrical_isolation_uncert;         
+    volatile unsigned short energy_stored;                       /* mJ */
+    volatile unsigned char energy_stored_uncert;
     
-    volatile short rp_iso_resistance;                   /* kohm */
-    volatile char rp_iso_resistance_uncert;
-    volatile short rn_iso_resistance;                   /* kohm */
-    volatile char rn_iso_resistance_uncert;
+    volatile unsigned short rp_iso_resistance;                   /* kohm */
+    volatile unsigned char rp_iso_resistance_uncert;
+    volatile unsigned short rn_iso_resistance;                   /* kohm */
+    volatile unsigned char rn_iso_resistance_uncert;
     
-    volatile char error_flags;
+    volatile Iso_Status_Bits status_bits;
     
     volatile short battery_volt;                        /* V */
     volatile char battery_volt_uncert;
@@ -138,14 +160,19 @@ typedef struct {
     
     
     /* --- Transmit Data --- */
-    volatile CAN_State requests[NUM_CAN_REQUESTS];
+    volatile CAN_Request requests[NUM_CAN_REQUESTS];
     volatile CAN_Response responses[NUM_CAN_RESPONSES];
 } CAN_Data;
 
+typedef struct {
+    VSCAN_MSG msg;
+    void (*handler)(VSCAN_MSG *msg, CAN_Data *data);
+    int request_num;
+} CAN_Response_Lookup;
 
 /* Global variables */
 extern VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
-extern VSCAN_MSG response_lookup[NUM_CAN_RESPONSES];
+extern CAN_Response_Lookup response_lookup[NUM_CAN_RESPONSES];
 extern VSCAN_HANDLE handle;
 
 
@@ -154,8 +181,5 @@ int can_send(CAN_Request_Index request, CAN_Data *data);
 
 /* CAN master thread */
 void *can_master(void *args);
-
-/* Used internally to handle received can messages */
-void handle_can_message(VSCAN_MSG *msg);
 
 #endif

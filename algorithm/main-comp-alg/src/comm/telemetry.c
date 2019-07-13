@@ -4,7 +4,10 @@
 #include <time.h>
 #include <errno.h>
 #include <stdio.h>
+#include <pthread.h>
+#include "abort_run.h"
 #include "spacex.h"
+#include "priority.h"
 #include "telemetry.h"
 
 
@@ -22,14 +25,22 @@ void *send_tlm(void *args) {
     int socket = ((TelemetryArgs *)args)->socket;
     SA * dest_addr = ((TelemetryArgs *)args)->dest_addr;
     socklen_t dest_len = ((TelemetryArgs *)args)->dest_len;
+    const struct sched_param priority = {TLM_SEND_PRIO};
+
+    /* Set thread priority */
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) != 0) {
+        printf("Failed to set TLM thread priority\n");
+        return NULL;
+    }
 
     struct timespec now;
     if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
+        ABORT_RUN;
         printf("clock_gettime() error: %s\n", strerror(errno));
-        exit(-3);
+        return NULL;
     }
-    __time_t sec = now.tv_sec;
-    __syscall_slong_t nsec = now.tv_nsec;
+    time_t sec = now.tv_sec;
+    long nsec = now.tv_nsec;
 
     INIT_TIMES(now, 1000000000L)
     struct timespec delay_1 = {sec, nsec};
@@ -40,12 +51,12 @@ void *send_tlm(void *args) {
         update_telemetry_1_1(&tlm);
 
         if(sendto(socket, &tlm, PKT_LENGTH, 0, dest_addr, dest_len) == -1) {
-            printf("%s\n", strerror(errno));
-            //TODO: Comm Loss
+            ABORT_RUN;
+            printf("Telemetry sendto() error: %s\n", strerror(errno));
         }
 
         if(send_spacex(&tlm) == -1) {
-            //TODO: Comm Loss
+            ABORT_RUN;
         }
 
         UPDATE_DELAY(delay_1)
