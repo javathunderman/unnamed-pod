@@ -24,7 +24,7 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	Fpga fpga;
 
-	NiFpga_Status fpga_status = init_fpga(*fpga, uint32_t attr);
+	NiFpga_Status fpga_status = init_fpga(*fpga, 0);
 	if (fpga_status < 0) {
 		printf("Failed to initialize fpga, status code %d\n", fpga_status);
 		return 5;
@@ -33,7 +33,7 @@ int main() {
 		printf("Warning during fpga initialization, status code %d\n", fpga_status);
 	}
 
-	fpga_status = run_fpga(*fpga, uint32_t attr);
+	fpga_status = run_fpga(*fpga, 0);
 	if (fpga_status < 0) {
 		printf("Failed to run fpga, status code %d\n", fpga_status);
 		return 5;
@@ -198,7 +198,7 @@ int main() {
 		}
 	}
 
-	fpclose(Fpga *fpga, uint32_t attr);
+	fpclose(Fpga *fpga, 0);
 	fpfinalize(Fpga *fpga);
 
 	return 0;
