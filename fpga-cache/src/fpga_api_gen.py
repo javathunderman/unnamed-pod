@@ -22,7 +22,7 @@ resource = "RIO0"
 
 
 win_path = '/'.join(header.split('/')[0:-1])+'/'
-test_path = '/'.join(header.split('/')[0:-2])+'/test'
+test_path = '/'.join(header.split('/')[0:-2])+'/test/'
 header = nt.basename(header)
 
 
@@ -326,10 +326,19 @@ for cont in conts:
     src_out.write('\n')
 src_out.close()
 
+#Create Mock Cache .csv
+csv_test = open(test_path + 'fpa_cache_test_dat.csv', 'w')
+header = ""
+for dec in decs:
+    header = header + f', {dec[1]}'
+
+csv_test.write(header[1:] + '\n')
+csv_test.close()
 #Create Mock Cache .c
 src_test = open(test_path + 'fpga_cache_test.c', 'w')
 
 #Includes
+print(test_path)
 src_test.write('#include "fpga_cache.h"\n\n')
 for line in includes:
     src_test.write(f'#include {line}\n')
