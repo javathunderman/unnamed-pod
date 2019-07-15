@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
+#include "states.h"
+#include "fpga_cache.h"
 
 
 #define __SERVICE__

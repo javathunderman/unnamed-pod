@@ -10,7 +10,7 @@
 int startup_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf(">> STARTUP STATE\n");
 
-	if (write_actuate_brakes(*fpga, NiFpga_False) != 0) {
+	if (NiFpga_IsNotError(write_actuate_brakes(fpga, NiFpga_False))) {
 		printf("ERROR: fpga failed to actuate brakes!");
 	}
 

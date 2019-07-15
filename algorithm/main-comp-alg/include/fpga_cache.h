@@ -1,7 +1,6 @@
 #ifndef __FPGA_CACHE__
 #define __FPGA_CACHE__
 #include "NiFpga_main.h"
-#include "NiFpga.h"
 
 typedef int32_t fxp32_16;
 typedef struct {
@@ -74,7 +73,7 @@ typedef struct {
 	uint64_t fault_long_1;
 	uint64_t fault_long_2;
 	uint64_t fault_long_3;
-} Cache;
+} FpgaCache;
 
 typedef struct {
 	NiFpga_Status status;
@@ -82,7 +81,7 @@ typedef struct {
 	const char *signature;
 	const char *resource;
 	NiFpga_Session session;
-	Cache cache;
+	FpgaCache cache;
 } Fpga;
 
 

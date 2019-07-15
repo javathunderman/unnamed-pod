@@ -1,17 +1,14 @@
-#ifndef __ESTOP__
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
 #include "states.h"
-
-#define __ESTOP__
-#endif
+#include "fpga_cache.h"
 
 int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf("EMERGENCY STOP!\n");
 	int pod_velocity = 0;
 
-	if (write_actuate_brakes(*fpga, NiFpga_True) != 0) {
+	if (NiFpga_IsError(write_actuate_brakes(fpga, NiFpga_True))) {
 		printf("ERROR: fpga failed to actuate brakes!");
 	}
 
@@ -21,7 +18,7 @@ int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	else if ((*fpga).cache.tape_velocity <= 0) {
 		printf("Entering Idle state!");
 
-		if (write_actuate_brakes(*fpga, NiFpga_False) != 0) {
+		if (write_actuate_brakes(fpga, NiFpga_False) != 0) {
 			printf("ERROR: fpga failed to actuate brakes!");
 		}
 

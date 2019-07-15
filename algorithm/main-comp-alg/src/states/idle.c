@@ -15,7 +15,7 @@ int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high p
 	}
 	//Move to standby
 	else if (command == ENTER_STANDBY) {
-		if (write_actuate_brakes(*fpga, NiFpga_False) != 0) {
+		if (fpga->cache.brake_state == NiFpga_False) {
 			printf("ERROR: fpga failed to actuate brakes!");
 		}
 		

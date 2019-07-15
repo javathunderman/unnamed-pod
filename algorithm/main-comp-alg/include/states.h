@@ -2,10 +2,10 @@
 /* This is where our state includes will live */
 #include "commands.h"
 #include "fpga_cache.h"
-#include "NiFpga.h"
-#include "NiFpga_main.h"#include "can_master.h"typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, ENDRUN_SID, NUM_STATES} State; 
+#include "can_master.h"
+typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, ENDRUN_SID, NUM_STATES} State;
 typedef struct {
-    Fpga_Cache fpga_cache;
+    FpgaCache fpga_cache;
     CAN_Data can_data;
 } UMData;
 typedef struct {

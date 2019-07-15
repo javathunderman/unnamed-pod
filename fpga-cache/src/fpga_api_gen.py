@@ -131,7 +131,7 @@ for i, cont in enumerate(conts):
         conts[i] = (fxpName, R.search(p_fxp, cont[1]).group(1)) + cont[2:]
         
 
-h_block = Block('typedef struct {', '} Cache;')
+h_block = Block('typedef struct {', '} FpgaCache;')
 
 for dec in decs:
     h_block.add(f'{dec[0]} {dec[1]};')
@@ -147,7 +147,7 @@ fpga.add('NiFpga_Session session;')
 
 
 # Cache
-fpga.add('Cache cache;')
+fpga.add('FpgaCache cache;')
 
 
 # Generate header for FPGA cache

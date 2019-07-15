@@ -22,9 +22,12 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT FPGA                                                                                    //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	Fpga fpga;
+	Fpga fpga_dat;
 
-	NiFpga_Status fpga_status = init_fpga(*fpga, 0);
+	Fpga *fpga = &fpga_dat;
+	default_fpga(fpga);
+
+	NiFpga_Status fpga_status = init_fpga(fpga, 0);
 	if (fpga_status < 0) {
 		printf("Failed to initialize fpga, status code %d\n", fpga_status);
 		return 5;
@@ -33,7 +36,7 @@ int main() {
 		printf("Warning during fpga initialization, status code %d\n", fpga_status);
 	}
 
-	fpga_status = run_fpga(*fpga, 0);
+	fpga_status = run_fpga(fpga, 0);
 	if (fpga_status < 0) {
 		printf("Failed to run fpga, status code %d\n", fpga_status);
 		return 5;
@@ -174,11 +177,11 @@ int main() {
 
 	//Initial values for state flow
 	int command = 0;
-	int next_state = startup_state(&thresholds, command);
+	int next_state = startup_state(&thresholds, fpga, command);
 	bool continueRun = true;
 	//main state loop
 	while (continueRun) {
-		fpga_status = refresh_cache(*Fpga);
+		NiFpga_IfIsNotError(refresh_cache(fpga));
 		if (fpga_status < 0) {
 			printf("Failed to refresh fpga cache, status code %d\n", fpga_status);
 			return 5;
@@ -199,8 +202,8 @@ int main() {
 		}
 	}
 
-	fpclose(Fpga *fpga, 0);
-	fpfinalize(Fpga *fpga);
+	fpclose(fpga, 0);
+	fpfinalize(fpga);
 
 	return 0;
 }
