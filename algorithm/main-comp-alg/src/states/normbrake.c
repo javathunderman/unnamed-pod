@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include "states.h"
+#include "fpga_cache.h"
 
 int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	// TODO: enter true velocity
@@ -15,18 +16,13 @@ int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	else if ((*fpga).cache.tape_velocity <= 0) {
 		printf("Pod stopped: Entering Idle state\n");
 
-		if (NiFpga_write_actuate_brakes(*fpga, NiFpga_False) != 0) {
-			printf("ERROR: fpga failed to retract brakes!");
-			return NORMBRAKE_SID;
-			//TODO: handle the NI is trash error better
-		}
+		fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_False), "retract brakes")
 
-		return IDLE_SID;
+		return NiFpga_IsNotError(fpga->status) ? IDLE_SID : NORMBRAKE_SID;
 	} else if (!fpga->cache.brake_state) {
-		if(NiFpga_IsError(write_actuate_brakes(fpga, NiFpga_True))) {
-			//TODO: handle the NI is trash error better
-			printf("ERROR: fpga failed to actuate brakes!");
-		}
+		fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_True), "actuate brakes")
+
+		return NiFpga_IsNotError(fpga->status) ? NORMBRAKE_SID : NORMBRAKE_SID;
 	}
 
 	return NORMBRAKE_SID;

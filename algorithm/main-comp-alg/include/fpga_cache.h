@@ -1,7 +1,17 @@
 #ifndef __FPGA_CACHE__
 #define __FPGA_CACHE__
 #include "NiFpga_main.h"
-#include "NiFpga.h"
+#include "atomics.h"
+
+
+#define fpgaRunAndUpdateIf(fpga, call, description) \
+if(NiFpga_IsError(fpga->status)) {\
+    printf("Attempting to perform action: '%s' while FPGA is in error state: %d. Trying anyway.\n",                #call, fpga->status);\
+                }\
+NiFpga_IfIsNotError(fpga->status, call);\
+if(NiFpga_IsError(fpga->status)) {\
+    printf("Failed to perform action: '%s' due to FPGA in error state: %d.\n",\
+                #call, fpga->status);}
 
 typedef int32_t fxp32_16;
 typedef struct {

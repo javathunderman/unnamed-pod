@@ -10,8 +10,6 @@
 #include "udp.h"
 #include "priority.h"
 #include "fpga_cache.h"
-#include "NiFpga.h"
-#include "NiFpga_main.h"
 
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
@@ -181,7 +179,7 @@ int main() {
 	bool continueRun = true;
 	//main state loop
 	while (continueRun) {
-		NiFpga_IfIsNotError(refresh_cache(fpga));
+		NiFpga_IfIsNotError(fpga->status, refresh_cache(fpga));
 		if (fpga_status < 0) {
 			printf("Failed to refresh fpga cache, status code %d\n", fpga_status);
 			return 5;

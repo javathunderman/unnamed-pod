@@ -13,19 +13,21 @@ import ntpath as nt
 
 root = tk.Tk()
 root.withdraw()
+include_path = filedialog.askdirectory()
+base = 'NiFpga_main'
+header = f'{base}.h'
+bitfile = f'{base}.lvbitx'
 
-header = filedialog.askopenfilename()
-base =  nt.basename(filedialog.askopenfilename()).split('.')[0]
 bit = base + '_Bitfile'
 sig = base + '_Signature'
 resource = "RIO0"
 
 
-win_path = '/'.join(header.split('/')[0:-1])+'/'
-test_path = '/'.join(header.split('/')[0:-2])+'/test/'
-header = nt.basename(header)
+repo_path = '/'.join(include_path.split('/')[0:-1])
+test_path = f'{repo_path}/test'
+src_path = f'{repo_path}/src/fpga'
 
-
+print(src_path)
 
 class Block:
     empty = ()
@@ -80,8 +82,8 @@ name_to_type = {
 
 fxpName = 'fxp32_16'
 
-# The list of includes for the files
-includes = [f'"{header}"', 'atomics.h']
+# the list of includes for the files
+includes = [f'"{header}"', '"atomics.h"']
 
 name = ''
 
@@ -99,7 +101,7 @@ signature = ''
 resource = "RIO0";
 
 
-h = open(win_path + header, 'r')
+h = open(f'{include_path}/{header}', 'r')
 i = 0
 for line in h:
     if(p_sig.match(line)):
@@ -151,7 +153,7 @@ fpga.add('FpgaCache cache;')
 
 
 # Generate header for FPGA cache
-header_out = open(win_path + 'fpga_cache.h', 'w')
+header_out = open(f'{include_path}/fpga_cache.h', 'w')
 header_out.write('#ifndef __FPGA_CACHE__\n#define __FPGA_CACHE__\n')
 for line in includes:
     header_out.write(f'#include {line}\n')
@@ -164,10 +166,10 @@ if(NiFpga_IsError(fpga->status)) {\\
     printf("Attempting to perform action: '%s' while FPGA is in error state: %d. Trying anyway.\\n",\
                 #call, fpga->status);\\
                 }\\
-NiFpga_ifIsNotError(fpga->status, call);\\
+NiFpga_IfIsNotError(fpga->status, call);\\
 if(NiFpga_IsError(fpga->status)) {\\
     printf("Failed to perform action: '%s' due to FPGA in error state: %d.\\n",\\
-                #call, fpga->status);\\
+                #call, fpga->status);\
 }
 
 ''')
@@ -230,7 +232,7 @@ header_out.write('#endif\n')
 header_out.close()
 
 # Write FPGA Implementation
-src_out = open(win_path + 'fpga_cache.c', 'w')
+src_out = open(f'{src_path}/fpga_cache.c', 'w')
 
 # Write includes
 src_out.write('#include "fpga_cache.h"\n\n')
