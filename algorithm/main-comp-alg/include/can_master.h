@@ -4,16 +4,11 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include "vs_can_api.h"
+#include "atomics.h"
 
 /* Master CAN loop cycle speed (ns delay) */
 #define CAN_FREQ 1000000L /* 1 kHz */
 
-/* Used to safely load/store values in CAN_Data struct */
-#define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
-#define LOAD(var) (__atomic_load_n(&(var), __ATOMIC_RELAXED))
-
-#define SEQ_STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_SEQ_CST))
-#define SEQ_LOAD(var) (__atomic_load_n(&(var), __ATOMIC_SEQ_CST))
 
 typedef enum {
     IDLE,
