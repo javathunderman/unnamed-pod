@@ -20,6 +20,11 @@ int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	}
 	else if ((*fpga).cache.tape_velocity <= 0) {
 		printf("Entering Idle state!");
+
+		if (write_actuate_brakes(*fpga, NiFpga_False) != 0) {
+			printf("ERROR: fpga failed to actuate brakes!");
+		}
+
 		return IDLE_SID;
 	}
 

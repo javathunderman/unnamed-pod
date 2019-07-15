@@ -10,11 +10,9 @@
 int open_port(void);
 
 int main(){
-  int i, n, fd,
-      cport_nr=1,        /* /dev/ttyS0 (COM1 on windows) */
-      bdrate=460800;       /* 9600 baud */
+  int i, n, fd, bytes_read;
 
-  unsigned char buf[1000];
+  unsigned char buf[32];
   //IMUData data;
 
   //Opening a Serial Port
@@ -25,39 +23,65 @@ int main(){
 	  return 0;
   }
 
-  printf("Attempting to set baudrate\n");
+  printf("Attempting to set baudrate...\n");
   //Setting baud rate...
   struct termios options;
 
   //Get the current options for the port...
-  tcgetattr(fd, &options);
+  if (n = tcgetattr(fd, &options) == -1) {
+	perror("tcgetattr failed");
+	return 0;
+  }
 
   //Set the baud rates to 19200...
-  cfsetispeed(&options, B57600);
-  cfsetospeed(&options, B57600);
+  if (n = cfsetispeed(&options, B57600) == -1) {
+	perror("cfsetispeed failed");
+	return 0;
+  }
+
+  if (n = cfsetospeed(&options, B57600) == -1) {
+	perror("cfsetispeed failed");
+	return 0;
+  }
 
   //Enable the receiver and set local mode...
   options.c_cflag |= (CLOCAL | CREAD);
 
   //Set the new options for the port...
-  tcsetattr(fd, TCSANOW, &options);
-  printf("Done setting baudrate\n");
+  if (n = tcsetattr(fd, TCSANOW, &options) == -1) {
+  	perror("tcsetattr failed");
+  	return 0;
+  }
+  printf("Done setting baud rate\n");
 
   //Writing Data to the Port
   int ping = 0x0102;
   n = write(fd, &ping, 8);
   if (n < 0)
-    fputs("write() of 8 bytes failed!\n", stderr);
+    fputs("ping: write() of 8 bytes failed!\n", stderr);
   else
-	printf("write() of %d bytes success!\n", n);
+	printf("ping: write() of %d bytes success!\n", n);
 
 
-  printf("Attempting to read buffer\n");
-  int x = fcntl(fd, F_SETFL, 0);
+  printf("Attempting to read buffer...\n");
+  int x = fcntl(fd, F_SETFL, FNDELAY);
 
-  printf("buf=%d\n", x);
+  printf("Size of buf = %d\n", sizeof(buf));
+
+
   while(1) {
 	//Reading Data from the Port
+	  bytes_read = read(fd, &buf, sizeof(buf));
+	  if (bytes_read > 0) {
+	  	  printf("bytes_read=%d, buffer=[", bytes_read, buf);
+	    for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
+	    	printf("%x ",buf[i]);
+	    printf("]\n[");
+	    for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
+	    	printf("%d ",buf[i]);
+	    printf("]\n");
+	  }
+
 
 	/*//Table 4 https://www.memsense.com/assets/docs/uploads/ms-imu3020/MS-IMU3020_PSUG.pdf
 	//data.sync1 = buff[0];
@@ -89,13 +113,15 @@ int main(){
 int open_port(void) {
   int fd; /* File descriptor for the port */
 
-  fd = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);
+  fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
   if (fd == -1) {
     //Could not open the port.
-    perror("open_port: Unable to open /dev/ttyS0 - \n");
+    perror("open_port: Unable to open /dev/ttyUSB0 - \n");
   }
-  else
+  else {
     fcntl(fd, F_SETFL, 0);
+    printf("opened port /dev/ttyUSB0 successfully\n");
+  }
 
   return (fd);
 }

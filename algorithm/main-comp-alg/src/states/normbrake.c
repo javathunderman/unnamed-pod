@@ -8,7 +8,6 @@
 #endif
 
 int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
-	static int pod_vel = 250;
 	printf(">> NORMAL BRAKE STATE - %d %d\n", pod_vel, acknowledge_command);
 
 	//check speed, repeat until zero?
@@ -18,10 +17,14 @@ int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	}
 	else if ((*fpga).cache.tape_velocity <= 0) {
 		printf("Pod stopped: Entering Idle state\n");
+
+		if (write_actuate_brakes(*fpga, NiFpga_False) != 0) {
+			printf("ERROR: fpga failed to actuate brakes!");
+		}
+
 		return IDLE_SID;
 	}
 	else {
-		pod_vel -= 100; //get pod speed from IMU and light sensors, logic goes here
 
 		if (write_actuate_brakes(*fpga, NiFpga_True) != 0) {
 			printf("ERROR: fpga failed to actuate brakes!");
