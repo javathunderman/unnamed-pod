@@ -75,10 +75,10 @@ int main(){
 	  if (bytes_read > 0) {
 	  	  printf("bytes_read=%d, buffer=[", bytes_read, buf);
 	    for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
-	    	printf("%x ",buf[i]);
-	    printf("]\n[");
-	    for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
-	    	printf("%d ",buf[i]);
+	    	printf("%02x ",buf[i]);
+	    //printf("]\n[");
+	    //for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
+	    	//printf("%d ",buf[i]);
 	    printf("]\n");
 	  }
 
