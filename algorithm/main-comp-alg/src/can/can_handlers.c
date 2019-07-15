@@ -340,7 +340,7 @@ void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data){
 
 }
 
-/* This function updates the feilds of the Iso_Status_Bits struct inside CAN_Data
+/* This function updates the fields of the Iso_Status_Bits struct inside CAN_Data
  *
  * Params: 
  *     CAN_Data *data -> pointer to CAN_data struct used by state machine
@@ -358,3 +358,49 @@ void set_status_bits(CAN_Data *data, unsigned char status_flags) {
     STORE(data->status_bits.low_batter_voltage, ((status_flags >> 2) & 0x01));
     STORE(data->status_bits.isolation_status, ((status_flags >> 1) & 0x02));
 }
+
+/* This function updates state machine's CAN_Data with:
+ *     controller_bus_voltage
+ *
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void controller_volt_handler(VSCAN_MSG *msg, CAN_Data *data) {
+    unsigned short controller_bus_voltage = *((unsigned short *) (&(msg->Data[1])));
+    STORE(data->controller_bus_voltage, controller_bus_voltage);
+}
+
+/* This function updates state machine's CAN_Data with:
+ *     controller_errors
+ *
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void controller_errors_handler(VSCAN_MSG *msg, CAN_Data *data) {
+    unsigned int controller_errors = *((unsigned int *) (&(msg->Data[1])));
+    STORE(data->controller_errors, controller_errors);
+}
+
+/* This function updates state machine's CAN_Data with:
+ *     controller_errors
+ *
+ * Params:
+ *     VSCAN_MSG *msg -> pointer to received CAN message frame
+ *     CAN_Data *data -> pointer to CAN_data struct used by state machine
+ *
+ * Returns:
+ *     void
+ */
+void controller_status_handler(VSCAN_MSG *msg, CAN_Data *data) {
+    unsigned short controller_status = *((unsigned short *) (&(msg->Data[1])));
+    STORE(data->controller_status, controller_status);
+}
+
