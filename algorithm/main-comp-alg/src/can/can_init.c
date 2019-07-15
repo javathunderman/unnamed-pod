@@ -411,10 +411,8 @@ void init_can_requests() {
     request_lookup[CONTROLLER_CLEAR_ERRORS_TX].msg.Size = 3;
     request_lookup[CONTROLLER_CLEAR_ERRORS_TX].msg.Data[0] = 0x3D;
     request_lookup[CONTROLLER_CLEAR_ERRORS_TX].msg.Data[1] = 0x8E;
-    request_lookup[CONTROLLER_CLEAR_ERRORS_TX].msg.Data[2] = 0x;
+    request_lookup[CONTROLLER_CLEAR_ERRORS_TX].msg.Data[2] = 0x00;
     request_lookup[CONTROLLER_CLEAR_ERRORS_TX].expect_response = false;
-    
-    CONTROLLER_STATUS_TX
 }
 
 /* This function initializes the response_lookup array with CAN messages
