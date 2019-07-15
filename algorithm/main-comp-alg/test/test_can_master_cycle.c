@@ -96,6 +96,34 @@ static void test_cycle_flush_error(void **state) {
     verify_sent(ISO_STATE_TX, &copy, &now);
 }
 
+static void test_cycle_multi_write(void **state) {
+    CAN_Request copies[4];
+    
+    /* Set current time {sec, nsec} */
+    struct timespec now = {5, 0};
+    
+    /* Set return values */
+    normal_read();
+    normal_flush();
+    
+    /* Pre-Conditions */
+    send_message(ISO_STATE_TX, &copies[0]);         normal_write();
+    send_message(LIPO_VOLTAGE_TX, &copies[1]);      normal_write();
+    send_message(READY_TO_TRANSMIT_TX, &copies[2]); normal_write();
+    send_message(DEVICE_CURRENT_TX, &copies[3]);    normal_write();
+    assert_false(g_abort_run);
+    
+    /* Call function to be tested */
+    can_cycle(&test_data, test_buffer, &now);
+    
+    /* Post-Conditions */
+    assert_false(g_abort_run);
+    verify_sent(ISO_STATE_TX, &copies[0], &now);
+    verify_sent(LIPO_VOLTAGE_TX, &copies[1], &now);
+    verify_sent(READY_TO_TRANSMIT_TX, &copies[2], &now);
+    verify_sent(DEVICE_CURRENT_TX, &copies[3], &now);
+}
+
 /* Test setup function */
 static int setup_test(void **state) {
     init_can_requests();
@@ -185,6 +213,7 @@ int main(void) {
         cmocka_unit_test_setup(test_cycle_read_error, setup_test),
         cmocka_unit_test_setup(test_cycle_write_error, setup_test),
         cmocka_unit_test_setup(test_cycle_flush_error, setup_test),
+        cmocka_unit_test_setup(test_cycle_multi_write, setup_test),
     };
     
     return cmocka_run_group_tests(tests, NULL, NULL);

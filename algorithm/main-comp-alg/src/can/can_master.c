@@ -10,7 +10,6 @@
 #include "abort_run.h"
 
 
-#define CAN_FREQ 1000000L /* 1 kHz */
 #define NS_IN_SEC 1000000000L
 #define UPDATE_DELAY(name) name.tv_sec = name.tv_sec + ((name.tv_nsec + CAN_FREQ) / NS_IN_SEC);\
                            name.tv_nsec = (name.tv_nsec + CAN_FREQ) % NS_IN_SEC;
@@ -27,7 +26,7 @@ static bool timeout_overrun(struct timespec *start, struct timespec *stop, struc
 static void can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now);
 
 /* Global variables */
-VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
+CAN_Request_Lookup request_lookup[NUM_CAN_REQUESTS];
 CAN_Response_Lookup response_lookup[NUM_CAN_RESPONSES];
 VSCAN_HANDLE handle;
 
@@ -122,7 +121,7 @@ void can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
         
         if (state == SEND) {
             /* Send message */
-            status = VSCAN_Write(handle, &(request_lookup[i]), 1, &ret_val);
+            status = VSCAN_Write(handle, &(request_lookup[i].msg), 1, &ret_val);
             if (ret_val != 1 || status != VSCAN_ERR_OK) {
                 ABORT_RUN;
                 printf("VSCAN_Write error status=%d\n", status);
@@ -130,8 +129,12 @@ void can_cycle(CAN_Data *data, VSCAN_MSG *read_buffer, struct timespec *now) {
                 /* Flush write-buffer this cycle */
                 flush = true;
                 
-                /* Update to WAITING state */
-                SEQ_STORE(data->requests[i].state, WAITING);
+                /* Update to WAITING or COMPLETE state */
+                if (request_lookup[i].expect_response) {
+                    SEQ_STORE(data->requests[i].state, WAITING);
+                } else {
+                    SEQ_STORE(data->requests[i].state, COMPLETE);
+                }
                 
                 /* Record timestamp and increment tx_count */
                 SEQ_STORE(data->requests[i].sent_time.tv_sec, now->tv_sec);

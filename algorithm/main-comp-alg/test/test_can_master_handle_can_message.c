@@ -121,17 +121,17 @@ static void test_can_master_handle_can_message_state(void **state) {
     init_can_responses();
     init_can_data(&data);
     
-    /* Setup ACTUAL_SPEED_RX message */
+    /* Setup TRANSMIT_ENABLE_RX message */
     msg.Flags = VSCAN_FLAGS_STANDARD;
     msg.Id = 0x181;
     msg.Size = 4;
-    msg.Data[0] = 0x30;
-    msg.Data[1] = 0x00;
+    msg.Data[0] = 0xE8;
+    msg.Data[1] = 0x01;
     msg.Data[2] = 0x00;
-    msg.Data[3] = 0xFF;
+    msg.Data[3] = 0x00;
     
-    /* Setup ACTUAL_SPEED_TX request */
-    data.requests[ACTUAL_SPEED_TX].state = WAITING;
+    /* Setup TRANSMIT_ENABLE_TX request */
+    data.requests[TRANSMIT_ENABLE_TX].state = WAITING;
     
     /* Handle message */
     g_abort_run = 0;
@@ -139,7 +139,7 @@ static void test_can_master_handle_can_message_state(void **state) {
     
     handle_can_message(&data, &msg, &timestamp);
     
-    assert_true(data.requests[ACTUAL_SPEED_TX].state == COMPLETE);
+    assert_true(data.requests[TRANSMIT_ENABLE_TX].state == COMPLETE);
     assert_false(g_abort_run);
 }
 

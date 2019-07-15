@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include "vs_can_api.h"
 
+/* Master CAN loop cycle speed (ns delay) */
+#define CAN_FREQ 1000000L /* 1 kHz */
 
 /* Used to safely load/store values in CAN_Data struct */
 #define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
@@ -43,6 +45,15 @@ typedef enum {
     ACTUAL_SPEED_TX,
     ACTUAL_CURRENT_TX,
     ACTUAL_POSITION_TX,
+    CONTROLLER_VOLT_TX,
+    CONTROLLER_ERROR_TX,
+    ACTUAL_SPEED_STOP_TX,
+    ACTUAL_CURRENT_STOP_TX,
+    ACTUAL_POSITION_STOP_TX,
+    CONTROLLER_VOLT_STOP_TX,
+    CONTROLLER_ERROR_STOP_TX,
+    CONTROLLER_STATUS_TX,
+	CONTROLLER_CLEAR_ERRORS_TX,
     
     NUM_CAN_REQUESTS
 } CAN_Request_Index;
@@ -68,6 +79,9 @@ typedef enum {
     ACTUAL_SPEED_RX,
     ACTUAL_CURRENT_RX,
     ACTUAL_POSITION_RX,
+    CONTROLLER_VOLT_RX,
+    CONTROLLER_ERROR_RX,
+    CONTROLLER_STATUS_RX,
     
     NUM_CAN_RESPONSES
 } CAN_Response_Index;
@@ -158,6 +172,12 @@ typedef struct {
     
     volatile int revolutions;                           /* revolutions */
     
+    volatile unsigned short controller_bus_voltage;     /* TODO */
+    
+    volatile unsigned int controller_errors;
+    
+    volatile unsigned short controller_status;
+    
     
     /* --- Transmit Data --- */
     volatile CAN_Request requests[NUM_CAN_REQUESTS];
@@ -166,12 +186,17 @@ typedef struct {
 
 typedef struct {
     VSCAN_MSG msg;
+    bool expect_response;
+} CAN_Request_Lookup;
+
+typedef struct {
+    VSCAN_MSG msg;
     void (*handler)(VSCAN_MSG *msg, CAN_Data *data);
     int request_num;
 } CAN_Response_Lookup;
 
 /* Global variables */
-extern VSCAN_MSG request_lookup[NUM_CAN_REQUESTS];
+extern CAN_Request_Lookup request_lookup[NUM_CAN_REQUESTS];
 extern CAN_Response_Lookup response_lookup[NUM_CAN_RESPONSES];
 extern VSCAN_HANDLE handle;
 
