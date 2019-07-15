@@ -138,7 +138,8 @@ void init_can_data(CAN_Data *data) {
     STORE(data->dtc_flags_1, 0);
     STORE(data->dtc_flags_2, 0);
     STORE(data->rolling_counter, 0);
-    STORE(data->error_flags, 0);
+    STORE(data->iso_status_flags, 0);
+    STORE(data->iso_error_flags, 0);
     STORE(data->electrical_isolation, 0);
     STORE(data->electrical_isolation_uncert, 0);
     STORE(data->energy_stored, 0);
@@ -147,13 +148,6 @@ void init_can_data(CAN_Data *data) {
     STORE(data->rp_iso_resistance_uncert, 0);
     STORE(data->rn_iso_resistance, 0);
     STORE(data->rn_iso_resistance_uncert, 0);
-    STORE(data->status_bits.hardware_error, 0);
-    STORE(data->status_bits.no_new_estimates, 0);
-    STORE(data->status_bits.high_uncertainty, 0);
-    STORE(data->status_bits.undefined, 0);
-    STORE(data->status_bits.high_battery_voltage, 0);
-    STORE(data->status_bits.low_batter_voltage, 0);
-    STORE(data->status_bits.isolation_status, 0);
     STORE(data->battery_volt, 0);
     STORE(data->battery_volt_uncert, 0);
     STORE(data->max_battery_volt, 0);

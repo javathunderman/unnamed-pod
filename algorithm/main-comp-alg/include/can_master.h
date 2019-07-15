@@ -136,7 +136,8 @@ typedef struct {
     volatile unsigned short dtc_flags_2;                         /* Bit Flags */
     volatile unsigned short rolling_counter;                     /* Counter   */
     
-    volatile unsigned char error_flags;
+	volatile unsigned char iso_status_flags;
+    volatile unsigned char iso_error_flags;
     
     volatile unsigned short electrical_isolation;                /* ohm/V */
     volatile unsigned char electrical_isolation_uncert;         
@@ -147,8 +148,6 @@ typedef struct {
     volatile unsigned char rp_iso_resistance_uncert;
     volatile unsigned short rn_iso_resistance;                   /* kohm */
     volatile unsigned char rn_iso_resistance_uncert;
-    
-    volatile Iso_Status_Bits status_bits;
     
     volatile short battery_volt;                        /* V */
     volatile char battery_volt_uncert;

@@ -3,8 +3,6 @@
 #include "can_handlers.h"
 #include "can_master.h"
 
-/* Used internally to set isolation monitor status bits */
-static void set_status_bits(CAN_Data *data, unsigned char status_flags);
 
 
 /* This function updates state machine's CAN_Data with:
@@ -108,7 +106,7 @@ void iso_state_handler(VSCAN_MSG *msg, CAN_Data *data){
     unsigned short energy_stored = *((unsigned short *) (&(msg->Data[5])));
     unsigned char energy_stored_uncert = *((unsigned char *) (&(msg->Data[7])));
 
-    set_status_bits(data, status_flags);
+    STORE(data->iso_error_flags, status_flags);
     STORE(data->electrical_isolation, bswap_16(electrical_isolation));
     STORE(data->electrical_isolation_uncert, electrical_isolation_uncert);
     STORE(data->energy_stored, bswap_16(energy_stored));
@@ -140,7 +138,7 @@ void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
     unsigned short rn_iso_resistance = *((unsigned short *) (&(msg->Data[5])));
     unsigned char rn_iso_resistance_uncert = *((unsigned char *) (&(msg->Data[7])));
 
-    set_status_bits(data, status_flags);
+    STORE(data->iso_error_flags, status_flags);
     STORE(data->rp_iso_resistance, bswap_16(rp_iso_resistance));
     STORE(data->rp_iso_resistance_uncert, rp_iso_resistance_uncert);
     STORE(data->rn_iso_resistance, bswap_16(rn_iso_resistance));
@@ -164,9 +162,9 @@ void iso_resistance_handler(VSCAN_MSG *msg, CAN_Data *data){
 void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
     unsigned char status_flags = *((unsigned char *) (&(msg->Data[1])));
     unsigned char error_flags = *((unsigned char *) (&(msg->Data[2])));
-
-    set_status_bits(data, status_flags);
-    STORE(data->error_flags, error_flags);
+    
+    STORE(data->iso_error_flags, status_flags);
+    STORE(data->iso_error_flags, error_flags);
 
 }
 
@@ -194,7 +192,7 @@ void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
    short max_battery_volt = *((short *) (&(msg->Data[5])));
    char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
 
-   set_status_bits(data, status_flags);
+   STORE(data->iso_error_flags, status_flags);
    STORE(data->battery_volt, bswap_16(battery_volt));
    STORE(data->battery_volt_uncert, battery_volt_uncert);
    STORE(data->max_battery_volt, bswap_16(max_battery_volt));
@@ -338,25 +336,6 @@ void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data){
    STORE(data->revolutions, revolutions);
 
 
-}
-
-/* This function updates the fields of the Iso_Status_Bits struct inside CAN_Data
- *
- * Params: 
- *     CAN_Data *data -> pointer to CAN_data struct used by state machine
- *     char status_flags -> char holding the status flags from the VSCAN_MSG *msg from the caller function
- *
- * Returns:
- *     void
- */
-void set_status_bits(CAN_Data *data, unsigned char status_flags) {
-    STORE(data->status_bits.hardware_error, ((status_flags >> 7) & 0x01));
-    STORE(data->status_bits.no_new_estimates, ((status_flags >> 6) & 0x01));
-    STORE(data->status_bits.high_uncertainty, ((status_flags >> 5) & 0x01));
-    STORE(data->status_bits.undefined, ((status_flags >> 4) & 0x01));
-    STORE(data->status_bits.high_battery_voltage, ((status_flags >> 3) & 0x01));
-    STORE(data->status_bits.low_batter_voltage, ((status_flags >> 2) & 0x01));
-    STORE(data->status_bits.isolation_status, ((status_flags >> 1) & 0x02));
 }
 
 /* This function updates state machine's CAN_Data with:
