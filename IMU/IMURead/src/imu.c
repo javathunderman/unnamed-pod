@@ -5,7 +5,31 @@
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
 
-//#include "imu.h"
+#include "imu.h"
+
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h> /* for CHAR_BIT */
+
+/** formatted output of ieee-754 representation of float */
+void show_ieee754 (float f)
+{
+    union {
+        float f;
+        uint32_t u;
+    } fu = { .f = f };
+    int i = sizeof f * CHAR_BIT;
+
+    printf ("  ");
+    while (i--)
+        printf ("%d ", (fu.u >> i) & 0x1);
+
+    putchar ('\n');
+    printf (" |s|      exp      |                  mantissa"
+            "                   |\n\n");
+}
+
+
 
 int open_port(void);
 
@@ -13,7 +37,7 @@ int main(){
   int i, n, fd, bytes_read;
 
   unsigned char buf[32];
-  //IMUData data;
+  IMUData data;
 
   //Opening a Serial Port
   fd = open_port();
@@ -55,12 +79,12 @@ int main(){
   printf("Done setting baud rate\n");
 
   //Writing Data to the Port
-  int ping = 0x0102;
+  /*int ping = 0x0102;
   n = write(fd, &ping, 8);
   if (n < 0)
     fputs("ping: write() of 8 bytes failed!\n", stderr);
   else
-	printf("ping: write() of %d bytes success!\n", n);
+	printf("ping: write() of %d bytes success!\n", n);*/
 
 
   printf("Attempting to read buffer...\n");
@@ -69,17 +93,36 @@ int main(){
   printf("Size of buf = %d\n", sizeof(buf));
 
 
+buf[0] = 165;
+buf[1] = 165;
   while(1) {
 	//Reading Data from the Port
-	  bytes_read = read(fd, &buf, sizeof(buf));
+	  unsigned char sync[1];
+	  int seen_a5 = 0;
+
+	  bytes_read = read(fd, &sync, 1);
+	  while (sync[0] != 165 && seen_a5) {
+		  if (sync[0] == 165) {
+			  seen_a5 = 1; //true
+		  }
+		  bytes_read = read(fd, &sync, 1);
+	  }
+
+	  bytes_read = read(fd, &(buf[2]), 30);
 	  if (bytes_read > 0) {
 	  	  printf("bytes_read=%d, buffer=[", bytes_read, buf);
 	    for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
 	    	printf("%02x ",buf[i]);
-	    //printf("]\n[");
-	    //for(i=0;i<bytes_read;i++)	 /*printing only the received characters*/
-	    	//printf("%d ",buf[i]);
 	    printf("]\n");
+
+	    //Parsing Accel
+	    data.x_accel = (buf[6]<<24) ^ (buf[7]<<16) ^ (buf[8]<<8) ^ buf[9];
+		data.y_accel = (buf[10]<<24) ^ (buf[11]<<16) ^ (buf[12]<<8) ^ buf[13];
+		data.z_accel = (buf[14]<<24) ^ (buf[15]<<16) ^ (buf[16]<<8) ^ buf[17];
+		//show_ieee754 (data.x_accel);
+		//printf("x_accel=%.3f, y_accel=%.3f, z_accel=%.3f\n", data.x_accel, data.y_accel, data.z_accel);
+
+    usleep(2500);  // sleep for 100 milliSeconds
 	  }
 
 
