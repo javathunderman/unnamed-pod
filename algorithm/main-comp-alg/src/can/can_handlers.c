@@ -186,17 +186,17 @@ void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
-   unsigned char status_flags = *((unsigned char *) (&(msg->Data[1])));
-   short battery_volt = *((short *) (&(msg->Data[2])));
-   char battery_volt_uncert = *((char *) (&(msg->Data[4])));
-   short max_battery_volt = *((short *) (&(msg->Data[5])));
-   char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
-
-   STORE(data->iso_error_flags, status_flags);
-   STORE(data->battery_volt, bswap_16(battery_volt));
-   STORE(data->battery_volt_uncert, battery_volt_uncert);
-   STORE(data->max_battery_volt, bswap_16(max_battery_volt));
-   STORE(data->max_battery_volt_uncert, max_battery_volt_uncert);
+    unsigned char status_flags = *((unsigned char *) (&(msg->Data[1])));
+    unsigned short battery_volt = *((short *) (&(msg->Data[2])));
+    unsigned char battery_volt_uncert = *((char *) (&(msg->Data[4])));
+    unsigned short max_battery_volt = *((short *) (&(msg->Data[5])));
+    unsigned char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
+    
+    STORE(data->iso_error_flags, status_flags);
+    STORE(data->battery_volt, bswap_16(battery_volt));
+    STORE(data->battery_volt_uncert, battery_volt_uncert);
+    STORE(data->max_battery_volt, bswap_16(max_battery_volt));
+    STORE(data->max_battery_volt_uncert, max_battery_volt_uncert);
 }
 
 /* This function updates state machine's CAN_Data with:
@@ -237,8 +237,8 @@ void transmit_enable_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void max_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
-   short max_speed = *((short *) (&(msg->Data[1])));
-   STORE(data->max_speed, max_speed);
+    short max_speed = *((short *) (&(msg->Data[1])));
+    STORE(data->max_speed, max_speed);
 
 }
 
@@ -294,8 +294,8 @@ void current_200pc_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void actual_speed_handler(VSCAN_MSG *msg, CAN_Data *data){
-   short percent_max_speed = *((short *) (&(msg->Data[1])));
-   STORE(data->percent_max_speed, percent_max_speed);
+    short percent_max_speed = *((short *) (&(msg->Data[1])));
+    STORE(data->percent_max_speed, percent_max_speed);
 
 }
 
@@ -332,10 +332,8 @@ void actual_current_handler(VSCAN_MSG *msg, CAN_Data *data){
  *     void
  */
 void actual_position_handler(VSCAN_MSG *msg, CAN_Data *data){
-   int revolutions = *((int *) (&(msg->Data[1])));
-   STORE(data->revolutions, revolutions);
-
-
+    int revolutions = *((int *) (&(msg->Data[1])));
+    STORE(data->revolutions, revolutions);
 }
 
 /* This function updates state machine's CAN_Data with:

@@ -48,7 +48,7 @@ typedef enum {
     CONTROLLER_VOLT_STOP_TX,
     CONTROLLER_ERROR_STOP_TX,
     CONTROLLER_STATUS_TX,
-	CONTROLLER_CLEAR_ERRORS_TX,
+    CONTROLLER_CLEAR_ERRORS_TX,
     
     NUM_CAN_REQUESTS
 } CAN_Request_Index;
@@ -136,7 +136,8 @@ typedef struct {
     volatile unsigned short dtc_flags_2;                         /* Bit Flags */
     volatile unsigned short rolling_counter;                     /* Counter   */
     
-	volatile unsigned char iso_status_flags;
+    /* Isolation Monitors */
+    volatile unsigned char iso_status_flags;
     volatile unsigned char iso_error_flags;
     
     volatile unsigned short electrical_isolation;                /* ohm/V */
@@ -149,11 +150,12 @@ typedef struct {
     volatile unsigned short rn_iso_resistance;                   /* kohm */
     volatile unsigned char rn_iso_resistance_uncert;
     
-    volatile short battery_volt;                        /* V */
-    volatile char battery_volt_uncert;
-    volatile short max_battery_volt;                    /* V */
-    volatile char max_battery_volt_uncert;
+    volatile unsigned short battery_volt;                        /* V */
+    volatile unsigned char battery_volt_uncert;
+    volatile unsigned short max_battery_volt;                    /* V */
+    volatile unsigned char max_battery_volt_uncert;
     
+    /* Motor Controller */
     volatile short max_speed;                           /* rpm */
     
     volatile short dev_current;                         /* dA */
