@@ -7,7 +7,7 @@
 #define __STANDBY__
 #endif
 
-int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high power on, but forbids movement
+int discharge_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf(">> IDLE STATE - Command: %d\n", command);
 
 	//(H8) E-STOP
@@ -18,12 +18,8 @@ int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high p
 	fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_True), "actuate brakes");
 	//TODO: Motor Idle
 
-	//(H6) Discharge
-	if (command == DISCHARGE) {
-		if (fpga->cache.brake_state == NiFpga_False) {
-
-		}
-		
+	//(H1) Revert to Standby + (C1) Discharged
+	if (command == ENTER_STANDBY && 1) { //TODO: discharged bool		
 		printf("Command received - Entering standby\n");
 		return STANDBY_SID;
 	}

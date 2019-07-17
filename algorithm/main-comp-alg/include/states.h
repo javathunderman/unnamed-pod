@@ -3,11 +3,12 @@
 #include "commands.h"
 #include "fpga_cache.h"
 #include "can_master.h"
-typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, ENDRUN_SID, NUM_STATES} State;
+typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, PRECHARGE_SID, ENABLEMOTOR_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, HVCUT_SID, DISCHARGE_SID, ENDRUN_SID, NUM_STATES} State;
 typedef struct {
     FpgaCache fpga_cache;
     CAN_Data can_data;
 } UMData;
+
 typedef struct {
     float track_length;
     float brake_distance;
@@ -21,19 +22,18 @@ typedef struct {
     float i_should_be_unassigned;
 } Thresholds;
 
-typedef struct {
-    Command command;
-    //Mark struct
-} Data;
-
 int startup_state(Fpga*, Thresholds*, int);
 int standby_state(Fpga*, Thresholds*, int);
 int initialize_state(Fpga*, Thresholds*, int);
 int service_state(Fpga*, Thresholds*, int);
+int precharge_state(Fpga*, Thresholds*, int);
+int enablemotor_state(Fpga*, Thresholds*, int);
 int accelerate_state(Fpga*, Thresholds*, int);
 int normbrake_state(Fpga*, Thresholds*, int);
 int estop_state(Fpga*, Thresholds*, int);
 int idle_state(Fpga*, Thresholds*, int);
+int hvcut_state(Fpga*, Thresholds*, int);
+int discharge_state(Fpga*, Thresholds*, int);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0

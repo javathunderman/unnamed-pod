@@ -8,7 +8,6 @@
 #endif
 
 int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
-
 	printf(">> STANDBY STATE - Command: %d\n", command);
 	/*printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
 		thresholds.brake_distance, 
@@ -17,11 +16,17 @@ int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		thresholds.battery_temperature_high, 
 		thresholds.battery_temperature_pers);*/
 
-	//Emergency brake
+	//(H8) E-STOP
 	if (command == EMERGENCY_BRAKE) {
 		return ESTOP_SID;
 	}
-	else if (command == PRELAUNCH) {
+	
+	//(H7) Shutdown
+	if (command == SHUTDOWN) {
+		//Power off
+	}
+	
+	if (command == PRELAUNCH) {
 		printf("PRELAUNCH COMMAND RECEIVED!\n");
 		return INITIALIZE_SID;
 	}

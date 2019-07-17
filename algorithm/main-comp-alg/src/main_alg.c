@@ -163,10 +163,14 @@ int main() {
 	fp_arr[STANDBY_SID] = &standby_state;
 	fp_arr[INITIALIZE_SID] = &initialize_state;
 	fp_arr[SERVICE_SID] = &service_state;
+	fp_arr[PRECHARGE_SID] = &precharge_state;
+	fp_arr[ENABLEMOTOR_SID] = &enablemotor_state;
 	fp_arr[ACCELERATE_SID] = &accelerate_state;
 	fp_arr[NORMBRAKE_SID] = &normbrake_state;
 	fp_arr[ESTOP_SID] = &estop_state;
 	fp_arr[IDLE_SID] = &idle_state;
+	fp_arr[HVCUT_SID] = &hvcut_state;
+	fp_arr[DISCHARGE_SID] = &discharge_state;
 	fp_arr[ENDRUN_SID] = NULL;
 	
 	printf("################################################################\n");

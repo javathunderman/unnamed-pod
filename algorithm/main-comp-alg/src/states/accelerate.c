@@ -8,27 +8,36 @@
 #endif
 
 int accelerate_state(Fpga *fpga, Thresholds *thresholds, int command) {
-	static int pod_position = 0;
 	int motor_temp = 998; //<- fake temp for logic
-
 	printf(">> ACCELERATE STATE - fake position: %d\n", pod_position);
 
-	//Emergency brake
+	//(H8) E-STOP
 	if (command == EMERGENCY_BRAKE || motor_temp > (*thresholds).motor_temperature_high) {
 		printf("ESTOP: fake position: %d\n", pod_position);
 		return ESTOP_SID;
 	}
-	//End of tube regular brake
-	else if ((*thresholds).track_length - pod_position <= (*thresholds).brake_distance) {
+
+	fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_False), "retract brakes");
+	//TODO: Motor driving
+	//TODO: Autonomy granted
+
+	//(C7) Any Critical Fault
+	if (0) {
+		return HVCUT_SID;
+	}
+	//(C6) Any Fault
+	if (0) {
+		return ESTOP_SID;
+	}
+	//(C5) Any Distance or Time Threshold
+	if ((*thresholds).track_length - pod_position <= (*thresholds).brake_distance
+		|| 0) {
 		printf("NORMAL BRAKE: fake position: %d\n", pod_position);
-		pod_position = 0; //temporary
 		return NORMBRAKE_SID;
 	}
 	//Continue to accelerate
 	else {
-		pod_position += 100; //get pod position from IMU and light sensors, logic goes here
-
-		printf("CONTINUING: fake position: %d\n", pod_position);
+		//get pod position from IMU and light sensors, logic goes here
 		//FULL THROTTLE!
 		return ACCELERATE_SID;
 	}
