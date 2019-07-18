@@ -23,7 +23,7 @@ int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	
 	//(H7) Shutdown
 	if (command == SHUTDOWN) {
-		//Power off
+		SHUTOFF_POD;
 	}
 	
 	if (command == PRELAUNCH) {

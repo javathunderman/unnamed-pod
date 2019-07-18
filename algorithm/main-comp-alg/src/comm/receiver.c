@@ -35,7 +35,7 @@ void *recv_cmds(void *args) {
         return NULL;
     }
     
-    while (1) {
+    while (!g_shutoff) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */
         len = recvfrom(sock, &buffer, RECV_LEN, 0, NULL, NULL);
         if (len == -1) {
@@ -58,6 +58,8 @@ void *recv_cmds(void *args) {
             }
         }
     }
+    
+    return NULL;
 }
 
 /* This function checks the validity of a received command.

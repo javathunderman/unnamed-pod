@@ -70,13 +70,17 @@ void *can_master(void *args) {
     struct timespec delay = {sec, nsec};
     
     
-    while (1) {
+    while (!g_shutoff) {
         clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &delay, NULL);
         
         can_cycle(data, read_buffer, &delay);
         
         UPDATE_DELAY(delay)
     }
+    
+    VSCAN_Close(handle);
+    
+    return NULL;
 }
 
 /* This function executes one cycle of the master can thread:
