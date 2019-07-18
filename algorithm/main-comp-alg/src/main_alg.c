@@ -25,27 +25,20 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT FPGA                                                                                    //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	Fpga fpga_dat;
+	Fpga fpga_dat; // FPGA metadata stored inside the struct
 
 	Fpga *fpga = &fpga_dat;
 	default_fpga(fpga);
-
-	NiFpga_Status fpga_status = init_fpga(fpga, 0);
-	if (fpga_status < 0) {
-		printf("Failed to initialize fpga, status code %d\n", fpga_status);
+	fpgaRunAndUpdateIf(fpga, init_fpga(fpga, 0), "Load NiFpga library and deploy bitfile");
+	if (NiFpga_IsError(fpga->status)) {
+		printf("Failed to initialize FPGA, status code %d, exiting\n", fpga->status);
 		return 5;
 	}
-	else if (fpga_status > 0) {
-		printf("Warning during fpga initialization, status code %d\n", fpga_status);
-	}
 
-	fpga_status = run_fpga(fpga, 0);
-	if (fpga_status < 0) {
-		printf("Failed to run fpga, status code %d\n", fpga_status);
+	fpgaRunAndUpdateIf(fpga, init_fpga(fpga, 0), "Run FPGA library");
+	if (NiFpga_IsError(fpga->status)) {
+		printf("Warning during fpga run, status code %d, exiting\n", fpga_status);
 		return 5;
-	}
-	else if (fpga_status > 0) {
-		printf("Warning during fpga run, status code %d\n", fpga_status);
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT REAL-TIME SCHEDULING                                                                    //
@@ -187,15 +180,16 @@ int main() {
 	int command = 0;
 	int next_state = startup_state(&thresholds, fpga, command);
 	bool continueRun = true;
+	
+	uint8_t fpga_fail = false;
 	//main state loop
 	while (continueRun) {
-		NiFpga_IfIsNotError(fpga->status, refresh_cache(fpga));
-		if (fpga_status < 0) {
-			printf("Failed to refresh fpga cache, status code %d\n", fpga_status);
-			return 5;
-		}
-		else if (fpga_status > 0) {
-			printf("Warning during fpga cache refresh, status code %d\n", fpga_status);
+		if(!fpga_fail) {
+			fpgaRunAndUpdateIf(fpga, refresh_cache(fpga), "Refresh FPGA values");
+			if (NiFpga_IsError(fpga->status) {
+				printf("Failed to refresh fpga cache, status code %d, exiting\n", fpga->status);
+				 fpga_fail = 1;
+			}
 		}
 
 		if (g_abort_run) {
