@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "sensors.h"
 #include "states.h"
 #include "commands.h"
@@ -79,75 +80,77 @@ int main() {
 	// CONFIG LOADING CODE                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	Thresholds thresholds;
-	char path[] = __FILE__;
-	strcpy(&path[strlen(__FILE__)-10], "config.csv");
-	FILE *config_file = fopen(path, "r");
+	
+	
+	// char path[] = __FILE__;
+	// strcpy(&path[strlen(__FILE__)-10], "config.csv");
+	// FILE *config_file = fopen(path, "r");
 
-	printf("################################################################\n");
-	printf("#                       reading csv                            #\n");
-	printf("################################################################\n");
+	// printf("################################################################\n");
+	// printf("#                       reading csv                            #\n");
+	// printf("################################################################\n");
 
-	if ( config_file == NULL ) { /* error opening file */
-		printf("ERROR: cannot open file: %s\n", path);
-		return 0;
-	}
-	else {
-		char line [128]; /* or other suitable maximum line size */
-		while (fgets ( line, sizeof line, config_file ) != NULL) { /* read a line */
-			printf("%s", line); 
-			char *token = strtok(line, ",");
-			char *type = token;
-			int i = 1;
+	// if ( config_file == NULL ) { /* error opening file */
+		// printf("ERROR: cannot open file: %s\n", path);
+		// return 0;
+	// }
+	// else {
+		// char line [128]; /* or other suitable maximum line size */
+		// while (fgets ( line, sizeof line, config_file ) != NULL) { /* read a line */
+			// printf("%s", line); 
+			// char *token = strtok(line, ",");
+			// char *type = token;
+			// int i = 1;
 
-			token = strtok(NULL, ",");
+			// token = strtok(NULL, ",");
 			
-			while( token != NULL ) {
-				char *curr_tok = token;
+			// while( token != NULL ) {
+				// char *curr_tok = token;
 				
-				if (strcmp("track_length", type) == 0) {
-					if (i == 1) thresholds.track_length = atof(curr_tok);
-					else {
-					}
-				}
-				else if (strcmp("brake_distance", type) == 0) {
-					if (i == 1) thresholds.brake_distance = atof(curr_tok);
-					else {
-					}
-				}
-				else if (strcmp("acceleration_distance", type) == 0) {
-					if (i == 1) thresholds.acceleration_distance = atof(curr_tok);
-					else {
-					}
-				}
-				else if (strcmp("battery_temperature", type) == 0) {
-					if (i == 1) thresholds.battery_temperature_low = atof(curr_tok);
-					else if (i == 2) thresholds.battery_temperature_high = atof(curr_tok);
-					else if (i == 3) thresholds.battery_temperature_pers = atof(curr_tok);
-					else {
-					}
-				}
-				else if (strcmp("motor_temperature", type) == 0) {
-					if (i == 1) thresholds.motor_temperature_low = atof(curr_tok);
-					else if (i == 2) thresholds.motor_temperature_high = atof(curr_tok);
-					else if (i == 3) thresholds.motor_temperature_pers = atof(curr_tok);
-					else {
-					}
-				}
+				// if (strcmp("track_length", type) == 0) {
+					// if (i == 1) thresholds.track_length = atof(curr_tok);
+					// else {
+					// }
+				// }
+				// else if (strcmp("brake_distance", type) == 0) {
+					// if (i == 1) thresholds.brake_distance = atof(curr_tok);
+					// else {
+					// }
+				// }
+				// else if (strcmp("acceleration_distance", type) == 0) {
+					// if (i == 1) thresholds.acceleration_distance = atof(curr_tok);
+					// else {
+					// }
+				// }
+				// else if (strcmp("battery_temperature", type) == 0) {
+					// if (i == 1) thresholds.battery_temperature_low = atof(curr_tok);
+					// else if (i == 2) thresholds.battery_temperature_high = atof(curr_tok);
+					// else if (i == 3) thresholds.battery_temperature_pers = atof(curr_tok);
+					// else {
+					// }
+				// }
+				// else if (strcmp("motor_temperature", type) == 0) {
+					// if (i == 1) thresholds.motor_temperature_low = atof(curr_tok);
+					// else if (i == 2) thresholds.motor_temperature_high = atof(curr_tok);
+					// else if (i == 3) thresholds.motor_temperature_pers = atof(curr_tok);
+					// else {
+					// }
+				// }
 
-				i++;
-				token = strtok(NULL, ",");
-			}	
-		}
-		fclose ( config_file );
-	}
+				// i++;
+				// token = strtok(NULL, ",");
+			// }	
+		// }
+		// fclose ( config_file );
+	// }
 
-	//Edit for manual testing
-	printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
-		thresholds.brake_distance, 
-		thresholds.acceleration_distance, 
-		thresholds.battery_temperature_low, 
-		thresholds.battery_temperature_high, 
-		thresholds.battery_temperature_pers);
+	// Edit for manual testing
+	// printf("threshold stuct values: bd:%f ad:%f %f %f %f\n", 
+		// thresholds.brake_distance, 
+		// thresholds.acceleration_distance, 
+		// thresholds.battery_temperature_low, 
+		// thresholds.battery_temperature_high, 
+		// thresholds.battery_temperature_pers);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT UDP COMMUNICATION                                                                       //
@@ -205,6 +208,24 @@ int main() {
 		if (next_state == ENDRUN_SID) {
 			continueRun = false;
 		}
+	}
+	
+	/* Join threads */
+	pthread_t tid;
+	
+	tid = LOAD(run_data.software.can_tid);
+	if (tid > 0) {
+		pthread_join(tid, NULL);
+	}
+	
+	tid = LOAD(run_data.software.tlm_tid);
+	if (tid > 0) {
+		pthread_join(tid, NULL);
+	}
+	
+	tid = LOAD(run_data.software.cmd_tid);
+	if (tid > 0) {
+		pthread_join(tid, NULL);
 	}
 
 	fpclose(fpga, 0);
