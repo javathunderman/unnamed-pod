@@ -12,7 +12,6 @@
 
 
 /* Static variables for SpaceX communication */
-static int spacex_socket;
 static struct sockaddr_in spacex_addr;
 static SpaceXFrame msg;
 
@@ -28,15 +27,6 @@ static SpaceXFrame msg;
  *     -1 -> socket creation failure
  */
 int init_spacex(void) {
-    
-    /* Create SpaceX socket */
-    spacex_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (spacex_socket == -1) {
-        printf("SpaceX socket creation failed...\n");
-        return -1;
-    } else {
-        printf("Created SpaceX socket...\n");
-    }
     
     /* Configure SpaceX address */
     bzero(&spacex_addr, sizeof(spacex_addr));
@@ -61,13 +51,13 @@ int init_spacex(void) {
  *      0 -> success
  *     -1 -> error
  */
-int send_spacex(Telemetry *tlm) {
+int send_spacex(int socket, Telemetry *tlm, UMData *data) {
     
     /* Update message frame */
     //TODO waiting for data from Mark
     
     /* Send message frame */
-    if(sendto(spacex_socket, &msg, sizeof(msg), 0, (SA *) &spacex_addr, sizeof(spacex_addr)) == -1) {
+    if(sendto(socket, &msg, sizeof(msg), 0, (SA *) &spacex_addr, sizeof(spacex_addr)) == -1) {
             printf("SpaceX telemetry send failure...\n");
             printf("%s\n", strerror(errno));
             return -1;

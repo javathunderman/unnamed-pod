@@ -37,7 +37,7 @@ TelemetryArgs ta;
  *     -5 -> cmd thread creation failure
  *     -6 -> tlm thread creation failure
  */
-int udp_init(CommandBuffer *cb) {
+int udp_init(CommandBuffer *cb, UMData *data) {
     int pod_socket;
     pthread_t recv_tid, send_tid;
     socklen_t dest_len;
@@ -103,8 +103,9 @@ int udp_init(CommandBuffer *cb) {
 
     /* Begin sending telemetry */
     ta.socket = pod_socket;
-    ta.dest_addr = (SA *) &dest_addr;
+    ta.dest_addr = dest_addr;
     ta.dest_len = dest_len;
+    ta.data = data;
     if (pthread_create(&send_tid, NULL, send_tlm, &ta) != 0) {
         printf("send_tlm pthread create failed...\n");
         return -6;
