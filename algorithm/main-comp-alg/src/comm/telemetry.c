@@ -112,7 +112,6 @@ void update_telemetry_1_1(Telemetry *tlm, UMData *data) {
     tlm->TANK_TEMP = LOAD(data->fpga_cache.T_pneum);
     tlm->POD_TEMP = LOAD(data->fpga_cache.T_pod);
     tlm->BRAKE_DISTANCE = LOAD(data->fpga_cache.brake_distance);
-    tlm->BRAKE_FORCE = LOAD(data->fpga_cache.brake_force);
     tlm->CUR_THRESH_MAX = LOAD(data->fpga_cache.cur_thresh_max);
     tlm->CUR_THRESH_MIN = LOAD(data->fpga_cache.cur_thresh_min);
     tlm->PRI1_CURRENT = LOAD(data->fpga_cache.current_p1);

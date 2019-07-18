@@ -342,22 +342,22 @@ for cont in conts:
 src_out.close()
 
 #Create Mock Cache .csv
-csv_test = open(test_path + 'fpa_cache_test_dat.csv', 'w')
+# csv_test = open(test_path + 'fpa_cache_test_dat.csv', 'w')
 header = ""
 for dec in decs:
     header = header + f', {dec[1]}'
 
-csv_test.write(header[1:] + '\n')
-csv_test.close()
+# csv_test.write(header[1:] + '\n')
+# csv_test.close()
 #Create Mock Cache .c
-src_test = open(test_path + 'fpga_cache_test.c', 'w')
+# src_test = open(test_path + 'fpga_cache_test.c', 'w')
 
 #Includes
-print(test_path)
-src_test.write('#include "fpga_cache.h"\n\n')
-for line in includes:
-    src_test.write(f'#include {line}\n')
-src_test.write('\n')
+# print(test_path)
+# src_test.write('#include "fpga_cache.h"\n\n')
+# for line in includes:
+#     src_test.write(f'#include {line}\n')
+# src_test.write('\n')
 
 default_fpga = Block('void default_fpga(Fpga *fpga) {','}')
 default_fpga.add('fpga->status = NiFpga_Status_Success;')
@@ -365,6 +365,6 @@ default_fpga.add('fpga->bit_path')
 
 
 
-src_test.close()
+#src_test.close()
 
 

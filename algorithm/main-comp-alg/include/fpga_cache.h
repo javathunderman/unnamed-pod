@@ -14,6 +14,7 @@ if(NiFpga_IsError(fpga->status)) {\
                 #call, fpga->status);}
 
 typedef int32_t fxp32_16;
+typedef int64_t fxp64_32;
 typedef struct {
 	NiFpga_Bool HVR_1_state;
 	NiFpga_Bool HVR_2_state;
@@ -36,6 +37,7 @@ typedef struct {
 	uint8_t light_FL_count;
 	uint8_t light_L_count;
 	uint8_t light_R_count;
+	uint8_t light_count;
 	uint8_t light_sensor_status;
 	fxp32_16 P_hp1;
 	fxp32_16 P_hp2;
@@ -58,22 +60,22 @@ typedef struct {
 	fxp32_16 T_pneum;
 	fxp32_16 T_pod;
 	fxp32_16 brake_distance;
-	fxp32_16 brake_force;
 	fxp32_16 cur_thresh_max;
 	fxp32_16 cur_thresh_min;
 	fxp32_16 current_p1;
 	fxp32_16 current_p2;
 	fxp32_16 current_r;
 	fxp32_16 fusion_distance;
-	fxp32_16 imu_distance;
+	fxp32_16 imu_velocity;
 	fxp32_16 mc_distance;
-	fxp32_16 tape_distance;
 	fxp32_16 tape_velocity;
 	fxp32_16 voltage_p1;
 	fxp32_16 voltage_p2;
 	fxp32_16 voltage_r;
+	int32_t tape_distance;
 	uint32_t cur_thresh_persistence;
 	uint32_t cur_thresh_ratio;
+	fxp64_32 imu_distance;
 	uint64_t fault_long_2;
 	uint64_t fault_long_3;
 	uint64_t hard_fault;
@@ -98,6 +100,14 @@ fxp32_16 dtofxp(double d);
 float fxptof(fxp32_16 fxp);
 
 double fxptod(fxp32_16 fxp);
+
+fxp64_32 ftofxpe(float d);
+
+fxp64_32 dtofxpe(double d);
+
+float fxpetof(fxp64_32 fxpe);
+
+double fxpetod(fxp64_32 fxpe);
 
 void default_fpga(Fpga *fpga);
 
@@ -169,16 +179,18 @@ NiFpga_Status write_thresh_reset_index(Fpga *fpga, uint8_t v);
 
 NiFpga_Status write_thresh_write_index(Fpga *fpga, uint8_t v);
 
-NiFpga_Status write_fxp_imu_acc(Fpga *fpga, int32_t v);
+NiFpga_Status write_imu_acc(Fpga *fpga, fxp32_16 v);
 
-NiFpga_Status write_fxp_mc_linear_v(Fpga *fpga, int32_t v);
+NiFpga_Status write_mc_velocity(Fpga *fpga, fxp32_16 v);
 
-NiFpga_Status write_fxp_thresh_new_max(Fpga *fpga, int32_t v);
+NiFpga_Status write_thresh_new_max(Fpga *fpga, fxp32_16 v);
 
-NiFpga_Status write_fxp_thresh_new_min(Fpga *fpga, int32_t v);
+NiFpga_Status write_thresh_new_min(Fpga *fpga, fxp32_16 v);
 
 NiFpga_Status write_thresh_f_ratio(Fpga *fpga, uint32_t v);
 
 NiFpga_Status write_thresh_persistence(Fpga *fpga, uint32_t v);
+
+NiFpga_Status write_imu_timestamp(Fpga *fpga, fxp64_32 v);
 
 #endif

@@ -78,9 +78,11 @@ name_to_type = {
             "Sgl": "float",
             "Dbl": "double",
             "fxp32_16" : "fxp32_16",
+            "fxp64_32" : "fxp64_32"
 }
 
 fxpName = 'fxp32_16'
+fxpeName = 'fxp64_32'
 
 # the list of includes for the files
 includes = [f'"{header}"', '"atomics.h"']
@@ -121,16 +123,21 @@ for line in h:
         
 h.close()
 
-# Replace type int32_t for indicators with name fxp_* with {fxpName}
+# Replace type int32_t for indicators with name fxp(e)_* with {fxpName}
 p_fxp = R.compile('^fxp_(.*)$')
+p_fxpe = R.compile('^fxpe_(.*)$')
 for i, dec in enumerate(decs):
     if(dec[0] == 'int32_t' and p_fxp.match(dec[1])):
         decs[i] = (fxpName, R.search(p_fxp, dec[1]).group(1)) + dec[2:]
+    elif(dec[0] == 'int64_t' and p_fxpe.match(dec[1])):
+        decs[i] = (fxpeName, R.search(p_fxpe, dec[1]).group(1)) + dec[2:]
 
-# Replace type int32_t for indicators with name fxp_* with {fxpName}
+# Replace type int32_t for indicators with name fxp(e)_* with {fxpName}
 for i, cont in enumerate(conts):
-    if(conts[0] == 'int32_t' and p_fxp.match(cont[1])):
+    if(cont[0] == 'int32_t' and p_fxp.match(cont[1])):
         conts[i] = (fxpName, R.search(p_fxp, cont[1]).group(1)) + cont[2:]
+    elif(cont[0] == 'int64_t' and p_fxpe.match(cont[1])):
+        conts[i] = (fxpeName, R.search(p_fxpe, cont[1]).group(1)) + cont[2:]
         
 
 h_block = Block('typedef struct {', '} FpgaCache;')
@@ -175,6 +182,7 @@ if(NiFpga_IsError(fpga->status)) {\\
 ''')
 
 header_out.write(f'typedef int32_t {fxpName};\n')
+header_out.write(f'typedef int64_t {fxpeName};\n')
 
 header_out.write(str(h_block))
 header_out.write('\n')
@@ -192,6 +200,14 @@ fxp32_16 dtofxp(double d);
 float fxptof(fxp32_16 fxp);
 
 double fxptod(fxp32_16 fxp);
+
+fxp64_32 ftofxpe(float d);
+
+fxp64_32 dtofxpe(double d);
+
+float fxpetof(fxp64_32 fxpe);
+
+double fxpetod(fxp64_32 fxpe);
 
 void default_fpga(Fpga *fpga);
 
@@ -245,6 +261,7 @@ src_out.write('\n')
 src_out.write('''
 /* FXP Utilities */
 #define TWO_TO_THE_16 65536
+#define TWO_TO_THE_32 4294967296L
 
 fxp32_16 ftofxp(float f) {
 	return (fxp32_16)(TWO_TO_THE_16 * f);
@@ -260,6 +277,22 @@ float fxptof(fxp32_16 fxp) {
 
 double fxptod(fxp32_16 fxp) {
 	return ((double)fxp)/TWO_TO_THE_16;
+}
+
+fxp64_32 ftofxpe(float f) {
+	return (fxp64_32)(TWO_TO_THE_32 * f);
+}
+
+fxp64_32 dtofxpe(double d) {
+	return (fxp64_32)(TWO_TO_THE_32 * d);
+}
+
+float fxpetof(fxp64_32 fxpe) {
+	return ((float)fxpe)/TWO_TO_THE_32;
+}
+
+double fxpetod(fxp64_32 fxpe) {
+	return ((double)fxpe)/TWO_TO_THE_32;
 }
 ''')
 # Create the method for populating the default values into an FPGA struct

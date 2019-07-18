@@ -37,11 +37,11 @@ void populate_thresholds(Fpga *fpga, char *file_name) {
 			}
 			if (i == 2) {
 				thresh_minimum = dtofxp(atof(value));
-				write_fxp_thresh_new_min(fpga, thresh_minimum);
+				write_thresh_new_min(fpga, thresh_minimum);
 			}
 			if (i == 3) {
 				thresh_maximum = dtofxp(atof(value));
-				write_fxp_thresh_new_max(fpga, thresh_maximum);
+				write_thresh_new_max(fpga, thresh_maximum);
 			}
 			if (i == 4) {
 				thresh_persistence = strtoul(value, &end, 10);

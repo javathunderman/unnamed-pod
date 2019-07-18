@@ -75,7 +75,7 @@ void test(FILE * const file, Fpga * fpga){
     struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI };
 
     printf("%s", greeting);
-    fprintf(file, "Time, Brake State, Drain State, P_14, P_15, P_16, P_17");
+    fprintf(file, "Time, Brake State, Drain State, P_HP1, P_HP2, P_LP1, P_LP2, Timeout");
     //Perform your test and log it to the CSV.
     while(1){
     	refresh_cache(fpga);
@@ -86,10 +86,17 @@ void test(FILE * const file, Fpga * fpga){
                 break;
             } else if (c == 'b') {
                 printf("TOGGLING BRAKES\n");
-                write_set_brakes(fpga, fpga->cache.current_brake_state);
+                write_brake_1(fpga, NOT(fpga->cache.brake_state));
+                write_brake_2(fpga, NOT(fpga->cache.brake_state));
+            } else if (c == '1') {
+                printf("TOGGLING BRAKES\n");
+                write_brake_1(fpga, NOT(fpga->cache.brake_state));
+            } else if (c == '2') {
+                printf("TOGGLING BRAKES\n");
+                write_brake_2(fpga, NOT(fpga->cache.brake_state));
             } else if (c == 'd') {
             	printf("TOGGLING DRAIN VALVE\n");
-            	write_set_drain_valve(fpga, NOT(fpga->cache.current_drain_valve_state));
+            	write_drain(fpga, NOT(fpga->cache.drain_valve_state));
             }
         }
         // Get timing for data logging
@@ -99,16 +106,14 @@ void test(FILE * const file, Fpga * fpga){
 
         // Update FPGA cache to fetch new values
 
-        fprintf(file, "%f, %s, %s, %f, %f, %f, %f\n", time,
-        		booltos(fpga->cache.current_brake_state), booltos(fpga->cache.current_drain_valve_state),
-        		fxptof(fpga->cache.fxp_pressure_14), fxptof(fpga->cache.fxp_pressure_15),
-        		fxptof(fpga->cache.fxp_pressure_16), fxptof(fpga->cache.fxp_pressure_17));
+        fprintf(file, "%f, %s, %s, %f, %f, %f, %f, %s\n", time,
+        		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
+        		fxptof(fpga->cache.P_hp1), fxptof(fpga->cache.P_hp2),
+        		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2), booltos(fpga->cache.FIFO_timeout));
 
     }
 }
-float fxptof(int32_t fxp) {
-	return fxp / 65536.0f;
-}
+
 int main(void) {
     uint32_t default_attr = 0;
     char fname[128];
