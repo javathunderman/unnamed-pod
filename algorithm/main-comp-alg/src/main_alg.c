@@ -37,7 +37,7 @@ int main() {
 
 	fpgaRunAndUpdateIf(fpga, init_fpga(fpga, 0), "Run FPGA library");
 	if (NiFpga_IsError(fpga->status)) {
-		printf("Warning during fpga run, status code %d, exiting\n", fpga_status);
+		printf("Warning during fpga run, status code %d, exiting\n", fpga->status);
 		return 5;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// REST OF STATE CODE STARTS HERE                                                               //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	int (*fp_arr[NUM_STATES]) (Thresholds *, int);   //state function calls
+	int (*fp_arr[NUM_STATES]) (Fpga *fpga, Thresholds *, int);   //state function calls
 
 	//1D array of Function Pointers to state functions
 	fp_arr[STARTUP_SID] = &startup_state;
@@ -178,7 +178,7 @@ int main() {
 
 	//Initial values for state flow
 	int command = 0;
-	int next_state = startup_state(&thresholds, fpga, command);
+	int next_state = startup_state(fpga, &thresholds, command);
 	bool continueRun = true;
 	
 	uint8_t fpga_fail = false;
@@ -186,7 +186,7 @@ int main() {
 	while (continueRun) {
 		if(!fpga_fail) {
 			fpgaRunAndUpdateIf(fpga, refresh_cache(fpga), "Refresh FPGA values");
-			if (NiFpga_IsError(fpga->status) {
+			if (NiFpga_IsError(fpga->status)) {
 				printf("Failed to refresh fpga cache, status code %d, exiting\n", fpga->status);
 				 fpga_fail = 1;
 			}
@@ -197,7 +197,7 @@ int main() {
 		}
 		
 		read_cmd(&cb, &command);
-		next_state = (*fp_arr[next_state])(&thresholds, command);
+		next_state = (*fp_arr[next_state])(fpga, &thresholds, command);
 		//end loop condition, warning, this does NOT necessarily brake, just makes pod take a nap
 		if (next_state == ENDRUN_SID) {
 			continueRun = false;
