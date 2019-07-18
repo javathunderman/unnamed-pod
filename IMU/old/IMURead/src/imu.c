@@ -19,16 +19,51 @@ compile with the command: gcc demo_rx.c rs232.c -Wall -Wextra -o2 -o test_rx
 #include <unistd.h>
 #endif
 
+#include <stdint.h>
+#include <limits.h> /* for CHAR_BIT */
+
 #include "rs232.h"
 #include "imu.h"
+
+void show_ieee754 (float f)
+{
+    union {
+        float f;
+        uint32_t u;
+    } fu = { .f = f };
+    int i = sizeof f * CHAR_BIT;
+
+    printf ("  ");
+    while (i--)
+        printf ("%d ", (fu.u >> i) & 0x1);
+
+    putchar ('\n');
+    printf (" |s|      exp      |                  mantissa"
+            "                   |\n\n");
+}
+
+char *int2bin(int n) {
+    // determine the number of bits needed ("sizeof" returns bytes)
+    int nbits = sizeof(n) * 8;
+    char *s = malloc(nbits+1);  // +1 for '\0' terminator
+    s[nbits] = '\0';
+    // forcing evaluation as an unsigned value prevents complications
+    // with negative numbers at the left-most bit
+    unsigned int u = *(unsigned int*)&n;
+    int i;
+    unsigned int mask = 1 << (nbits-1); // fill in values right-to-left
+    for (i = 0; i < nbits; i++, mask >>= 1)
+        s[i] = ((u & mask) != 0) + '0';
+    return s;
+}
 
 
 int main(){
   int i, n,
-      cport_nr=1,        /* /dev/ttyS0 (COM1 on windows) */
-      bdrate=460800;       /* 9600 baud */
+      cport_nr=16,        /* /dev/ttyS0 (COM1 on windows) */
+      bdrate=230400;       /* 9600 baud */
 
-  unsigned char buf[33];
+  unsigned char buf[34];
   IMUData data;
 
   char mode[]={'8','N','1',0};
@@ -43,7 +78,7 @@ int main(){
   printf("Successfully opened com port\n");
   while(1)
   {
-    n = RS232_PollComport(cport_nr, buf, 32);
+    n = RS232_PollComport(cport_nr, buf, 34);
 
     if(n > 0)
     {
@@ -57,33 +92,27 @@ int main(){
         }
       }
 
-      printf("cleaned: received %i bytes: %s\n", n, (char *)buf);
     }
-    printf("received %i bytes: %s\n", n, (char *)buf);
-	//Table 4 https://www.memsense.com/assets/docs/uploads/ms-imu3020/MS-IMU3020_PSUG.pdf
-	//data.sync1 = buff[0];
-	//data.sync2 = buff[1];
-	//data.message_type = buff[2];
-	//data.payload_size = buff[3];
 
-	//unsure how MSB and LSB are used here
-	//data. = buff[];
-	//data. = buff[];
-	data.x_accel = (buf[8]<<4) ^ buf[7];
-	data.y_accel = (buf[12]<<4) ^ buf[11];
-	data.z_accel = (buf[16]<<4) ^ buf[15];
+    if (n > 0) {
+    	/*printf("bytes_read=%d, buffer=[", n);
+		for(i=0;i<n;i++)
+			printf("%02x ",buf[i]);
+		printf("]\n");*/
+		unsigned char bx[] = {buf[9], buf[8], buf[7], buf[6]};
+		unsigned char by[] = {buf[13], buf[12], buf[11], buf[10]};
+		unsigned char bz[] = {buf[17], buf[16], buf[15], buf[14]};
+		memcpy(&data.x_accel, &bx, sizeof(float));
+		memcpy(&data.y_accel, &by, sizeof(float));
+		memcpy(&data.z_accel, &bz, sizeof(float));
 
-	//data. = buff[];
-	//data. = buff[];
-	data.x_gyro = (buf[22]<<4) ^ buf[21];
-	data.y_gyro = (buf[26]<<4) ^ buf[25];
-	data.z_gyro = (buf[30]<<4) ^ buf[29];
-	printf("x_accel=%.3f, y_accel=%.3f, z_accel=%.3f, gyro=%.3f\n", data.x_accel, data.y_accel, data.z_accel, data.x_gyro);
+		printf("x_accel=%.5f, y_accel=%.5f, z_accel=%.5f\n", data.x_accel, data.y_accel, data.z_accel);
 
+    }
 #ifdef _WIN32
-    Sleep(100);
+    Sleep(1.25);
 #else
-    usleep(100000);  /* sleep for 100 milliSeconds */
+    usleep(1250);  /* sleep for 100 milliSeconds 100000*/
 #endif
   }
 

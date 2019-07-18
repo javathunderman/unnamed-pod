@@ -1,10 +1,15 @@
+#include "rs232.h"
 
-//Table 4 https://www.memsense.com/assets/docs/uploads/ms-imu3020/MS-IMU3020_PSUG.pdf
 typedef struct {
 	float x_accel;
 	float y_accel;
 	float z_accel;
-	float x_gyro;
-	float y_gyro;
-	float z_gyro;
+	float pressure;
 } IMUData;
+
+//use 16 for ttyUSB0 or 0 for ttyS0, 230400 baudrate for now
+// Call this once to setup imu connection
+int imu_setup(int cport_nr, int bdrate);
+
+// Returns the latest reading from IMU
+IMUData imu_read(int cport_nr);
