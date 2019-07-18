@@ -32,7 +32,7 @@ typedef struct {
 
 
 int init_spacex(void);
-int send_spacex(Telemetry *tlm);
+int send_spacex(int socket, Telemetry *tlm, UMData *data);
 SpaceXState convert_state(int pod_state);
 
 

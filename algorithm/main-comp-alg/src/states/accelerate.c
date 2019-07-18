@@ -9,6 +9,7 @@
 
 int accelerate_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	int motor_temp = 998; //<- fake temp for logic
+	int pod_position = 12;
 	printf(">> ACCELERATE STATE - fake position: %d\n", pod_position);
 
 	//(H8) E-STOP
