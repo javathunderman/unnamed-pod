@@ -3,10 +3,23 @@
 #include "commands.h"
 #include "fpga_cache.h"
 #include "can_master.h"
+
 typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, PRECHARGE_SID, ENABLEMOTOR_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, HVCUT_SID, DISCHARGE_SID, ENDRUN_SID, NUM_STATES} State;
+
+typedef struct {
+    pthread_t can_tid;
+    pthread_t tlm_tid;
+    pthread_t cmd_tid;
+    Command last_cmd;
+    time_t last_cmd_sec;
+    long last_cmd_nsec;
+    int pod_state;
+} Software_Data;
+
 typedef struct {
     FpgaCache fpga_cache;
     CAN_Data can_data;
+    Software_Data software;
 } UMData;
 
 typedef struct {

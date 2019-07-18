@@ -7,7 +7,7 @@
 #include "states.h"
 
 #define SA struct sockaddr
-#define TO_USEC 100000
+#define TO_USEC 300000
 #define PORT 8187
 
 typedef struct {

@@ -3,6 +3,7 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include "states.h"
+#include "abort_run.h"
 
 #define __STANDBY__
 #endif

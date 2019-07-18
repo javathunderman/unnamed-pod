@@ -10,12 +10,15 @@
 #include "udp.h"
 #include "priority.h"
 #include "fpga_cache.h"
+#include "run_data.h"
 
 
 typedef enum {STOPPING_DISTANCE, THRESHOLD1_LOW, THRESHOLD1_HIGH, THRESHOLD2_LOW, THRESHOLD2_HIGH, TEST1, TEST2, TEST3, TEST4} Config;
 
 int g_abort_run = 0;
 int g_shutoff = 0;
+
+UMData run_data;
 
 int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +78,6 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// CONFIG LOADING CODE                                                                          //
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	UMData run_data;
 	Thresholds thresholds;
 	char path[] = __FILE__;
 	strcpy(&path[strlen(__FILE__)-10], "config.csv");

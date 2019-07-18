@@ -10,6 +10,7 @@
 #include "priority.h"
 #include "atomics.h"
 #include "states.h"
+#include "run_data.h"
 #include "telemetry.h"
 
 
@@ -36,6 +37,9 @@ void *send_tlm(void *args) {
         return NULL;
     }
 
+    /* Store thread id */
+    STORE(run_data.software.tlm_tid, pthread_self());
+
     struct timespec now;
     if(clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
         ABORT_RUN;
@@ -49,7 +53,7 @@ void *send_tlm(void *args) {
     struct timespec delay_1 = {sec, nsec};
 
 
-    while(1) {
+    while (!g_shutoff) {
         clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &delay_1, NULL);
         update_telemetry_1_1(&tlm, data);
 
@@ -64,6 +68,8 @@ void *send_tlm(void *args) {
 
         UPDATE_DELAY(delay_1)
     }
+
+    return NULL;
 }
 
 void update_telemetry_1_1(Telemetry *tlm, UMData *data) {

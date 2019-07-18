@@ -7,6 +7,7 @@
 #include "receiver.h"
 #include "priority.h"
 #include "abort_run.h"
+#include "run_data.h"
 
 #define RECV_LEN 100
 
@@ -34,6 +35,9 @@ void *recv_cmds(void *args) {
         printf("Failed to set CMD thread priority\n");
         return NULL;
     }
+    
+    /* Store thread id */
+    STORE(run_data.software.cmd_tid, pthread_self());
     
     while (!g_shutoff) {
         /* Receive 1 command, failures and timeout trigger comm loss condition */

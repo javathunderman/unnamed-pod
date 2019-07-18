@@ -8,6 +8,7 @@
 #include "vs_can_api.h"
 #include "priority.h"
 #include "abort_run.h"
+#include "run_data.h"
 
 
 #define NS_IN_SEC 1000000000L
@@ -55,6 +56,9 @@ void *can_master(void *args) {
         printf("Failed to set CAN thread priority\n");
         return NULL;
     }
+    
+    /* Store thread id */
+    STORE(run_data.software.can_tid, pthread_self());
     
     /* Initialize loop timing */
     struct timespec now;
