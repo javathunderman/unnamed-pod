@@ -79,7 +79,7 @@ void test(FILE * const file, Fpga * fpga){
     //Perform your test and log it to the CSV.
     while(1){
     	refresh_cache(fpga);
-        if (poll(&mypoll, 1, 60000)) {
+        if (poll(&mypoll, 1, 15000)) {
             scanf("%c", &c);
             if (c == 'q') {
                 printf("EXITING\n");
@@ -100,10 +100,10 @@ void test(FILE * const file, Fpga * fpga){
 
         // Update FPGA cache to fetch new values
 
-        fprintf(file, "%f, %s, %s, %f, %f, %f, %f, %s\n", time,
+        fprintf(file, "%f, %s, %s, %f, %f, %f, %f\n", time,
         		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
         		fxptof(fpga->cache.P_hp1), fxptof(fpga->cache.P_hp2),
-        		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2), booltos(fpga->cache.FIFO_timeout));
+        		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2));
         printf("Time: %f, Brake: %s, Drain: %s, HP1: %f, HP2: %f, LP1: %f,LP2: %f\n", time,
                 		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
                 		fxptof(fpga->cache.P_hp1), fxptof(fpga->cache.P_hp2),

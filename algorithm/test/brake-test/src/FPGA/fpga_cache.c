@@ -57,45 +57,39 @@ NiFpga_Status refresh_cache(Fpga *fpga) {
 	float tempfloat;
 	double tempdouble;
 	fxp32_16 tempfxp32_16;
-	/* Atomically store FIFO_timeout */
-	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18002, &tempNiFpga_Bool))){
-			STORE((fpga->cache.FIFO_timeout), tempNiFpga_Bool);
-		}
-	}
 	/* Atomically store brake_state */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1800A, &tempNiFpga_Bool))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x18006, &tempNiFpga_Bool))){
 			STORE((fpga->cache.brake_state), tempNiFpga_Bool);
 		}
 	}
 	/* Atomically store drain_valve_state */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1800E, &tempNiFpga_Bool))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadBool(fpga->session, 0x1800A, &tempNiFpga_Bool))){
 			STORE((fpga->cache.drain_valve_state), tempNiFpga_Bool);
 		}
 	}
 	/* Atomically store P_hp1 */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18010, &tempfxp32_16))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1800C, &tempfxp32_16))){
 			STORE((fpga->cache.P_hp1), tempfxp32_16);
 		}
 	}
 	/* Atomically store P_hp2 */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18014, &tempfxp32_16))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18010, &tempfxp32_16))){
 			STORE((fpga->cache.P_hp2), tempfxp32_16);
 		}
 	}
 	/* Atomically store P_lp1 */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18018, &tempfxp32_16))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18014, &tempfxp32_16))){
 			STORE((fpga->cache.P_lp1), tempfxp32_16);
 		}
 	}
 	/* Atomically store P_lp2 */
 	if(NiFpga_IsNotError(fpga->status)){
-		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x1801C, &tempfxp32_16))){
+		if(NiFpga_MergeStatus(&(fpga->status),  NiFpga_ReadI32(fpga->session, 0x18018, &tempfxp32_16))){
 			STORE((fpga->cache.P_lp2), tempfxp32_16);
 		}
 	}
@@ -115,22 +109,22 @@ NiFpga_Status fpfinalize(Fpga *fpga) {
 }
 
 NiFpga_Status write_brake_1(Fpga *fpga, NiFpga_Bool v) {
-	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18022, v));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x1801E, v));
 	return fpga->status;
 }
 
 NiFpga_Status write_brake_2(Fpga *fpga, NiFpga_Bool v) {
-	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18026, v));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18022, v));
 	return fpga->status;
 }
 
 NiFpga_Status write_drain(Fpga *fpga, NiFpga_Bool v) {
-	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x1802A, v));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18026, v));
 	return fpga->status;
 }
 
 NiFpga_Status write_stop(Fpga *fpga, NiFpga_Bool v) {
-	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18006, v));
+	NiFpga_IfIsNotError(fpga->status, NiFpga_WriteBool(fpga->session, 0x18002, v));
 	return fpga->status;
 }
 

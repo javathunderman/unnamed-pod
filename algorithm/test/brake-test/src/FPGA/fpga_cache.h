@@ -1,12 +1,7 @@
 #ifndef __FPGA_CACHE__
 #define __FPGA_CACHE__
 #include "NiFpga_brake_test.h"
-
-#define STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_RELAXED))
-#define LOAD(var) (__atomic_load_n(&(var), __ATOMIC_RELAXED))
-
-#define SEQ_STORE(var, val) (__atomic_store_n(&(var), (val), __ATOMIC_SEQ_CST))
-#define SEQ_LOAD(var) (__atomic_load_n(&(var), __ATOMIC_SEQ_CST))
+#include "atomics.h"
 
 
 #define fpgaRunAndUpdateIf(fpga, call, description) \
@@ -21,7 +16,6 @@ if(NiFpga_IsError(fpga->status)) {\
 
 typedef int32_t fxp32_16;
 typedef struct {
-	NiFpga_Bool FIFO_timeout;
 	NiFpga_Bool brake_state;
 	NiFpga_Bool drain_valve_state;
 	fxp32_16 P_hp1;
