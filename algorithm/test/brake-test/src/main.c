@@ -79,6 +79,8 @@ void test(FILE * const file, Fpga * fpga){
     //Perform your test and log it to the CSV.
     while(1){
     	refresh_cache(fpga);
+    	fpga->cache.P_hp1 -= 1000;
+    	fpga->cache.P_hp2 -= 1000;
         if (poll(&mypoll, 1, 15000)) {
             scanf("%c", &c);
             if (c == 'q') {
@@ -104,10 +106,10 @@ void test(FILE * const file, Fpga * fpga){
         		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
         		fxptof(fpga->cache.P_hp1), fxptof(fpga->cache.P_hp2),
         		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2));
-        printf("Time: %f, Brake: %s, Drain: %s, HP1: %f, HP2: %f, LP1: %f,LP2: %f\n", time,
+        printf("Time: %f, Brake: %s, Drain: %s, HP1: %f, HP2: %f, LP1: %f,LP2: %f, FPGA: %d\n", time,
                 		booltos(fpga->cache.brake_state), booltos(fpga->cache.drain_valve_state),
                 		fxptof(fpga->cache.P_hp1), fxptof(fpga->cache.P_hp2),
-                		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2));
+                		fxptof(fpga->cache.P_lp1), fxptof(fpga->cache.P_lp2), fpga->status);
 
     }
 }

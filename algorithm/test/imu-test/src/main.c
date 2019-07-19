@@ -17,7 +17,7 @@
 
 #define TEST "IMU-Test" //Name of the test, must be under 50 characters
 #define DT 100			//Timing interval for logging in millis
-#define LEN 5			//Length of time to log in seconds.
+#define LEN 60			//Length of time to log in seconds.
 
 #define BAUD 230400
 #define CPORT 16
