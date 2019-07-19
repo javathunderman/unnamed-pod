@@ -181,6 +181,10 @@ int main() {
 	int next_state = startup_state(fpga, &thresholds, command);
 	bool continueRun = true;
 	
+	/* Init sclk count */
+	int time;
+	SEQ_STORE(run_data.software.sclk, 0);
+	
 	uint8_t fpga_fail = false;
 	//main state loop
 	while (continueRun) {
@@ -202,6 +206,9 @@ int main() {
 		if (next_state == ENDRUN_SID) {
 			continueRun = false;
 		}
+		
+		time = SEQ_LOAD(run_data.software.sclk);
+		SEQ_STORE(run_data.software.sclk, time + 1);
 	}
 	
 	/* Join threads */

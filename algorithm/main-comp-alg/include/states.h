@@ -14,6 +14,10 @@ typedef struct {
     time_t last_cmd_sec;
     long last_cmd_nsec;
     int pod_state;
+    int sclk;
+    int precharge_delay_1;
+    int precharge_delay_2;
+    int precharge_delay_3;
 } Software_Data;
 
 typedef struct {

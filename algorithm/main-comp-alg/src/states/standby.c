@@ -17,8 +17,11 @@ int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		thresholds.battery_temperature_high, 
 		thresholds.battery_temperature_pers);*/
 
+	fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_False), "retract brakes");
+
 	//(H8) E-STOP
 	if (command == EMERGENCY_BRAKE) {
+		printf("SHUTTING DOWN POD!\n");
 		return ESTOP_SID;
 	}
 	
@@ -32,6 +35,7 @@ int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		printf("PRELAUNCH COMMAND RECEIVED!\n");
 		return INITIALIZE_SID;
 	}
+	
 	else if (command == ENTER_SERVICE) {
 		printf("ENTER SERVICE COMMAND RECEIVED!\n");
 		return SERVICE_SID;
@@ -39,4 +43,5 @@ int standby_state(Fpga *fpga, Thresholds *thresholds, int command) {
 
 	return STANDBY_SID;
 }
+
 

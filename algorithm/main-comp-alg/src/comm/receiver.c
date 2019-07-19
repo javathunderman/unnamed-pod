@@ -53,7 +53,7 @@ void *recv_cmds(void *args) {
             cmd = *(((int *)&buffer) + 1); 
             if (verify_cmd(cmd) && (write_cmd(cb, cmd) == 0)) {
                 printf("Received: %d\n", cmd);
-                //TODO Telemeter success
+                STORE(run_data.software.last_cmd, cmd);
             } else {
                 if (cmd != NONE) {
                     ABORT_RUN;

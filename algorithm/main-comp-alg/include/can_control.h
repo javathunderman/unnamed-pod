@@ -12,5 +12,9 @@ void control_cycle(CAN_Data *data, int cycle_num);
 FSM_Status can_motor_ready(CAN_Data *data);
 FSM_Status can_motor_enable(CAN_Data *data);
 FSM_Status can_motor_constants(CAN_Data *data);
+FSM_Status can_motor_precharge(CAN_Data *data);
+FSM_Status can_motor_start_highrate(CAN_Data *data);
+FSM_Status can_motor_stop_highrate(CAN_Data *data);
+FSM_Status can_reset_precharge(CAN_Data *data);
 
 #endif

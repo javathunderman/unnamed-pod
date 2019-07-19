@@ -187,16 +187,30 @@ void iso_error_handler(VSCAN_MSG *msg, CAN_Data *data){
  */
 void lipo_handler(VSCAN_MSG *msg, CAN_Data *data){
     unsigned char status_flags = *((unsigned char *) (&(msg->Data[1])));
-    unsigned short battery_volt = *((short *) (&(msg->Data[2])));
+    unsigned short battery_volt = bswap_16(*((short *) (&(msg->Data[2]))));
     unsigned char battery_volt_uncert = *((char *) (&(msg->Data[4])));
-    unsigned short max_battery_volt = *((short *) (&(msg->Data[5])));
+    unsigned short max_battery_volt = bswap_16(*((short *) (&(msg->Data[5]))));
     unsigned char max_battery_volt_uncert = *((char *) (&(msg->Data[7])));
     
-    STORE(data->iso_error_flags, status_flags);
-    STORE(data->battery_volt, bswap_16(battery_volt));
+    STORE(data->iso_status_flags, status_flags);
+    STORE(data->battery_volt, battery_volt);
     STORE(data->battery_volt_uncert, battery_volt_uncert);
-    STORE(data->max_battery_volt, bswap_16(max_battery_volt));
+    STORE(data->max_battery_volt, max_battery_volt);
     STORE(data->max_battery_volt_uncert, max_battery_volt_uncert);
+    
+    if (max_battery_volt > 400) {
+        STORE(data->iso_status_flags_left, status_flags);
+        STORE(data->battery_volt_left, battery_volt);
+        STORE(data->battery_volt_uncert_left, battery_volt_uncert);
+        STORE(data->max_battery_volt_left, max_battery_volt);
+        STORE(data->max_battery_volt_uncert_left, max_battery_volt_uncert);
+    } else {
+        STORE(data->iso_status_flags_right, status_flags);
+        STORE(data->battery_volt_right, battery_volt);
+        STORE(data->battery_volt_uncert_right, battery_volt_uncert);
+        STORE(data->max_battery_volt_right, max_battery_volt);
+        STORE(data->max_battery_volt_uncert_right, max_battery_volt_uncert);
+    }
 }
 
 /* This function updates state machine's CAN_Data with:

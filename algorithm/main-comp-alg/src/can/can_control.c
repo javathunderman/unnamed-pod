@@ -7,17 +7,21 @@
 
 #define NS_IN_SEC 1000000000L
 #define CYCLES_IN_SEC (NS_IN_SEC / CAN_FREQ)
-#define HZ_2 (CYCLES_IN_SEC / 2)
+#define HZ_20 (CYCLES_IN_SEC / 20)
+
+#define CHARGE_THRESHOLD 20250
 
 static FSM_Status satisfy_request(CAN_Data *data, CAN_Request_Index index);
+static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index);
 static void try_send(CAN_Data *data, CAN_Request_Index index);
+
 
 void control_cycle(CAN_Data *data, int cycle_num) {
     /* Send ISO requests */
-    if ((cycle_num % HZ_2) == 0) {
-        try_send(data, ISO_STATE_TX);
-        try_send(data, ISO_RESISTANCE_TX);
-        try_send(data, ISO_ERROR_TX);
+    if ((cycle_num % HZ_20) == 0) {
+        //try_send(data, ISO_STATE_TX);
+        //try_send(data, ISO_RESISTANCE_TX);
+        //try_send(data, ISO_ERROR_TX);
         try_send(data, LIPO_VOLTAGE_TX);
     }
 }
@@ -82,6 +86,28 @@ FSM_Status can_motor_constants(CAN_Data *data) {
     return FSM_COMPLETE;
 }
 
+FSM_Status can_motor_precharge(CAN_Data *data) {
+    FSM_Status ret_val;
+    
+    /* Satisfy CONTROLLER_VOLT_TX */
+    ret_val = satisfy_request(data, CONTROLLER_VOLT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    if (SEQ_LOAD(data->controller_bus_voltage) < CHARGE_THRESHOLD) {
+        return FSM_WAITING;
+    }
+    
+    /* Satisfy CONTROLLER_VOLT_STOP_TX */
+    ret_val = satisfy_request(data, CONTROLLER_VOLT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    return FSM_COMPLETE;
+}
+
 FSM_Status can_motor_start_highrate(CAN_Data *data) {
     FSM_Status ret_val;
     
@@ -105,6 +131,102 @@ FSM_Status can_motor_start_highrate(CAN_Data *data) {
     
     /* Satisfy CONTROLLER_ERROR_TX */
     ret_val = satisfy_request(data, CONTROLLER_ERROR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    return FSM_COMPLETE;
+}
+
+FSM_Status can_motor_stop_highrate(CAN_Data *data) {
+    FSM_Status ret_val;
+    
+    /* Satisfy ACTUAL_SPEED_STOP_TX */
+    ret_val = satisfy_request(data, ACTUAL_SPEED_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Satisfy ACTUAL_CURRENT_STOP_TX */
+    ret_val = satisfy_request(data, ACTUAL_CURRENT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Satisfy ACTUAL_POSITION_STOP_TX */
+    ret_val = satisfy_request(data, ACTUAL_POSITION_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Satisfy CONTROLLER_ERROR_STOP_TX */
+    ret_val = satisfy_request(data, CONTROLLER_ERROR_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    return FSM_COMPLETE;
+}
+
+FSM_Status can_reset_precharge(CAN_Data *data) {
+    FSM_Status ret_val;
+    
+    /* Reset ACTUAL_SPEED_TX */
+    ret_val = reset_request_state(data, ACTUAL_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_CURRENT_TX */
+    ret_val = reset_request_state(data, ACTUAL_CURRENT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_POSITION_TX */
+    ret_val = reset_request_state(data, ACTUAL_POSITION_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_VOLT_TX */
+    ret_val = reset_request_state(data, CONTROLLER_VOLT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_ERROR_TX */
+    ret_val = reset_request_state(data, CONTROLLER_ERROR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_SPEED_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_SPEED_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_CURRENT_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_CURRENT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_POSITION_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_POSITION_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_ERROR_STOP_TX */
+    ret_val = reset_request_state(data, CONTROLLER_ERROR_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_VOLT_STOP_TX */
+    ret_val = reset_request_state(data, CONTROLLER_VOLT_STOP_TX);
     if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
         return ret_val;
     }
@@ -160,5 +282,18 @@ static void try_send(CAN_Data *data, CAN_Request_Index index) {
         } else {
             SEQ_STORE(data->requests[index].state, SEND);
         }
+    }
+}
+
+static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index) {
+    CAN_State state = SEQ_LOAD(data->requests[index].state);
+    
+    if (state == IDLE) {
+        return FSM_COMPLETE;
+    } else if (state == SEND || state == WAITING) {
+        return FSM_WAITING;
+    } else {
+        SEQ_STORE(data->requests[index].state, IDLE);
+        return FSM_COMPLETE;
     }
 }
