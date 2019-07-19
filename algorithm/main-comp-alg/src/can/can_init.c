@@ -102,9 +102,9 @@ void init_can_data(CAN_Data *data) {
             case ACTUAL_SPEED_RX:
             case ACTUAL_CURRENT_RX:
             case ACTUAL_POSITION_RX:
-                /* 10ms timeout */
+                /* 20ms timeout */
                 STORE(data->responses[i].timeout_interval.tv_sec, 0L);
-                STORE(data->responses[i].timeout_interval.tv_nsec, 10000000L);
+                STORE(data->responses[i].timeout_interval.tv_nsec, 20000000L);
                 break;
             
             default: 
@@ -123,7 +123,7 @@ void init_can_data(CAN_Data *data) {
         STORE(data->requests[i].sent_time.tv_sec, 0L);
         STORE(data->requests[i].sent_time.tv_nsec, 0L);
         STORE(data->requests[i].timeout_interval.tv_sec, 0L);
-        STORE(data->requests[i].timeout_interval.tv_nsec, 10000000L); /* 10ms timeout */
+        STORE(data->requests[i].timeout_interval.tv_nsec, 20000000L); /* 20ms timeout */
     }
     
     /* Init values to 0 */

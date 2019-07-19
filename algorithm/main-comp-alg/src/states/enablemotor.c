@@ -24,9 +24,9 @@ int enablemotor_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		printf("MOTOR INITIALIZED!\n");
 		return NiFpga_IsNotError(fpga->status) ? ACCELERATE_SID : DISCHARGE_SID;
 	}
-	else if (command == LAUNCH) {
-		printf("LAUNCH COMMAND RECEIVED!\n");
-		return NiFpga_IsNotError(fpga->status) ? PRECHARGE_SID : PRECHARGE_SID;
+	else if (command == DISCHARGE) {
+		printf("DISCHARGE COMMAND RECEIVED!\n");
+		return NiFpga_IsNotError(fpga->status) ? DISCHARGE_SID : DISCHARGE_SID;
 	}
 
 	return ENABLEMOTOR_SID;

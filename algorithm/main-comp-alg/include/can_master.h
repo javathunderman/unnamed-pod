@@ -155,6 +155,18 @@ typedef struct {
     volatile unsigned short max_battery_volt;                    /* V */
     volatile unsigned char max_battery_volt_uncert;
     
+    volatile unsigned char iso_status_flags_left;
+    volatile unsigned short battery_volt_left;                        /* V */
+    volatile unsigned char battery_volt_uncert_left;
+    volatile unsigned short max_battery_volt_left;                    /* V */
+    volatile unsigned char max_battery_volt_uncert_left;
+    
+    volatile unsigned char iso_status_flags_right;
+    volatile unsigned short battery_volt_right;                        /* V */
+    volatile unsigned char battery_volt_uncert_right;
+    volatile unsigned short max_battery_volt_right;                    /* V */
+    volatile unsigned char max_battery_volt_uncert_right;
+    
     /* Motor Controller */
     volatile short max_speed;                           /* rpm */
     
