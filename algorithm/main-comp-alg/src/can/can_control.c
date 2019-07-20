@@ -303,24 +303,35 @@ static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index) {
 
 static int can_data_threshold(CAN_Data *data){
     
-    if (data->can_data.min_voltage < 2.7){
+    if (LOAD(data->can_data.min_voltage) < 2.7){
         return 1;
     }
-    if (data->can_data.max_voltage > 4.2){
+    if (LOAD(data->can_data.max_voltage) > 4.2){
         return 1;      
     }
-    if (data->can_data.avg_temp > 65){
+    if (LOAD(data->can_data.avg_temp) > 65){
         return 1;   
     }
-    if (data->can_data.high_temp > 70){
+    if (LOAD(data->can_data.high_temp) > 70){
         return 1;   
     }
-    if (data->can_data.controller_errors != 0){
+    if (LOAD(data->can_data.controller_errors) != 0){
         return 1;   
     }
-    if (data->can_data.true_current > data->can_data.current_200pc){
+    if (LOAD(data->can_data.true_current) > LOAD(data->can_data.current_200pc)){
         return 1;   
     }
-    
+    if ((LOAD(data->iso_status_flags_left) >> 2) & 3 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_right) >> 2) & 3 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_left) >> 7) & 1 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_right) >> 7) & 1 != 0){
+        return 1;   
+    }
     return 0;
 }
