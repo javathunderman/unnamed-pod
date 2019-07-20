@@ -269,8 +269,8 @@ void init_can_requests() {
     request_lookup[SET_SPEED_TX].msg.Id = 0x201;
     request_lookup[SET_SPEED_TX].msg.Size = 3;
     request_lookup[SET_SPEED_TX].msg.Data[0] = 0x31;
-    request_lookup[SET_SPEED_TX].msg.Data[1] = 0x00;  //TODO: Percent Max Speed
-    request_lookup[SET_SPEED_TX].msg.Data[2] = 0x00;  //TODO: Percent Max Speed
+    request_lookup[SET_SPEED_TX].msg.Data[1] = 0xA8;  //TODO: Percent Max Speed
+    request_lookup[SET_SPEED_TX].msg.Data[2] = 0x5E;  //TODO: Percent Max Speed
     request_lookup[SET_SPEED_TX].expect_response = false;
     
     /* MAX_SPEED_TX */
