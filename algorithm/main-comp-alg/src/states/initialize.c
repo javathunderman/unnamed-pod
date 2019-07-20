@@ -44,6 +44,14 @@ int initialize_state(Fpga *fpga, Thresholds *thresholds, int command) {
         return INITIALIZE_SID;
     }
     
+    /* Reset CAN motor variables */
+    ret_val = can_reset_motor(&(run_data.can_data));
+    if (ret_val == FSM_FAILED) {
+        return STANDBY_SID;
+    } else if (ret_val == FSM_WAITING) {
+        return INITIALIZE_SID;
+    }
+    
     ret_val = reset_precharge(fpga);
     if (ret_val == FSM_FAILED) {
         printf("Precharge reset failed!\n");

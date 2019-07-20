@@ -71,9 +71,9 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		}
 	}
 	else if (command == CLOSE_FIRST_RELAY){
-		if (!fpga->cache.HVR_1_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_True), "close HVR1");
-		}	
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_True), "close HVR1");
+		
 	}
 	else if (command == OPEN_FIRST_RELAY) {
 		

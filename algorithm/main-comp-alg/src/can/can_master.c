@@ -9,6 +9,7 @@
 #include "priority.h"
 #include "abort_run.h"
 #include "run_data.h"
+#include "can_control.h"
 
 
 #define NS_IN_SEC 1000000000L
@@ -50,6 +51,7 @@ void *can_master(void *args) {
     CAN_Data *data = (CAN_Data *)args;
     VSCAN_MSG read_buffer[CAN_BUF_LEN];
     const struct sched_param priority = {CAN_MASTER_PRIO};
+    int cycle_num = 0;
     
     /* Set thread priority */
     if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) != 0) {
@@ -79,6 +81,9 @@ void *can_master(void *args) {
         
         can_cycle(data, read_buffer, &delay);
         
+        control_cycle(data, cycle_num);
+        
+        cycle_num = (cycle_num == 1000) ? 0 : cycle_num + 1;
         UPDATE_DELAY(delay)
     }
     
@@ -243,12 +248,12 @@ void handle_can_message(CAN_Data *data, VSCAN_MSG *msg, struct timespec *timesta
     }
     
     if (msg_id == -1) {
-        ABORT_RUN;
-        printf("Unrecognized CAN message id=%ld, flags=%d\n", msg->Id, msg->Flags);
-        for (n = 0; n < msg->Size; n++) {
-            printf("\tData[%d]=0x%0x\n", n, msg->Data[n]);
-        }
-        printf("\n");
+        //ABORT_RUN;
+        //printf("Unrecognized CAN message id=%ld, flags=%d\n", msg->Id, msg->Flags);
+        //for (n = 0; n < msg->Size; n++) {
+        //    printf("\tData[%d]=0x%0x\n", n, msg->Data[n]);
+        //}
+        //printf("\n");
         return;
     }
     

@@ -3,12 +3,16 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include "states.h"
+#include "run_data.h"
+#include "can_control.h"
 
 #define __STANDBY__
 #endif
 
 int hvcut_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf(">> IDLE STATE - Command: %d\n", command);
+
+	can_motor_end_run(&(run_data.can_data));
 
 	//(H8) E-STOP
 	if (command == EMERGENCY_BRAKE) {

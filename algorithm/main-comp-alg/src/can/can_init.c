@@ -126,6 +126,8 @@ void init_can_data(CAN_Data *data) {
         STORE(data->requests[i].timeout_interval.tv_nsec, 20000000L); /* 20ms timeout */
     }
     
+    STORE(data->requests[LIPO_VOLTAGE_TX].check_timeout, true);
+    
     /* Init values to 0 */
     STORE(data->pack_soc, 0);
     STORE(data->pack_voltage, 0);

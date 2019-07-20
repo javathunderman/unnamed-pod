@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include "states.h"
 #include "fpga_cache.h"
+#include "run_data.h"
+#include "can_control.h"
 
 int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	// TODO: enter true velocity
@@ -13,6 +15,10 @@ int normbrake_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		return ESTOP_SID;
 	}
 	//check speed, repeat until zero?
+
+	if (can_motor_end_run(&(run_data.can_data)) == FSM_FAILED) {
+		return HVCUT_SID;
+	}
 
 	//(C3) Zero Velocity
 	if ((*fpga).cache.tape_velocity <= 0) {

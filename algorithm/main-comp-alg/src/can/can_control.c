@@ -25,7 +25,7 @@ void control_cycle(CAN_Data *data, int cycle_num) {
         try_send(data, LIPO_VOLTAGE_TX);
     }
     if (can_data_threshold(data)){
-        ABORT_RUN;   
+        //ABORT_RUN;
     }
 }
 
@@ -171,6 +171,24 @@ FSM_Status can_motor_stop_highrate(CAN_Data *data) {
     return FSM_COMPLETE;
 }
 
+FSM_Status can_motor_end_run(CAN_Data *data) {
+    FSM_Status ret_val;
+    
+    /* Satisfy STOP_MOTOR_TX */
+    ret_val = satisfy_request(data, STOP_MOTOR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Satisfy DISABLE_MOTOR_TX */
+    ret_val = satisfy_request(data, DISABLE_MOTOR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    return FSM_COMPLETE;
+}
+
 FSM_Status can_reset_precharge(CAN_Data *data) {
     FSM_Status ret_val;
     
@@ -230,6 +248,150 @@ FSM_Status can_reset_precharge(CAN_Data *data) {
     
     /* Reset CONTROLLER_VOLT_STOP_TX */
     ret_val = reset_request_state(data, CONTROLLER_VOLT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    return FSM_COMPLETE;
+}
+
+FSM_Status can_reset_motor(CAN_Data *data) {
+    FSM_Status ret_val;
+    
+    /* Reset precharge */
+    ret_val = can_reset_precharge(data);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset READY_TO_TRANSMIT_TX */
+    ret_val = reset_request_state(data, READY_TO_TRANSMIT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset DISABLE_MOTOR_TX */
+    ret_val = reset_request_state(data, DISABLE_MOTOR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ENABLE_MOTOR_TX */
+    ret_val = reset_request_state(data, ENABLE_MOTOR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset TRANSMIT_ENABLE_TX */
+    ret_val = reset_request_state(data, TRANSMIT_ENABLE_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACCEL_RAMP_TX */
+    ret_val = reset_request_state(data, ACCEL_RAMP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset DECEL_RAMP_TX */
+    ret_val = reset_request_state(data, DECEL_RAMP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset STOP_MOTOR_TX */
+    ret_val = reset_request_state(data, STOP_MOTOR_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset SET_SPEED_TX */
+    ret_val = reset_request_state(data, SET_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset MAX_SPEED_TX */
+    ret_val = reset_request_state(data, MAX_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset DEVICE_CURRENT_TX */
+    ret_val = reset_request_state(data, MAX_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CURRENT_200PC_TX */
+    ret_val = reset_request_state(data, MAX_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_SPEED_TX */
+    ret_val = reset_request_state(data, ACTUAL_SPEED_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_CURRENT_TX */
+    ret_val = reset_request_state(data, ACTUAL_CURRENT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_POSITION_TX */
+    ret_val = reset_request_state(data, ACTUAL_POSITION_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_VOLT_TX */
+    ret_val = reset_request_state(data, CONTROLLER_VOLT_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_SPEED_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_SPEED_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_CURRENT_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_CURRENT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset ACTUAL_POSITION_STOP_TX */
+    ret_val = reset_request_state(data, ACTUAL_POSITION_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_VOLT_STOP_TX */
+    ret_val = reset_request_state(data, CONTROLLER_VOLT_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_ERROR_STOP_TX */
+    ret_val = reset_request_state(data, CONTROLLER_ERROR_STOP_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_STATUS_TX */
+    ret_val = reset_request_state(data, CONTROLLER_STATUS_TX);
+    if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
+        return ret_val;
+    }
+    
+    /* Reset CONTROLLER_CLEAR_ERRORS_TX */
+    ret_val = reset_request_state(data, CONTROLLER_CLEAR_ERRORS_TX);
     if (ret_val == FSM_FAILED || ret_val == FSM_WAITING) {
         return ret_val;
     }
@@ -303,35 +465,24 @@ static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index) {
 
 static int can_data_threshold(CAN_Data *data){
     
-    if (LOAD(data->can_data.min_voltage) < 2.7){
+    if (data->min_voltage < 2.7){
         return 1;
     }
-    if (LOAD(data->can_data.max_voltage) > 4.2){
+    if (data->max_voltage > 4.2){
         return 1;      
     }
-    if (LOAD(data->can_data.avg_temp) > 65){
+    if (data->avg_temp > 65){
         return 1;   
     }
-    if (LOAD(data->can_data.high_temp) > 70){
+    if (data->high_temp > 70){
         return 1;   
     }
-    if (LOAD(data->can_data.controller_errors) != 0){
+    if (data->controller_errors != 0){
         return 1;   
     }
-    if (LOAD(data->can_data.true_current) > LOAD(data->can_data.current_200pc)){
+    if (data->true_current > data->current_200pc){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_left) & 3) != 0){
-        return 1;   
-    }
-    if ((LOAD(data->iso_status_flags_right) & 3) != 0){
-        return 1;   
-    }
-    if ((LOAD(data->iso_status_flags_left) & 128) != 0){
-        return 1;   
-    }
-    if ((LOAD(data->iso_status_flags_right) & 128) != 0){
-        return 1;   
-    }
+    
     return 0;
 }

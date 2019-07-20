@@ -7,7 +7,7 @@
 #include "states.h"
 
 #define SA struct sockaddr
-#define TO_USEC 300000
+#define TO_USEC 500000
 #define PORT 8187
 
 typedef struct {
@@ -32,7 +32,6 @@ typedef struct {
     unsigned int LED_2 : 8;
     unsigned int TAPE_BL_COUNT : 8;
     unsigned int TAPE_BR_COUNT : 8;
-    unsigned int TAPE_FL_COUNT : 8;
     unsigned int TAPE_L_COUNT : 8;
     unsigned int TAPE_R_COUNT : 8;
     unsigned int LIGHT_SENSOR_STATUS : 8;
@@ -43,7 +42,7 @@ typedef struct {
     unsigned int PRI1_TEMP : 32;
     unsigned int PRI2_TEMP : 32;
     unsigned int RES_TEMP : 32;
-    unsigned int CRIO_TEMP : 32;
+    unsigned int CRIO_TEMP : 16;
     unsigned int EXTRA1_TEMP : 32;
     unsigned int EXTRA2_TEMP : 32;
     unsigned int PISTON1_TEMP : 32;

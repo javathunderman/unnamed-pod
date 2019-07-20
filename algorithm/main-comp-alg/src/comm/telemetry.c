@@ -14,7 +14,7 @@
 #include "telemetry.h"
 
 
-#define PKT_LENGTH 1966
+#define PKT_LENGTH 1963
 #define TLM_FREQ 20000000L
 #define NS_IN_SEC 1000000000L
 #define UPDATE_DELAY(name) name.tv_sec = name.tv_sec + ((name.tv_nsec + TLM_FREQ) / NS_IN_SEC);\
@@ -87,7 +87,6 @@ void update_telemetry_1_1(Telemetry *tlm, UMData *data) {
     tlm->LED_2 = LOAD(data->fpga_cache.iso_led_2_state);
     tlm->TAPE_BL_COUNT = LOAD(data->fpga_cache.light_BL_count);
     tlm->TAPE_BR_COUNT = LOAD(data->fpga_cache.light_BR_count);
-    tlm->TAPE_FL_COUNT = LOAD(data->fpga_cache.light_FL_count);
     tlm->TAPE_L_COUNT = LOAD(data->fpga_cache.light_L_count);
     tlm->TAPE_R_COUNT = LOAD(data->fpga_cache.light_R_count);
     tlm->LIGHT_SENSOR_STATUS = LOAD(data->fpga_cache.light_sensor_status);

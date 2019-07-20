@@ -3,12 +3,18 @@
 #include <unistd.h>
 #include "states.h"
 #include "fpga_cache.h"
+#include "run_data.h"
+#include "can_control.h"
 
 int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	printf("EMERGENCY STOP!\n");
 
 	if (command == EMERGENCY_BRAKE) {
 		return ESTOP_SID;
+	}
+
+	if (can_motor_end_run(&(run_data.can_data)) == FSM_FAILED) {
+		return HVCUT_SID;
 	}
 
 	//(C3) Zero Velocity
