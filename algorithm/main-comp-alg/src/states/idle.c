@@ -20,12 +20,15 @@ int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high p
 
 	//(H6) Discharge
 	if (command == DISCHARGE) {
-		if (fpga->cache.brake_state == NiFpga_False) {
-
-		}
 		
-		printf("Command received - Entering standby\n");
-		return STANDBY_SID;
+		printf("Command received - Entering discharge\n");
+		return DISCHARGE_SID;
+	}
+	
+	//(H3) enter service
+	if (command == ENTER_SERVICE){
+		printf("Command recieved - Entering Service\n");
+		return ENTER_SERVICE_SID;
 	}
 
 	return IDLE_SID;
