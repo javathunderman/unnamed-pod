@@ -41,46 +41,74 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		//motor speed fast
 	}
 	else if (command == ACTUATE_BRAKES) {
-		//verify both solenoids open or that digital output is low for two brake solenoids
+		if (!fpfa->cache.brake_state){
+			fpgaRunAndUpdateIf(fpga, write_actuate_brakes(NiFpga_True), "actuate brakes");
+		}
 	}
 	else if (command == OPEN_ELECTRONIC_DRAIN_VALVE) {
-		//verify solenoid open or digital output is high for drain solenoid	
+		if (!fpga->cache.drain_valve_state){
+			fpgaRunAndUpdateIf(fpga, write_actuate_drain(NiFpga_True), "open electronic drain valve");	
+		}
 	}
 	else if (command == FIRST_LOW_VOLTAGE_SHUTOFF){
-		//verify current drops to precision of zero for first battery
+		if (!fpga->cache.avb_shutoff_p1_state){
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(NiFpga_True), "avb shutoff prim 1");
+		}
 	}
 	else if (command == SECOND_LOW_VOLTAGE_SHUTOFF){
-		//verify current drops to precision of zero for second battery and verify avionics load is on reserve battery
+		if (!fpga->cache.avb_shutoff_p2_state){
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(NiFpga_True), "avb shutoff prim 2");
+		}
 	}
 	else if (command == FIRST_BATTERY_ON){
-		//verify current is non zero for first battery
+		if (fpga->cache.avb_shutoff_p1_state){
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(NiFpga_False), "First battery on");
+		}
 	}
 	else if (command == SECOND_BATTERY_ON){
-		//verify current is non zero for second battery	
+		if (fpga->cache.avb_shutoff_p2_state){
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(NiFpga_False), "Second battery on");
+		}
 	}
 	else if (command == CLOSE_FIRST_RELAY){
-		//verify control pin on flight computer is pulled high 	
+		if (!fpga->cache.HVR_1_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_1(NiFpga_True), "close HVR1");	
+		}	
 	}
 	else if (command == OPEN_FIRST_RELAY) {
-		//verify that pin on flight computer is pulled low	
+		if (fpga->cache.HVR_1_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_1(NiFpga_False), "open HVR1");	
+		}	
 	}
 	else if (command == CLOSE_SECOND_RELAY){
-		//verify control pin on flight computer is pulled high 	
+		if (!fpga->cache.HVR_2_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_2(NiFpga_True), "close HVR2");	
+		}	
 	}
 	else if (command == OPEN_SECOND_RELAY) {
-		//verify that pin on flight computer is pulled low	
+		if (fpga->cache.HVR_2_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_2(NiFpga_False), "open HVR2");	
+		}	
 	}
 	else if (command == CLOSE_THIRD_RELAY){
-		//verify control pin on flight computer is pulled high 	
+		if (!fpga->cache.HVR_3_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_3(NiFpga_True), "close HVR3");	
+		}
 	}
 	else if (command == OPEN_THIRD_RELAY) {
-		//verify that pin on flight computer is pulled low	
+		if (fpga->cache.HVR_3_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_3(NiFpga_False), "open HVR3");	
+		}	
 	}
 	else if (command == CLOSE_FOURTH_RELAY){
-		//verify control pin on flight computer is pulled high 	
+		if (!fpga->cache.HVR_4_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_4(NiFpga_True), "close HVR4");	
+		}
 	}
 	else if (command == OPEN_FOURTH_RELAY) {
-		//verify that pin on flight computer is pulled low	
+		if (fpga->cache.HVR_4_state){
+			fpgaRunAndUpdateIf(fpga, write_hvr_4(NiFpga_False), "open HVR4");	
+		}
 	}
 	else if (command == ENTER_PRE_CHARGE) {
 		//verify that relay are switched according to the sequence
@@ -88,7 +116,7 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 	else if (command == ENTER_ENABLE_MOTOR){
 		//verify relays are switched according to sequence
 	}
-	else if (command == ABORT_RUN){
+	else if (command == RUN_ABORT){
 		//abort using E-stop	
 	}
 	else if (command == SLEEP){
