@@ -3,6 +3,7 @@
 #include "commands.h"
 #include "fpga_cache.h"
 #include "can_master.h"
+#include "utils.h"
 
 typedef enum {STARTUP_SID, STANDBY_SID, INITIALIZE_SID, SERVICE_SID, PRECHARGE_SID, ENABLEMOTOR_SID, ACCELERATE_SID, NORMBRAKE_SID, ESTOP_SID, IDLE_SID, HVCUT_SID, DISCHARGE_SID, ENDRUN_SID, NUM_STATES} State;
 
@@ -18,6 +19,7 @@ typedef struct {
     int precharge_delay_1;
     int precharge_delay_2;
     int precharge_delay_3;
+    int precharge_complete;
 } Software_Data;
 
 typedef struct {
@@ -51,6 +53,8 @@ int estop_state(Fpga*, Thresholds*, int);
 int idle_state(Fpga*, Thresholds*, int);
 int hvcut_state(Fpga*, Thresholds*, int);
 int discharge_state(Fpga*, Thresholds*, int);
+
+FSM_Status reset_precharge(Fpga *fpga);
 
 //temporary thresholds, commands, and other values for transition logic
 #define estop_command 0
