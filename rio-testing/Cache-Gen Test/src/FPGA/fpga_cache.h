@@ -66,6 +66,7 @@ typedef struct {
 } Fpga;
 
 
+
 void default_fpga(Fpga *fpga);
 
 NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr);

@@ -35,6 +35,11 @@ NiFpga_Status init_fpga(Fpga *fpga, uint32_t attr) {
                         NiFpga_OpenAttribute_NoRun | attr, 
                         &(fpga->session)));
 	
+	if(imu_setup(CPORT, BAUD)) {
+		printf("Failed to setup IMU! Aborting.\n");
+
+	}
+
 	return fpga->status;
 }
 

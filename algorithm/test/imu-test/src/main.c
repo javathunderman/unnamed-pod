@@ -13,14 +13,12 @@
 #include <string.h>
 #include <sys/time.h>
 #include "FPGA/fpga_cache.h" //Replace with header from cache-gen if using it
-#include "IMU/imu.h"
+#include "FPGA/imu.h"
 
 #define TEST "IMU-Test" //Name of the test, must be under 50 characters
 #define DT 100			//Timing interval for logging in millis
-#define LEN 60			//Length of time to log in seconds.
+#define LEN 10			//Length of time to log in seconds.
 
-#define BAUD 230400
-#define CPORT 16
 
 
 /*
@@ -47,30 +45,42 @@ int test_num(const char* test_name){
  * Basic file writing on intervals. Due to function calls taking time, the timings
  * are not exac
  */
-void test(FILE * const file){
+void test(FILE * const file, Fpga *fpga){
 	struct timeval start, cur;
 	float time = 0;
 	gettimeofday(&start, NULL);
 
 	//Perform your test and log it to the CSV.
-
-	if(imu_setup(16, 230400)) {
-		printf("Failed to setup IMU! Aborting.\n");
-		exit(1);
-	}
-
+	fprintf(file, "Time, a_x, a_y, a_z, v, d, p, status\n");
 	while(time < LEN){
+		refresh_cache(fpga);
 		//Measure values and log
+
 		gettimeofday(&cur, NULL);
 		time = cur.tv_sec - start.tv_sec;
 		time += (0.000001f * (cur.tv_usec - start.tv_usec));
-		fprintf(file, "%f, %f\n", time, 0.0);
+
+		fprintf(file, "%f, %f, %f, %f, %f, %d,\n",
+				time, fxptod(fpga->imu_dat.x_accel),
+				fxptod(fpga->imu_dat.y_accel), fxptod(fpga->imu_dat.z_accel),
+				fxptod(fpga->imu_dat.pressure), fpga->status);
+		printf("%f, %f, %f, %f, %f, %d,\n",
+				time, fxptod(fpga->imu_dat.x_accel),
+				fxptod(fpga->imu_dat.y_accel), fxptod(fpga->imu_dat.z_accel),
+				fxptod(fpga->imu_dat.pressure), fpga->status);
 		usleep(1000*DT);
-		printf("Time: %f\n", time);
+
 	}
 
 }
 int main(void) {
+	Fpga fpga_dat;
+	Fpga *fpga = &fpga_dat;
+	default_fpga(fpga);
+
+	init_fpga(fpga, 0);
+	run_fpga(fpga, 0);
+
 	char fname[128];
 	puts("Test Initialization..."); /* prints !!!Hello World!!! */
 	sprintf(fname, "test_%s_%d.csv", TEST, test_num(TEST));
@@ -83,8 +93,10 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	test(file);
+	test(file, fpga);
 	fclose(file);
+	fpclose(fpga, 0);
+	fpfinalize(fpga);
 	puts("Test Complete!");
 	return EXIT_SUCCESS;
 }

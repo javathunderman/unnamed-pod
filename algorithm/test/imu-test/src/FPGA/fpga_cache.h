@@ -2,6 +2,11 @@
 #define __FPGA_CACHE__
 #include "NiFpga_imu_test.h"
 #include "atomics.h"
+#include "imu.h"
+
+#define BAUD 230400
+#define CPORT 16
+
 
 
 #define fpgaRunAndUpdateIf(fpga, call, description) \
@@ -27,6 +32,8 @@ typedef struct {
 	const char *resource;
 	NiFpga_Session session;
 	FpgaCache cache;
+	ImuData imu_dat;
+	int cport;
 } Fpga;
 
 
