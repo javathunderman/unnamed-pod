@@ -324,7 +324,7 @@ static int can_data_threshold(CAN_Data *data){
     if ((LOAD(data->iso_status_flags_left) & 3) != 0){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_right) >> 2 & 3) != 0){
+    if ((LOAD(data->iso_status_flags_right) & 3) != 0){
         return 1;   
     }
     if ((LOAD(data->iso_status_flags_left) & 128) != 0){
