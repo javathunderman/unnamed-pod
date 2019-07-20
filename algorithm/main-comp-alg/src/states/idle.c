@@ -28,7 +28,7 @@ int idle_state(Fpga *fpga, Thresholds *thresholds, int command) { //keeps high p
 	//(H3) enter service
 	if (command == ENTER_SERVICE){
 		printf("Command recieved - Entering Service\n");
-		return ENTER_SERVICE_SID;
+		return SERVICE_SID;
 	}
 
 	return IDLE_SID;
