@@ -34,11 +34,11 @@ typedef struct {
 	uint8_t cur_thresh_index;
 	uint8_t light_BL_count;
 	uint8_t light_BR_count;
-	uint8_t light_FL_count;
 	uint8_t light_L_count;
 	uint8_t light_R_count;
 	uint8_t light_count;
 	uint8_t light_sensor_status;
+	int16_t T_cRIO;
 	fxp32_16 P_hp1;
 	fxp32_16 P_hp2;
 	fxp32_16 P_lp1;
@@ -46,7 +46,6 @@ typedef struct {
 	fxp32_16 T_avb_p1;
 	fxp32_16 T_avb_p2;
 	fxp32_16 T_avb_r;
-	fxp32_16 T_cRIO;
 	fxp32_16 T_extra1;
 	fxp32_16 T_extra2;
 	fxp32_16 T_piston0;
