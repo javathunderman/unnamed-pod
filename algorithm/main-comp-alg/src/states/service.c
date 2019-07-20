@@ -41,34 +41,34 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		//motor speed fast
 	}
 	else if (command == ACTUATE_BRAKES) {
-		if (!fpga->cache.brake_state){
-			fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_True), "actuate brakes");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_True), "actuate brakes");
+		
 	}
 	else if (command == OPEN_ELECTRONIC_DRAIN_VALVE) {
-		if (!fpga->cache.drain_valve_state){
-			fpgaRunAndUpdateIf(fpga, write_actuate_drain(fpga, NiFpga_True), "open electronic drain valve");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_actuate_drain(fpga, NiFpga_True), "open electronic drain valve");
+		
 	}
 	else if (command == FIRST_LOW_VOLTAGE_SHUTOFF){
-		if (!fpga->cache.avb_shutoff_p1_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_True), "avb shutoff prim 1");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_True), "avb shutoff prim 1");
+		
 	}
 	else if (command == SECOND_LOW_VOLTAGE_SHUTOFF){
-		if (!fpga->cache.avb_shutoff_p2_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_True), "avb shutoff prim 2");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_True), "avb shutoff prim 2");
+		
 	}
 	else if (command == FIRST_BATTERY_ON){
-		if (fpga->cache.avb_shutoff_p1_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_False), "First battery on");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_False), "First battery on");
+		
 	}
 	else if (command == SECOND_BATTERY_ON){
-		if (fpga->cache.avb_shutoff_p2_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_False), "Second battery on");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_False), "Second battery on");
+		
 	}
 	else if (command == CLOSE_FIRST_RELAY){
 		
