@@ -63,6 +63,11 @@ NiFpga_Status run_fpga(Fpga *fpga, uint32_t attr) {
 }
 
 NiFpga_Status refresh_cache(Fpga *fpga) {
+	fpga->imu_dat = imu_read(fpga->cport);
+
+	write_imu_acc(fpga, fpga->imu_dat.x_accel);
+	write_imu_timestamp(fpga, dtofxpe(timespectom(fpga->imu_dat.timestamp) / 1000.0));
+
 	NiFpga_Bool tempNiFpga_Bool;
 	int8_t tempint8_t;
 	uint8_t tempuint8_t;

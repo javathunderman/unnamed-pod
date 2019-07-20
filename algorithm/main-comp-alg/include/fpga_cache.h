@@ -2,6 +2,7 @@
 #define __FPGA_CACHE__
 #include "NiFpga_main.h"
 #include "atomics.h"
+#include "imu.h"
 
 
 #define fpgaRunAndUpdateIf(fpga, call, description) \
@@ -88,6 +89,8 @@ typedef struct {
 	const char *resource;
 	NiFpga_Session session;
 	FpgaCache cache;
+	ImuData imu_dat;
+	int cport;
 } Fpga;
 
 
