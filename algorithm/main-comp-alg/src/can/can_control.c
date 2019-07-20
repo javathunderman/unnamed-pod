@@ -321,16 +321,16 @@ static int can_data_threshold(CAN_Data *data){
     if (LOAD(data->can_data.true_current) > LOAD(data->can_data.current_200pc)){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_left) >> 2) & 3 != 0){
+    if ((LOAD(data->iso_status_flags_left) & 3) != 0){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_right) >> 2) & 3 != 0){
+    if ((LOAD(data->iso_status_flags_right) >> 2 & 3) != 0){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_left) >> 7) & 1 != 0){
+    if ((LOAD(data->iso_status_flags_left) & 128) != 0){
         return 1;   
     }
-    if ((LOAD(data->iso_status_flags_right) >> 7) & 1 != 0){
+    if ((LOAD(data->iso_status_flags_right) & 128) != 0){
         return 1;   
     }
     return 0;
