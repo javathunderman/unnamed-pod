@@ -6,6 +6,7 @@
 #include "abort_run.h"
 #include "utils.h"
 #include "can_control.h"
+#include "run_data.h"
 
 #define __STANDBY__
 #endif

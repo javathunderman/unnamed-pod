@@ -41,73 +41,73 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		//motor speed fast
 	}
 	else if (command == ACTUATE_BRAKES) {
-		if (!fpfa->cache.brake_state){
-			fpgaRunAndUpdateIf(fpga, write_actuate_brakes(NiFpga_True), "actuate brakes");
+		if (!fpga->cache.brake_state){
+			fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_True), "actuate brakes");
 		}
 	}
 	else if (command == OPEN_ELECTRONIC_DRAIN_VALVE) {
 		if (!fpga->cache.drain_valve_state){
-			fpgaRunAndUpdateIf(fpga, write_actuate_drain(NiFpga_True), "open electronic drain valve");	
+			fpgaRunAndUpdateIf(fpga, write_actuate_drain(fpga, NiFpga_True), "open electronic drain valve");
 		}
 	}
 	else if (command == FIRST_LOW_VOLTAGE_SHUTOFF){
 		if (!fpga->cache.avb_shutoff_p1_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(NiFpga_True), "avb shutoff prim 1");
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_True), "avb shutoff prim 1");
 		}
 	}
 	else if (command == SECOND_LOW_VOLTAGE_SHUTOFF){
 		if (!fpga->cache.avb_shutoff_p2_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(NiFpga_True), "avb shutoff prim 2");
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_True), "avb shutoff prim 2");
 		}
 	}
 	else if (command == FIRST_BATTERY_ON){
 		if (fpga->cache.avb_shutoff_p1_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(NiFpga_False), "First battery on");
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_1(fpga, NiFpga_False), "First battery on");
 		}
 	}
 	else if (command == SECOND_BATTERY_ON){
 		if (fpga->cache.avb_shutoff_p2_state){
-			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(NiFpga_False), "Second battery on");
+			fpgaRunAndUpdateIf(fpga, write_avb_shutoff_prim_2(fpga, NiFpga_False), "Second battery on");
 		}
 	}
 	else if (command == CLOSE_FIRST_RELAY){
 		if (!fpga->cache.HVR_1_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_1(NiFpga_True), "close HVR1");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_True), "close HVR1");
 		}	
 	}
 	else if (command == OPEN_FIRST_RELAY) {
 		if (fpga->cache.HVR_1_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_1(NiFpga_False), "open HVR1");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_False), "open HVR1");
 		}	
 	}
 	else if (command == CLOSE_SECOND_RELAY){
 		if (!fpga->cache.HVR_2_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_2(NiFpga_True), "close HVR2");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_True), "close HVR2");
 		}	
 	}
 	else if (command == OPEN_SECOND_RELAY) {
 		if (fpga->cache.HVR_2_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_2(NiFpga_False), "open HVR2");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_False), "open HVR2");
 		}	
 	}
 	else if (command == CLOSE_THIRD_RELAY){
 		if (!fpga->cache.HVR_3_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_3(NiFpga_True), "close HVR3");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_True), "close HVR3");
 		}
 	}
 	else if (command == OPEN_THIRD_RELAY) {
 		if (fpga->cache.HVR_3_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_3(NiFpga_False), "open HVR3");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_False), "open HVR3");
 		}	
 	}
 	else if (command == CLOSE_FOURTH_RELAY){
 		if (!fpga->cache.HVR_4_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_4(NiFpga_True), "close HVR4");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_True), "close HVR4");
 		}
 	}
 	else if (command == OPEN_FOURTH_RELAY) {
 		if (fpga->cache.HVR_4_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_4(NiFpga_False), "open HVR4");	
+			fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_False), "open HVR4");
 		}
 	}
 	else if (command == ENTER_PRE_CHARGE) {
