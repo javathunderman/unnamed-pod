@@ -41,7 +41,7 @@ typedef enum {
     OPEN_FOURTH_RELAY = 0x1F,
     ENTER_PRE_CHARGE = 0x20,
     ENTER_ENABLE_MOTOR = 0x22,
-    ABORT_RUN = 0x23,
+    RUN_ABORT = 0x23,
     SLEEP = 0x24,//remove sleep command?
     ENTER_SERVICE_PROPULSION = 0x25,
     BEGIN_MOTOR_CONTROLLER_STARTUP = 0x26,
