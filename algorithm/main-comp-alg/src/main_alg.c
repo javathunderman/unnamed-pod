@@ -36,7 +36,7 @@ int main() {
         return 5;
     }
 
-    fpgaRunAndUpdateIf(fpga, init_fpga(fpga, 0), "Run FPGA library");
+    fpgaRunAndUpdateIf(fpga, run_fpga(fpga, 0), "Run FPGA library");
     if (NiFpga_IsError(fpga->status)) {
         printf("Warning during fpga run, status code %d, exiting\n", fpga->status);
         return 5;
