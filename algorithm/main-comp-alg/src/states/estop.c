@@ -19,7 +19,7 @@ int estop_state(Fpga *fpga, Thresholds *thresholds, int command) {
 
 	//(C3) Zero Velocity
 	if ((*fpga).cache.tape_velocity <= 0) {
-		printf("Pod stopped: Entering Idle state\n");
+		printf("Pod stopped: Entering Discharge state\n");
 
 		fpgaRunAndUpdateIf(fpga, write_actuate_brakes(fpga, NiFpga_False), "retract brakes")
 
