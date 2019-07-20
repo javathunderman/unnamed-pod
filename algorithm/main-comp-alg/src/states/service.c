@@ -76,39 +76,39 @@ int service_state(Fpga *fpga, Thresholds *thresholds, int command) {
 		}	
 	}
 	else if (command == OPEN_FIRST_RELAY) {
-		if (fpga->cache.HVR_1_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_False), "open HVR1");
-		}	
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_1(fpga, NiFpga_False), "open HVR1");
+			
 	}
 	else if (command == CLOSE_SECOND_RELAY){
-		if (!fpga->cache.HVR_2_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_True), "close HVR2");
-		}	
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_True), "close HVR2");
+			
 	}
 	else if (command == OPEN_SECOND_RELAY) {
-		if (fpga->cache.HVR_2_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_False), "open HVR2");
-		}	
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_2(fpga, NiFpga_False), "open HVR2");
+			
 	}
 	else if (command == CLOSE_THIRD_RELAY){
-		if (!fpga->cache.HVR_3_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_True), "close HVR3");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_True), "close HVR3");
+		
 	}
 	else if (command == OPEN_THIRD_RELAY) {
-		if (fpga->cache.HVR_3_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_False), "open HVR3");
-		}	
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_3(fpga, NiFpga_False), "open HVR3");
+			
 	}
 	else if (command == CLOSE_FOURTH_RELAY){
-		if (!fpga->cache.HVR_4_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_True), "close HVR4");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_True), "close HVR4");
+		
 	}
 	else if (command == OPEN_FOURTH_RELAY) {
-		if (fpga->cache.HVR_4_state){
-			fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_False), "open HVR4");
-		}
+		
+		fpgaRunAndUpdateIf(fpga, write_hvr_4(fpga, NiFpga_False), "open HVR4");
+		
 	}
 	else if (command == ENTER_PRE_CHARGE) {
 		//verify that relay are switched according to the sequence
