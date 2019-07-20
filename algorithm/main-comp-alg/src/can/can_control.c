@@ -14,7 +14,7 @@
 static FSM_Status satisfy_request(CAN_Data *data, CAN_Request_Index index);
 static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index);
 static void try_send(CAN_Data *data, CAN_Request_Index index);
-
+static int can_data_threshold(CAN_Data *data);
 
 void control_cycle(CAN_Data *data, int cycle_num) {
     /* Send ISO requests */
@@ -23,6 +23,9 @@ void control_cycle(CAN_Data *data, int cycle_num) {
         //try_send(data, ISO_RESISTANCE_TX);
         //try_send(data, ISO_ERROR_TX);
         try_send(data, LIPO_VOLTAGE_TX);
+    }
+    if (can_data_threshold(data)){
+        ABORT_RUN;   
     }
 }
 
@@ -296,4 +299,39 @@ static FSM_Status reset_request_state(CAN_Data *data, CAN_Request_Index index) {
         SEQ_STORE(data->requests[index].state, IDLE);
         return FSM_COMPLETE;
     }
+}
+
+static int can_data_threshold(CAN_Data *data){
+    
+    if (LOAD(data->can_data.min_voltage) < 2.7){
+        return 1;
+    }
+    if (LOAD(data->can_data.max_voltage) > 4.2){
+        return 1;      
+    }
+    if (LOAD(data->can_data.avg_temp) > 65){
+        return 1;   
+    }
+    if (LOAD(data->can_data.high_temp) > 70){
+        return 1;   
+    }
+    if (LOAD(data->can_data.controller_errors) != 0){
+        return 1;   
+    }
+    if (LOAD(data->can_data.true_current) > LOAD(data->can_data.current_200pc)){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_left) >> 2) & 3 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_right) >> 2) & 3 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_left) >> 7) & 1 != 0){
+        return 1;   
+    }
+    if ((LOAD(data->iso_status_flags_right) >> 7) & 1 != 0){
+        return 1;   
+    }
+    return 0;
 }
