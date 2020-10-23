@@ -37,7 +37,7 @@ typedef struct {
   unsigned int MTR_V : 32;
   unsigned int MTR_A : 32;
   unsigned int MTR_TEMP : 32;
-  unsigned int TELEMETRY_STATUS : 32;
+  unsigned int CAN_CONNECTED : 32;
   unsigned int INT_HYD_TEMP : 32;
   unsigned int EXT_HYD_TEMP : 32;
   unsigned int CIM_SPEED : 32;
@@ -48,15 +48,6 @@ typedef struct {
   unsigned int TIME_USEC : 32;
   unsigned int LAST_COMMAND : 32;
   unsigned int THROTTLE : 32;
-  unsigned int METHANE : 32;
-  unsigned int PIPEJACKING : 32;
-  unsigned int GROUND_STATUS : 32;
-  unsigned int HV_STATUS : 32;
-  unsigned int LV_STATUS : 32;
-  unsigned int USM_STATUS : 32;
-  unsigned int SENSOR_STATUS : 32;
-  unsigned int STEERING_STATUS : 32;
-  unsigned int EXCAVATION_STATUS : 32;
 } Telemetry;
 
 void main(void) {
@@ -119,7 +110,7 @@ void main(void) {
 }
 
 void update_telemetry_1_1(Telemetry *tlm) {
-    tlm->TBM_TEMP = 0x437a0000;
+    tlm->TBM_TEMP = 0x42b2cccd;
     tlm->EPB_PRESSURE = 0x3e5ba5e3;
     tlm->ACCEL_X = 0x401e147b;
     tlm->ACCEL_Y = 0x3ab78034;
@@ -143,7 +134,7 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->MTR_V = 0x4426d333;
     tlm->MTR_A = 0x435ab333;
     tlm->MTR_TEMP = 0x438b91ec;
-    tlm->TELEMETRY_STATUS = 0;
+    tlm->CAN_CONNECTED = 1;
     tlm->INT_HYD_TEMP = 0x42c80000;
     tlm->EXT_HYD_TEMP = 0x447a0000;
     tlm->CIM_SPEED = 0x00000000;
@@ -154,13 +145,4 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->TIME_USEC = 0;
     tlm->LAST_COMMAND = 0;
     tlm->THROTTLE = 0;
-    tlm->METHANE = 125;
-    tlm->PIPEJACKING = 2;
-    tlm->GROUND_STATUS = 1;
-    tlm->HV_STATUS = 1;
-    tlm->LV_STATUS = 1;
-    tlm->USM_STATUS = 1;
-    tlm->SENSOR_STATUS = 1;
-    tlm->STEERING_STATUS = 1;
-    tlm->EXCAVATION_STATUS = 1;
 }

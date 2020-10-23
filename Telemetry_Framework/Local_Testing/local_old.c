@@ -13,50 +13,63 @@
 #define SA struct sockaddr
 
 typedef struct {
-  unsigned int TBM_TEMP : 32;
-  unsigned int EPB_PRESSURE : 32;
-  unsigned int ACCEL_X : 32;
-  unsigned int ACCEL_Y : 32;
-  unsigned int ACCEL_Z : 32;
-  unsigned int VEL_X : 32;
-  unsigned int VEL_Y : 32;
-  unsigned int VEL_Z : 32;
-  unsigned int POS_X : 32;
-  unsigned int POS_Y : 32;
-  unsigned int POS_Z : 32;
-  unsigned int PRIM1_V : 32;
-  unsigned int PRIM2_V : 32;
-  unsigned int RESV_V : 32;
-  unsigned int PRIM1_A : 32;
-  unsigned int PRIM2_A : 32;
-  unsigned int RESV_A : 32;
-  unsigned int PRIM1_TEMP : 32;
-  unsigned int PRIM2_TEMP : 32;
-  unsigned int RESV_TEMP : 32;
-  unsigned int MTR_RPM : 32;
-  unsigned int MTR_V : 32;
-  unsigned int MTR_A : 32;
-  unsigned int MTR_TEMP : 32;
-  unsigned int TELEMETRY_STATUS : 32;
-  unsigned int INT_HYD_TEMP : 32;
-  unsigned int EXT_HYD_TEMP : 32;
-  unsigned int CIM_SPEED : 32;
-  unsigned int SOIL_BOX_WEIGHT : 32;
-  unsigned int FSM_STATE : 32;
-  unsigned int INIT_CHECKS : 32;
-  unsigned int TIME_SEC : 32;
-  unsigned int TIME_USEC : 32;
-  unsigned int LAST_COMMAND : 32;
-  unsigned int THROTTLE : 32;
-  unsigned int METHANE : 32;
-  unsigned int PIPEJACKING : 32;
-  unsigned int GROUND_STATUS : 32;
-  unsigned int HV_STATUS : 32;
-  unsigned int LV_STATUS : 32;
-  unsigned int USM_STATUS : 32;
-  unsigned int SENSOR_STATUS : 32;
-  unsigned int STEERING_STATUS : 32;
-  unsigned int EXCAVATION_STATUS : 32;
+    unsigned int POD_TEMP : 32;
+    unsigned int POD_PRESSURE : 32;
+    unsigned int ACCEL_X : 32;
+    unsigned int ACCEL_Y : 32;
+    unsigned int ACCEL_Z : 32;
+    unsigned int VEL_X : 32;
+    unsigned int VEL_Y : 32;
+    unsigned int VEL_Z : 32;
+    unsigned int POS_X : 32;
+    unsigned int POS_Y : 32;
+    unsigned int POS_Z : 32;
+    unsigned int PRIM1_V : 32;
+    unsigned int PRIM2_V : 32;
+    unsigned int RESV_V : 32;
+    unsigned int PRIM1_A : 32;
+    unsigned int PRIM2_A : 32;
+    unsigned int RESV_A : 32;
+    unsigned int PRIM1_TEMP : 32;
+    unsigned int PRIM2_TEMP : 32;
+    unsigned int RESV_TEMP : 32;
+    unsigned int MTR_RPM : 32;
+    unsigned int MTR_V : 32;
+    unsigned int MTR_A : 32;
+    unsigned int MTR_TEMP : 32;
+    unsigned int CAN_CONNECTED : 32;
+    unsigned int CAN_STATE : 32;
+    unsigned int CAN_ERR : 32;
+    unsigned int HIGH_TRANSDUCER1 : 32;
+    unsigned int HIGH_TRANSDUCER2 : 32;
+    unsigned int LOW_TRANSDUCER1 : 32;
+    unsigned int LOW_TRANSDUCER2 : 32;
+    unsigned int TANK_TEMP : 32;
+    unsigned int PRESSURE_DRAIN : 32;
+    unsigned int SOLENOID1 : 32;
+    unsigned int SOLENOID2 : 32;
+    unsigned int FSM_STATE : 32;
+    unsigned int INIT_CHECKS : 32;
+    unsigned int TIME_SEC : 32;
+    unsigned int TIME_USEC : 32;
+    unsigned int LAST_COMMAND : 32;
+    unsigned int THROTTLE : 32;
+    unsigned int PACK_V : 32;
+    unsigned int PACK_A : 32;
+    unsigned int RELAYS : 32;
+    unsigned int ISOLATION : 32;
+    unsigned int FUSE : 32;
+    unsigned int PACK_CHARGE : 32;
+    unsigned int MODULE1_TEMP : 32;
+    unsigned int MODULE2_TEMP : 32;
+    unsigned int MODULE3_TEMP : 32;
+    unsigned int MODULE4_TEMP : 32;
+    unsigned int MODULE5_TEMP : 32;
+    unsigned int MODULE6_TEMP : 32;
+    unsigned int MODULE7_TEMP : 32;
+    unsigned int MODULE8_TEMP : 32;
+    unsigned int MAX_CELL : 32;
+    unsigned int MIN_CELL : 32;
 } Telemetry;
 
 void main(void) {
@@ -84,7 +97,7 @@ void main(void) {
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(55003);
-
+    
     dest_addr.sin_family = AF_INET;
     inet_aton("192.168.1.127", &dest_addr.sin_addr.s_addr);
     dest_addr.sin_port = htons(8187);
@@ -97,9 +110,9 @@ void main(void) {
     } else {
         printf("Bound socket...\n");
     }
-
+    
     update_telemetry_1_1(&tlm);
-
+    
     printf("Sending...\n");
     if(sendto(pod_socket, &tlm, 228, MSG_NOSIGNAL, (SA *) &dest_addr, sizeof(dest_addr)) == -1) {
         printf("%s\n", strerror(errno));
@@ -119,8 +132,8 @@ void main(void) {
 }
 
 void update_telemetry_1_1(Telemetry *tlm) {
-    tlm->TBM_TEMP = 0x437a0000;
-    tlm->EPB_PRESSURE = 0x3e5ba5e3;
+    tlm->POD_TEMP = 0x42b2cccd;
+    tlm->POD_PRESSURE = 0x3e5ba5e3;
     tlm->ACCEL_X = 0x401e147b;
     tlm->ACCEL_Y = 0x3ab78034;
     tlm->ACCEL_Z = 0xba902de0;
@@ -143,24 +156,37 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->MTR_V = 0x4426d333;
     tlm->MTR_A = 0x435ab333;
     tlm->MTR_TEMP = 0x438b91ec;
-    tlm->TELEMETRY_STATUS = 0;
-    tlm->INT_HYD_TEMP = 0x42c80000;
-    tlm->EXT_HYD_TEMP = 0x447a0000;
-    tlm->CIM_SPEED = 0x00000000;
-    tlm->SOIL_BOX_WEIGHT = 0x40a00000;
+    tlm->CAN_CONNECTED = 1;
+    tlm->CAN_STATE = 0;
+    tlm->CAN_ERR = 1;
+    tlm->HIGH_TRANSDUCER1 = 0x43f2a666;
+    tlm->HIGH_TRANSDUCER2 = 0x43f2a166;
+    tlm->LOW_TRANSDUCER1 = 0x430ab333;
+    tlm->LOW_TRANSDUCER2 = 0x430ab333;
+    tlm->TANK_TEMP = 0x42c46666;
+    tlm->PRESSURE_DRAIN = 0;
+    tlm->SOLENOID1 = 0;
+    tlm->SOLENOID2 = 0;
     tlm->FSM_STATE = 0;
     tlm->INIT_CHECKS = 0;
     tlm->TIME_SEC = 0;
     tlm->TIME_USEC = 0;
     tlm->LAST_COMMAND = 0;
     tlm->THROTTLE = 0;
-    tlm->METHANE = 125;
-    tlm->PIPEJACKING = 2;
-    tlm->GROUND_STATUS = 1;
-    tlm->HV_STATUS = 1;
-    tlm->LV_STATUS = 1;
-    tlm->USM_STATUS = 1;
-    tlm->SENSOR_STATUS = 1;
-    tlm->STEERING_STATUS = 1;
-    tlm->EXCAVATION_STATUS = 1;
+    tlm->PACK_V = 0x4426d333;
+    tlm->PACK_A = 0x435ab333;
+    tlm->RELAYS = 1;
+    tlm->ISOLATION = 0;
+    tlm->FUSE = 0;
+    tlm->PACK_CHARGE = 0x42bc6666;
+    tlm->MODULE1_TEMP = 0x42ba999a;
+    tlm->MODULE2_TEMP = 0x42ba999a;
+    tlm->MODULE3_TEMP = 0x42bc6666;
+    tlm->MODULE4_TEMP = 0x42ba999a;
+    tlm->MODULE5_TEMP = 0x42bc7666;
+    tlm->MODULE6_TEMP = 0x42ba999a;
+    tlm->MODULE7_TEMP = 0x42ba999a;
+    tlm->MODULE8_TEMP = 0x42bc4666;
+    tlm->MAX_CELL = 0x4081999a;
+    tlm->MIN_CELL = 0x405e147b;
 }
