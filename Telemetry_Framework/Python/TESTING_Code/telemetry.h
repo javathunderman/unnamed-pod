@@ -26,15 +26,6 @@ typedef struct {
     unsigned int POS_X : 32;
     unsigned int POS_Y : 32;
     unsigned int POS_Z : 32;
-    unsigned int PRIM1_V : 32;
-    unsigned int PRIM2_V : 32;
-    unsigned int RESV_V : 32;
-    unsigned int PRIM1_A : 32;
-    unsigned int PRIM2_A : 32;
-    unsigned int RESV_A : 32;
-    unsigned int PRIM1_TEMP : 32;
-    unsigned int PRIM2_TEMP : 32;
-    unsigned int RESV_TEMP : 32;
     unsigned int MTR_RPM : 32;
     unsigned int MTR_V : 32;
     unsigned int MTR_A : 32;
@@ -55,10 +46,12 @@ typedef struct {
     unsigned int GROUND_STATUS : 32;
     unsigned int HV_STATUS : 32;
     unsigned int LV_STATUS : 32;
-    unsigned int USM_STATUS : 32;
     unsigned int SENSOR_STATUS : 32;
     unsigned int STEERING_STATUS : 32;
     unsigned int EXCAVATION_STATUS : 32;
+    unsigned int CIM_TEMP : 32;
+    unsigned int INT_HYD_PRESSURE : 32;
+    unsigned int EXT_HYD_PRESSURE : 32;
 } Telemetry;
 
 

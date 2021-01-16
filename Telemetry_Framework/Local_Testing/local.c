@@ -24,15 +24,6 @@ typedef struct {
   unsigned int POS_X : 32;
   unsigned int POS_Y : 32;
   unsigned int POS_Z : 32;
-  unsigned int PRIM1_V : 32;
-  unsigned int PRIM2_V : 32;
-  unsigned int RESV_V : 32;
-  unsigned int PRIM1_A : 32;
-  unsigned int PRIM2_A : 32;
-  unsigned int RESV_A : 32;
-  unsigned int PRIM1_TEMP : 32;
-  unsigned int PRIM2_TEMP : 32;
-  unsigned int RESV_TEMP : 32;
   unsigned int MTR_RPM : 32;
   unsigned int MTR_V : 32;
   unsigned int MTR_A : 32;
@@ -53,10 +44,12 @@ typedef struct {
   unsigned int GROUND_STATUS : 32;
   unsigned int HV_STATUS : 32;
   unsigned int LV_STATUS : 32;
-  unsigned int USM_STATUS : 32;
   unsigned int SENSOR_STATUS : 32;
   unsigned int STEERING_STATUS : 32;
   unsigned int EXCAVATION_STATUS : 32;
+  unsigned int CIM_TEMP : 32;
+  unsigned int INT_HYD_PRESSURE : 32;
+  unsigned int EXT_HYD_PRESSURE : 32;
 } Telemetry;
 
 void main(void) {
@@ -86,7 +79,7 @@ void main(void) {
     servaddr.sin_port = htons(55003);
 
     dest_addr.sin_family = AF_INET;
-    inet_aton("192.168.1.127", &dest_addr.sin_addr.s_addr);
+    inet_aton("192.168.68.119", &dest_addr.sin_addr.s_addr);
     dest_addr.sin_port = htons(8187);
 
     /* Bind pod socket to server address */
@@ -130,23 +123,14 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->POS_X = 0x439c0000;
     tlm->POS_Y = 0x3c23d70a;
     tlm->POS_Z = 0x3c23d70a;
-    tlm->PRIM1_V = 0x41e00000;
-    tlm->PRIM2_V = 0x41e00002;
-    tlm->RESV_V = 0x41e00000;
-    tlm->PRIM1_A = 0x4174cccd;
-    tlm->PRIM2_A = 0x41080000;
-    tlm->RESV_A = 0x41080000;
-    tlm->PRIM1_TEMP = 0x42c06666;
-    tlm->PRIM2_TEMP = 0x42c06666;
-    tlm->RESV_TEMP = 0x42c06666;
     tlm->MTR_RPM = 0x4552e000;
     tlm->MTR_V = 0x4426d333;
     tlm->MTR_A = 0x435ab333;
     tlm->MTR_TEMP = 0x438b91ec;
     tlm->TELEMETRY_STATUS = 0;
-    tlm->INT_HYD_TEMP = 0x42c80000;
-    tlm->EXT_HYD_TEMP = 0x447a0000;
-    tlm->CIM_SPEED = 0x00000000;
+    tlm->INT_HYD_TEMP = 0x41f00000;
+    tlm->EXT_HYD_TEMP = 0x41f00000;
+    tlm->CIM_SPEED = 0x42be0000;
     tlm->SOIL_BOX_WEIGHT = 0x40a00000;
     tlm->FSM_STATE = 0;
     tlm->INIT_CHECKS = 0;
@@ -159,8 +143,10 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->GROUND_STATUS = 1;
     tlm->HV_STATUS = 1;
     tlm->LV_STATUS = 1;
-    tlm->USM_STATUS = 1;
     tlm->SENSOR_STATUS = 1;
     tlm->STEERING_STATUS = 1;
     tlm->EXCAVATION_STATUS = 1;
+    tlm->CIM_TEMP = 0x42be0000;
+    tlm->INT_HYD_PRESSURE = 0x44bb8000;
+    tlm->EXT_HYD_PRESSURE = 0x44bb8000;
 }

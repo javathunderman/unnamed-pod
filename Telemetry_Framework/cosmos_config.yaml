@@ -1,5 +1,5 @@
 target_name: TESTING
-target_ip: 192.168.1.152
+target_ip: 192.168.68.119
 target_port: 8187
 comm_timeout_us: 1000000
 packet_name: PACKET
