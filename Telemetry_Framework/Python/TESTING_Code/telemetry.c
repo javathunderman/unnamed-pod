@@ -8,7 +8,7 @@
 #include "telemetry.h"
 
 
-#define PKT_LENGTH 148
+#define PKT_LENGTH 152
 #define TLM_FREQ 1000000000L
 #define NS_IN_SEC 1000000000L
 #define UPDATE_DELAY(name) name.tv_sec = name.tv_sec + ((name.tv_nsec + TLM_FREQ) / NS_IN_SEC);\
@@ -68,7 +68,7 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->MTR_V = ???;
     tlm->MTR_A = ???;
     tlm->MTR_TEMP = ???;
-    tlm->TELEMETRY_STATUS = ???;
+    tlm->TelemetryTBM_STATUS = ???;
     tlm->INT_HYD_TEMP = ???;
     tlm->EXT_HYD_TEMP = ???;
     tlm->CIM_SPEED = ???;
@@ -81,14 +81,15 @@ void update_telemetry_1_1(Telemetry *tlm) {
     tlm->THROTTLE = ???;
     tlm->METHANE = ???;
     tlm->PIPEJACKING = ???;
-    tlm->GROUND_STATUS = ???;
+    tlm->TelemetryGS_STATUS = ???;
     tlm->HV_STATUS = ???;
-    tlm->LV_STATUS = ???;
+    tlm->PS_TBM_STATUS = ???;
     tlm->SENSOR_STATUS = ???;
     tlm->STEERING_STATUS = ???;
     tlm->EXCAVATION_STATUS = ???;
     tlm->CIM_TEMP = ???;
     tlm->INT_HYD_PRESSURE = ???;
     tlm->EXT_HYD_PRESSURE = ???;
+    tlm->PS_GS_STATUS = ???;
 }
 

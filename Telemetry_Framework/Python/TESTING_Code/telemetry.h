@@ -30,7 +30,7 @@ typedef struct {
     unsigned int MTR_V : 32;
     unsigned int MTR_A : 32;
     unsigned int MTR_TEMP : 32;
-    unsigned int TELEMETRY_STATUS : 32;
+    unsigned int TelemetryTBM_STATUS : 32;
     unsigned int INT_HYD_TEMP : 32;
     unsigned int EXT_HYD_TEMP : 32;
     unsigned int CIM_SPEED : 32;
@@ -43,15 +43,16 @@ typedef struct {
     unsigned int THROTTLE : 32;
     unsigned int METHANE : 32;
     unsigned int PIPEJACKING : 32;
-    unsigned int GROUND_STATUS : 32;
+    unsigned int TelemetryGS_STATUS : 32;
     unsigned int HV_STATUS : 32;
-    unsigned int LV_STATUS : 32;
+    unsigned int PS_TBM_STATUS : 32;
     unsigned int SENSOR_STATUS : 32;
     unsigned int STEERING_STATUS : 32;
     unsigned int EXCAVATION_STATUS : 32;
     unsigned int CIM_TEMP : 32;
     unsigned int INT_HYD_PRESSURE : 32;
     unsigned int EXT_HYD_PRESSURE : 32;
+    unsigned int PS_GS_STATUS : 32;
 } Telemetry;
 
 
